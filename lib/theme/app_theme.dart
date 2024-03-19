@@ -14,6 +14,7 @@ class AppTheme {
 
   static const Color registerCollorContainerLetter =
       Color.fromARGB(255, 89, 116, 167);
+  static const Color pannelColor = Color(0xffb233043);
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
     primaryColor: primary,
