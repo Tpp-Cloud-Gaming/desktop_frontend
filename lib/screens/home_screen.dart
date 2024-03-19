@@ -1,6 +1,8 @@
 import 'package:cloud_gaming/theme/app_theme.dart';
 import 'package:cloud_gaming/widget/widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,53 +12,207 @@ class HomeScreen extends StatelessWidget {
     //esto vendría de un request a la API
     List<Map<String, dynamic>> games = [
       {
-        'image': 'assets/pannel-icons/friends.png',
-        'title': 'Home',
+        'image': 'assets/example-games/finals.webp',
+        'title': 'The Finals',
       },
       {
-        'image': 'assets/pannel-icons/history.png',
-        'title': 'Profile',
+        'image': 'assets/example-games/nba.webp',
+        'title': 'Nba 2K',
       },
       {
-        'image': 'assets/pannel-icons/settings.png',
-        'title': 'Settings',
+        'image': 'assets/example-games/terraria.webp',
+        'title': 'Terraria',
       },
       {
-        'image': 'assets/pannel-icons/star.png',
-        'title': 'Logout',
+        'image': 'assets/example-games/finals.webp',
+        'title': 'Valorant',
+      },
+      {
+        'image': 'assets/example-games/finals.webp',
+        'title': 'The Finals',
+      },
+      {
+        'image': 'assets/example-games/nba.webp',
+        'title': 'Nba 2K',
+      },
+      {
+        'image': 'assets/example-games/terraria.webp',
+        'title': 'Terraria',
+      },
+      {
+        'image': 'assets/example-games/finals.webp',
+        'title': 'Valorant',
+      },
+      {
+        'image': 'assets/example-games/finals.webp',
+        'title': 'The Finals',
+      },
+      {
+        'image': 'assets/example-games/nba.webp',
+        'title': 'Nba 2K',
+      },
+      {
+        'image': 'assets/example-games/terraria.webp',
+        'title': 'Terraria',
+      },
+      {
+        'image': 'assets/example-games/finals.webp',
+        'title': 'Valorant',
+      },
+      {
+        'image': 'assets/example-games/finals.webp',
+        'title': 'The Finals',
+      },
+      {
+        'image': 'assets/example-games/nba.webp',
+        'title': 'Nba 2K',
+      },
+      {
+        'image': 'assets/example-games/terraria.webp',
+        'title': 'Terraria',
+      },
+      {
+        'image': 'assets/example-games/finals.webp',
+        'title': 'Valorant',
       },
     ];
 
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Stack(
-        children: [
-          const BackGround(),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        body: Stack(
+      children: [
+        const BackGround(),
+        Row(
+          children: [
+            const CustomPannel(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: size.width * 0.08, left: size.height * 0.05),
+                  child: const Text("Titulos mas jugados",
+                      style: TextStyle(color: Colors.white, fontSize: 45)),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: size.width * 0.03, left: size.width * 0.05),
+                    child: SizedBox(
+                      width: size.width * 0.5,
+                      child: Expanded(
+                        child: GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // number of items in each row
+                            mainAxisSpacing: 8.0, // spacing between rows
+                            crossAxisSpacing: 8.0, // spacing between columns
+                          ),
+                          itemCount: games.length,
+                          itemBuilder: (context, index) {
+                            return GameCard(
+                              title: games[index]["title"],
+                              imagePath: games[index]["image"],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ));
+  }
+}
+
+class GameCard extends StatefulWidget {
+  const GameCard({super.key, required this.title, required this.imagePath});
+
+  final String imagePath;
+  final String title;
+
+  @override
+  State<GameCard> createState() => _GameCardState();
+}
+
+class _GameCardState extends State<GameCard> {
+  double scale = 1.0;
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Container(
+      height: size.height * 0.3,
+      width: size.width * 0.1,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      child: InkWell(
+        onTap: () {},
+        onHover: (value) {
+          if (value) {
+            setState(() {
+              scale = 1.1;
+            });
+          } else {
+            setState(() {
+              scale = 1.0;
+            });
+          }
+        },
+        child: Transform.scale(
+          scale: scale,
+          child: Column(
             children: [
-              const CustomPannel(),
-              // Padding(
-              //     padding: const EdgeInsets.only(left: 20.0),
-              //     child: ListView(children: [
-              // GridView.builder(
-              //   gridDelegate:
-              //       const SliverGridDelegateWithFixedCrossAxisCount(
-              //     crossAxisCount: 2, // number of items in each row
-              //     mainAxisSpacing: 8.0, // spacing between rows
-              //     crossAxisSpacing: 8.0, // spacing between columns
-              //   ),
-              //   itemCount: games.length,
-              //   itemBuilder: (context, index) {
-              //     return Text(
-              //       "HOLA",
-              //       style: TextStyle(color: Colors.white),
-              //     );
-              //   },
-              // ),
-              // ]))
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: FadeInImage(
+                    placeholder: const AssetImage('assets/no-image.jpg'),
+                    image: AssetImage(widget.imagePath),
+                    width: size.width * 0.1,
+                    height: size.height * 0.25,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Expanded(
+                child: Text(
+                  widget.title ?? 'no-name',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                  ),
+                ),
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

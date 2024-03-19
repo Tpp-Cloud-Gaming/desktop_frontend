@@ -12,20 +12,20 @@ class CustomPannel extends StatefulWidget {
 class _CustomPannelState extends State<CustomPannel> {
   List<Map<String, dynamic>> items = [
     {
-      'image': 'assets/pannel-icons/friends.png',
-      'title': 'Home',
-    },
-    {
       'image': 'assets/pannel-icons/history.png',
-      'title': 'Profile',
+      'title': 'Biblioteca',
     },
     {
       'image': 'assets/pannel-icons/settings.png',
-      'title': 'Settings',
+      'title': 'Configuracion',
+    },
+    {
+      'image': 'assets/pannel-icons/friends.png',
+      'title': 'Amigos',
     },
     {
       'image': 'assets/pannel-icons/star.png',
-      'title': 'Logout',
+      'title': 'Favoritos',
     },
   ];
 
