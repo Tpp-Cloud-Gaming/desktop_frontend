@@ -11,6 +11,7 @@ class AppTheme {
   static const Color appBarColor = Color(0xff2E305F);
   static const Color secondaryBackgroundContainer =
       Color.fromARGB(255, 40, 17, 89);
+  static const Color onHoverColor = Color(0xff558088);
 
   static const Color registerCollorContainerLetter =
       Color.fromARGB(255, 89, 116, 167);

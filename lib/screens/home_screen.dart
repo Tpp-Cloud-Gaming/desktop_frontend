@@ -3,6 +3,7 @@ import 'package:cloud_gaming/widget/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -92,22 +93,24 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(
                       top: size.width * 0.08, left: size.height * 0.05),
-                  child: const Text("Titulos mas jugados",
-                      style: TextStyle(color: Colors.white, fontSize: 45)),
+                  child: Text(AppLocalizations.of(context)!.homeTitle,
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 45)),
                 ),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
                         top: size.width * 0.03, left: size.width * 0.05),
                     child: SizedBox(
-                      width: size.width * 0.5,
+                      width: size.width * 0.75,
                       child: Expanded(
                         child: GridView.builder(
+                          padding: const EdgeInsets.only(right: 400, top: 100),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3, // number of items in each row
-                            mainAxisSpacing: 8.0, // spacing between rows
-                            crossAxisSpacing: 8.0, // spacing between columns
+                            mainAxisSpacing: 5.0, // spacing between rows
+                            crossAxisSpacing: 5.0, // spacing between columns
                           ),
                           itemCount: games.length,
                           itemBuilder: (context, index) {
