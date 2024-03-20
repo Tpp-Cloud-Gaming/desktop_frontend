@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../theme/app_theme.dart';
+import '../themes/app_theme.dart';
 
 class CustomPannel extends StatefulWidget {
   const CustomPannel({super.key});
@@ -15,18 +15,22 @@ class _CustomPannelState extends State<CustomPannel> {
     {
       'image': 'assets/pannel-icons/history.png',
       'title': 'Biblioteca',
+      'page': 'settings'
     },
     {
       'image': 'assets/pannel-icons/settings.png',
       'title': 'Configuracion',
+      'page': 'settings'
     },
     {
       'image': 'assets/pannel-icons/friends.png',
       'title': 'Amigos',
+      'page': 'settings'
     },
     {
       'image': 'assets/pannel-icons/star.png',
       'title': 'Favoritos',
+      'page': 'settings'
     },
   ];
 
@@ -61,9 +65,7 @@ class _CustomPannelState extends State<CustomPannel> {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.all(size.height * 0.01),
-                    child: CustomItem(
-                        title: items[index]['title'],
-                        imgPath: items[index]['image']),
+                    child: CustomItem(item: items[index], context: context),
                   );
                 },
               ),
@@ -74,9 +76,9 @@ class _CustomPannelState extends State<CustomPannel> {
 }
 
 class CustomItem extends StatefulWidget {
-  final String title;
-  final String imgPath;
-  const CustomItem({super.key, required this.title, required this.imgPath});
+  final BuildContext context;
+  final Map<String, dynamic> item;
+  const CustomItem({super.key, required this.context, required this.item});
 
   @override
   State<CustomItem> createState() => _CustomItemState();
@@ -102,11 +104,13 @@ class _CustomItemState extends State<CustomItem> {
       style: OutlinedButton.styleFrom(
         side: const BorderSide(color: Colors.transparent),
       ),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pushNamed(context, widget.item["page"]);
+      },
       child: Row(
         children: [
           Image(
-            image: AssetImage(widget.imgPath),
+            image: AssetImage(widget.item["image"]),
             height: 40,
             width: 40,
             color: color,
@@ -114,7 +118,7 @@ class _CustomItemState extends State<CustomItem> {
           ),
           SizedBox(width: size.width * 0.005), // 2% of width
           Text(
-            widget.title,
+            widget.item["title"],
             style: TextStyle(color: color, fontSize: size.width * 0.012),
           ),
         ],

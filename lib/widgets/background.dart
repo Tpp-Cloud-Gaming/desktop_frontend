@@ -1,4 +1,4 @@
-import 'package:cloud_gaming/theme/app_theme.dart';
+import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 
