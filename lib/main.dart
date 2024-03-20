@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_gaming/routes/app_routes.dart';
+import 'package:cloud_gaming/services/webrtc_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,6 +15,7 @@ void main() {
     setWindowMinSize(const Size(1700, 900));
   }
 
+  WebRTCService().connectToSocket();
   runApp(const MyApp());
 }
 

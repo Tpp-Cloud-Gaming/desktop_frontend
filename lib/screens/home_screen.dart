@@ -100,23 +100,21 @@ class HomeScreen extends StatelessWidget {
                         top: size.width * 0.03, left: size.width * 0.05),
                     child: SizedBox(
                       width: size.width * 0.75,
-                      child: Expanded(
-                        child: GridView.builder(
-                          padding: const EdgeInsets.only(right: 400, top: 100),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3, // number of items in each row
-                            mainAxisSpacing: 5.0, // spacing between rows
-                            crossAxisSpacing: 5.0, // spacing between columns
-                          ),
-                          itemCount: games.length,
-                          itemBuilder: (context, index) {
-                            return GameCard(
-                              title: games[index]["title"],
-                              imagePath: games[index]["image"],
-                            );
-                          },
+                      child: GridView.builder(
+                        padding: const EdgeInsets.only(right: 400, top: 100),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, // number of items in each row
+                          mainAxisSpacing: 5.0, // spacing between rows
+                          crossAxisSpacing: 5.0, // spacing between columns
                         ),
+                        itemCount: games.length,
+                        itemBuilder: (context, index) {
+                          return GameCard(
+                            title: games[index]["title"],
+                            imagePath: games[index]["image"],
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -198,16 +196,14 @@ class _GameCardState extends State<GameCard> {
               const SizedBox(
                 height: 5,
               ),
-              Expanded(
-                child: Text(
-                  widget.title ?? 'no-name',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                  ),
+              Text(
+                widget.title ?? 'no-name',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
                 ),
               ),
             ],
