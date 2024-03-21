@@ -1,26 +1,21 @@
-import 'package:socket_io_client/socket_io_client.dart' as io;
+//import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:tcp_socket_connection/tcp_socket_connection.dart';
 
 class WebRTCService {
-  // Replace 'https://your_socket_server_url' with the URL of your Socket.IO server.
-  final socket = io.io('http://localhost:2794');
+  TcpSocketConnection socketConnection =
+      TcpSocketConnection("127.0.0.1", 28080);
 
-  void connectToSocket() {
-    socket.connect();
-    print("Conecte");
-    socket.onConnect((_) {
-      print('Connected to the socket server');
-    });
-    socket.onDisconnect((_) {
-      print('Disconnected from the socket server');
-    });
+//receiving and sending back a custom message
+  void messageReceived(String msg) {
+    socketConnection.sendMessage("MessageIsReceived :D ");
+  }
 
-    socket.on('message', (data) {
-      print('Received message');
-    });
-
-    // Add more event listeners and functionality as needed.
-
-    // To send a message to the server, use:
-    // socket.emit('eventName', 'message data');
+  void start() async {
+    socketConnection.enableConsolePrint(
+        true); //use this to see in the console what's happening
+    if (await socketConnection.canConnect(5000, attempts: 3)) {
+      //check if it's possible to connect to the endpoint
+      await socketConnection.connect(5000, messageReceived, attempts: 3);
+    }
   }
 }

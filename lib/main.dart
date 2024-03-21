@@ -7,7 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:window_size/window_size.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -15,7 +15,7 @@ void main() {
     setWindowMinSize(const Size(1700, 900));
   }
 
-  WebRTCService().connectToSocket();
+  await comunication();
   runApp(const MyApp());
 }
 
@@ -43,4 +43,8 @@ class MyApp extends StatelessWidget {
       routes: AppRoutes.routes,
     );
   }
+}
+
+Future<void> comunication() async {
+  WebRTCService().start();
 }
