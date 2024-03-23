@@ -16,6 +16,9 @@ class AppTheme {
   static const Color registerCollorContainerLetter =
       Color.fromARGB(255, 89, 116, 167);
   static const Color pannelColor = Color(0xffb233043);
+  static const Color loginPannelColor = Color(0xffb1B2942);
+  static const Color loginButtonColor = Color(0xffb1B2942);
+  static const Color loginButtonTextColor = Color.fromARGB(249, 81, 68, 150);
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
     primaryColor: primary,

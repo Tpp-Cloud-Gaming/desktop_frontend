@@ -1,6 +1,6 @@
-//import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:tcp_socket_connection/tcp_socket_connection.dart';
 
+//COMUNICACION CON RUST, POR AHORA NO SE USA
 class WebRTCService {
   TcpSocketConnection socketConnection =
       TcpSocketConnection("127.0.0.1", 28080);
