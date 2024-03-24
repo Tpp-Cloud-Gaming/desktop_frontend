@@ -1,3 +1,6 @@
+import 'package:cloud_gaming/services/notifications_service.dart';
+import 'package:cloud_gaming/themes/app_theme.dart';
+import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -48,6 +51,37 @@ class ServerService {
   // Listen to update of typing status from connected users
   void handleTyping(Map<String, dynamic> data) {
     print(data);
+  }
+
+  void login(String username, String password, BuildContext context) {
+    socket.emitWithAck(
+      "Login",
+      {"username": username, "password": password},
+      ack: (data) {
+        if (data) {
+          Navigator.pushNamed(context, 'home');
+        } else {
+          NotificationsService.showSnackBar("Incorrect Username or Password",
+              Colors.red, AppTheme.loginPannelColor);
+        }
+      },
+    );
+  }
+
+  void register(
+      String email, String username, String password, BuildContext context) {
+    socket.emitWithAck(
+      "Register",
+      {"email": email, "username": username, "password": password},
+      ack: (data) {
+        if (data) {
+          Navigator.pushNamed(context, 'home');
+        } else {
+          NotificationsService.showSnackBar("Incorrect Username or Password",
+              Colors.red, AppTheme.loginPannelColor);
+        }
+      },
+    );
   }
 
   // Send a Message to the server

@@ -1,5 +1,4 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
-import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
@@ -7,15 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegisterScreen extends StatelessWidget {
   final ServerService server;
-  const LoginScreen({super.key, required this.server});
+  const RegisterScreen({super.key, required this.server});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final colorGen = ColorFilterGenerator.getInstance();
 
+    TextEditingController emailController = TextEditingController();
     TextEditingController usernameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
@@ -71,6 +71,21 @@ class LoginScreen extends StatelessWidget {
                         const Padding(
                           padding: EdgeInsets.only(top: 30, left: 40),
                           child: Text(
+                            "Email",
+                            style: TextStyle(color: Colors.white, fontSize: 22),
+                          ),
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, left: 40, right: 40),
+                            child: CustomInputField(
+                              controller: emailController,
+                              textType: TextInputType.emailAddress,
+                              obscureText: false,
+                            )),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 15, left: 40),
+                          child: Text(
                             "Username",
                             style: TextStyle(color: Colors.white, fontSize: 22),
                           ),
@@ -97,29 +112,7 @@ class LoginScreen extends StatelessWidget {
                               obscureText: true,
                             )),
                         Padding(
-                          padding: const EdgeInsets.only(left: 40, top: 10),
-                          child: InkWell(
-                            onTap: () {},
-                            child: Text(
-                              "Forgot your password?",
-                              style: TextStyle(
-                                color: AppTheme.loginButtonTextColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    offset: const Offset(0.0, 00.0),
-                                    blurRadius: 0.5,
-                                    color: const Color.fromARGB(255, 0, 0, 0)
-                                        .withOpacity(0.8),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
+                          padding: const EdgeInsets.only(top: 40),
                           child: Center(
                               child: SizedBox(
                             width: double.infinity,
@@ -135,80 +128,41 @@ class LoginScreen extends StatelessWidget {
                                               BorderRadius.circular(5)),
                                       backgroundColor: AppTheme.primary),
                                   onPressed: () {
+                                    String email = emailController.text;
                                     String username = usernameController.text;
                                     String password = passwordController.text;
 
+                                    bool validEmail = isValidEmail(email);
                                     bool validUsername =
                                         isValidUsername(username);
                                     bool validPassword =
                                         isValidPassword(password);
 
-                                    if (!validUsername || !validPassword) {
+                                    if (!validUsername ||
+                                        !validPassword ||
+                                        !validEmail) {
                                       //Mensaje por pantalla de error
                                       passwordController.clear();
                                       NotificationsService.showSnackBar(
-                                          "Not Valid Username or Password",
+                                          "Not Valid credentials",
                                           Colors.red,
                                           AppTheme.loginPannelColor);
                                     } else {
-                                      server.login(username, password, context);
+                                      server.register(
+                                          email, username, password, context);
                                       usernameController.clear();
                                       passwordController.clear();
+                                      emailController.clear();
                                     }
                                   },
                                   child: const Text(
-                                    "Login",
+                                    "Register",
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 22),
                                   )),
                             ),
                           )),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 25),
-                          child: Row(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 40),
-                                child: Text(
-                                  "Need an account?",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute<void>(
-                                          builder: (BuildContext context) =>
-                                              RegisterScreen(server: server),
-                                        ));
-                                  },
-                                  child: Text(
-                                    "Register",
-                                    style: TextStyle(
-                                      color: AppTheme.loginButtonTextColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: <Shadow>[
-                                        Shadow(
-                                          offset: const Offset(0.0, 00.0),
-                                          blurRadius: 0.5,
-                                          color:
-                                              const Color.fromARGB(255, 0, 0, 0)
-                                                  .withOpacity(0.8),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     ),
                   ),

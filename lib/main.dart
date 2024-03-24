@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_gaming/routes/app_routes.dart';
 import 'package:cloud_gaming/screens/login_screen.dart';
+import 'package:cloud_gaming/screens/screens.dart';
+import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -56,6 +58,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Cloud Gaming',
       home: LoginScreen(server: server),
       routes: AppRoutes.routes,
+      scaffoldMessengerKey: NotificationsService.messengerKey,
     );
   }
 }
