@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "788138999982",
+    "project_id": "cloudgaming-e7494",
+    "storage_bucket": "cloudgaming-e7494.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788138999982:android:a441b16384eeebfd7b2d3f",
+        "android_client_info": {
+          "package_name": "com.example.cloud_gaming"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGAJVzuR_joDZu54o7zfktAUZGnEopfak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

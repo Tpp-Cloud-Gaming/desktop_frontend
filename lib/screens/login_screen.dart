@@ -1,5 +1,7 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
 import 'package:cloud_gaming/screens/screens.dart';
+import 'package:cloud_gaming/services/firebase_auth_service.dart';
+import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
@@ -16,7 +18,7 @@ class LoginScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final colorGen = ColorFilterGenerator.getInstance();
 
-    TextEditingController usernameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
@@ -71,7 +73,7 @@ class LoginScreen extends StatelessWidget {
                         const Padding(
                           padding: EdgeInsets.only(top: 30, left: 40),
                           child: Text(
-                            "Username",
+                            "Email",
                             style: TextStyle(color: Colors.white, fontSize: 22),
                           ),
                         ),
@@ -79,8 +81,9 @@ class LoginScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(
                                 top: 10, left: 40, right: 40),
                             child: CustomInputField(
-                              controller: usernameController,
+                              controller: emailController,
                               obscureText: false,
+                              textType: TextInputType.emailAddress,
                             )),
                         const Padding(
                           padding: EdgeInsets.only(top: 15, left: 40),
@@ -134,27 +137,9 @@ class LoginScreen extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(5)),
                                       backgroundColor: AppTheme.primary),
-                                  onPressed: () {
-                                    String username = usernameController.text;
-                                    String password = passwordController.text;
-
-                                    bool validUsername =
-                                        isValidUsername(username);
-                                    bool validPassword =
-                                        isValidPassword(password);
-
-                                    if (!validUsername || !validPassword) {
-                                      //Mensaje por pantalla de error
-                                      passwordController.clear();
-                                      NotificationsService.showSnackBar(
-                                          "Not Valid Username or Password",
-                                          Colors.red,
-                                          AppTheme.loginPannelColor);
-                                    } else {
-                                      server.login(username, password, context);
-                                      usernameController.clear();
-                                      passwordController.clear();
-                                    }
+                                  onPressed: () async {
+                                    loginFunction(emailController,
+                                        passwordController, context, server);
                                   },
                                   child: const Text(
                                     "Login",
@@ -219,5 +204,47 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+void loginFunction(
+    TextEditingController emailController,
+    TextEditingController passwordController,
+    BuildContext context,
+    ServerService server) async {
+  String email = emailController.text;
+  String password = passwordController.text;
+
+  bool validUsername = isValidEmail(email);
+  bool validPassword = isValidPassword(password);
+
+  FirebaseAuthService authService = FirebaseAuthService();
+  if (!validUsername || !validPassword) {
+    //Mensaje por pantalla de error
+    passwordController.clear();
+    NotificationsService.showSnackBar(
+        "Invalid Email or Password", Colors.red, AppTheme.loginPannelColor);
+  } else {
+    final String? resp = await authService.loginUser(email, password);
+    if (resp != null) {
+      passwordController.clear();
+      NotificationsService.showSnackBar(
+          resp, Colors.red, AppTheme.loginPannelColor);
+      return;
+    } else {
+      //if (await authService.isEmailVerified()) {
+
+      server.login(email, password, context);
+      emailController.clear();
+      passwordController.clear();
+
+      // } else {
+      //   NotificationsService.showSnackBar(
+      //       "Email isn´t verified, we resend the email verification for you",
+      //       Colors.red,
+      //       AppTheme.loginPannelColor);
+      //   await authService.sendEmailVerification();
+      // }
+    }
   }
 }

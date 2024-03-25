@@ -1,10 +1,12 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
+import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
+import 'package:flutter/widgets.dart';
 
 class RegisterScreen extends StatelessWidget {
   final ServerService server;
@@ -116,50 +118,65 @@ class RegisterScreen extends StatelessWidget {
                           child: Center(
                               child: SizedBox(
                             width: double.infinity,
-                            height: 45,
+                            height: 60,
                             child: Padding(
                               padding:
                                   const EdgeInsets.only(left: 40, right: 40),
-                              child: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                      elevation: 10,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      backgroundColor: AppTheme.primary),
-                                  onPressed: () {
-                                    String email = emailController.text;
-                                    String username = usernameController.text;
-                                    String password = passwordController.text;
-
-                                    bool validEmail = isValidEmail(email);
-                                    bool validUsername =
-                                        isValidUsername(username);
-                                    bool validPassword =
-                                        isValidPassword(password);
-
-                                    if (!validUsername ||
-                                        !validPassword ||
-                                        !validEmail) {
-                                      //Mensaje por pantalla de error
-                                      passwordController.clear();
-                                      NotificationsService.showSnackBar(
-                                          "Not Valid credentials",
-                                          Colors.red,
-                                          AppTheme.loginPannelColor);
-                                    } else {
-                                      server.register(
-                                          email, username, password, context);
-                                      usernameController.clear();
-                                      passwordController.clear();
-                                      emailController.clear();
-                                    }
-                                  },
-                                  child: const Text(
-                                    "Register",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  )),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: size.width * 0.10,
+                                    height: 50,
+                                    child: OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                            elevation: 10,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            backgroundColor: AppTheme.primary),
+                                        onPressed: () async {
+                                          registerFunction(
+                                              emailController,
+                                              usernameController,
+                                              passwordController,
+                                              context,
+                                              server);
+                                        },
+                                        child: const Text(
+                                          "Register",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22),
+                                        )),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 20.0),
+                                    child: SizedBox(
+                                      width: 100,
+                                      height: 50,
+                                      child: OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                            elevation: 10,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            backgroundColor: AppTheme.primary),
+                                        onPressed: () async {
+                                          Navigator.pushNamed(
+                                              context, 'google_auth');
+                                        },
+                                        child: const Image(
+                                          image: AssetImage(
+                                              'assets/google_icon.png'),
+                                          height: 30,
+                                          width: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           )),
                         ),
@@ -173,5 +190,34 @@ class RegisterScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+void registerFunction(
+    TextEditingController emailController,
+    TextEditingController usernameController,
+    TextEditingController passwordController,
+    BuildContext context,
+    ServerService server) async {
+  String email = emailController.text;
+  String username = usernameController.text;
+  String password = passwordController.text;
+
+  bool validEmail = isValidEmail(email);
+  bool validUsername = isValidUsername(username);
+  bool validPassword = isValidPassword(password);
+
+  if (!validUsername || !validPassword || !validEmail) {
+    //Mensaje por pantalla de error
+    passwordController.clear();
+    NotificationsService.showSnackBar(
+        "Not Valid credentials", Colors.red, AppTheme.loginPannelColor);
+  } else {
+    await FirebaseAuthService().registerWithEmail(email, password, username);
+    print("mande validacion");
+    server.register(email, username, password, context);
+    usernameController.clear();
+    passwordController.clear();
+    emailController.clear();
   }
 }

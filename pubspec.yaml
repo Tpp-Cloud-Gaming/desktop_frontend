@@ -47,6 +47,12 @@ dependencies:
   tcp_socket_connection: ^0.3.1
   provider: ^6.1.2
   flutter_regex: ^0.0.3
+  firebase_auth: ^4.17.9
+  firebase_core: ^2.27.1
+  window_to_front: ^0.0.3
+  url_launcher: ^6.1.7
+  oauth2: ^2.0.1
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

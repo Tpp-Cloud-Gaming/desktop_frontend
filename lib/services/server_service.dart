@@ -53,35 +53,39 @@ class ServerService {
     print(data);
   }
 
-  void login(String username, String password, BuildContext context) {
-    socket.emitWithAck(
-      "Login",
-      {"username": username, "password": password},
-      ack: (data) {
-        if (data) {
-          Navigator.pushNamed(context, 'home');
-        } else {
-          NotificationsService.showSnackBar("Incorrect Username or Password",
-              Colors.red, AppTheme.loginPannelColor);
-        }
-      },
-    );
+  void login(String email, String password, BuildContext context) {
+    Navigator.pushNamed(context, 'home');
+    //Habilitar cuando este la api
+    // socket.emitWithAck(
+    //   "Login",
+    //   {"username": username, "password": password},
+    //   ack: (data) {
+    //     if (data) {
+    //       Navigator.pushNamed(context, 'home');
+    //     } else {
+    //       NotificationsService.showSnackBar("Incorrect Username or Password",
+    //           Colors.red, AppTheme.loginPannelColor);
+    //     }
+    //   },
+    // );
   }
 
   void register(
       String email, String username, String password, BuildContext context) {
-    socket.emitWithAck(
-      "Register",
-      {"email": email, "username": username, "password": password},
-      ack: (data) {
-        if (data) {
-          Navigator.pushNamed(context, 'home');
-        } else {
-          NotificationsService.showSnackBar("Incorrect Username or Password",
-              Colors.red, AppTheme.loginPannelColor);
-        }
-      },
-    );
+    Navigator.of(context).pushReplacementNamed('email_verification');
+    //Habilitar cuando este la api
+    // socket.emitWithAck(
+    //   "Register",
+    //   {"email": email, "username": username, "password": password},
+    //   ack: (data) {
+    //     if (data) {
+    //       Navigator.pushNamed(context, 'home');
+    //     } else {
+    //       NotificationsService.showSnackBar("Incorrect Username or Password",
+    //           Colors.red, AppTheme.loginPannelColor);
+    //     }
+    //   },
+    // );
   }
 
   // Send a Message to the server
