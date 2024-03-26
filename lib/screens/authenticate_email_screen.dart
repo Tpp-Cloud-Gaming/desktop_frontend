@@ -1,14 +1,11 @@
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
-import 'package:cloud_gaming/themes/app_theme.dart';
-import 'package:cloud_gaming/widgets/background.dart';
 import 'package:flutter/material.dart';
 
 class EmailVerificationScreen extends StatelessWidget {
-  const EmailVerificationScreen({Key? key}) : super(key: key);
+  const EmailVerificationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
     FirebaseAuthService authService = FirebaseAuthService();
     authService.startEmailVerificationCheck();
 

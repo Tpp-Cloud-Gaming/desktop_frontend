@@ -1,13 +1,14 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
 import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
-import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
+import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
+import 'package:flutter/widgets.dart';
 
 class LoginScreen extends StatelessWidget {
   final ServerService server;
@@ -34,8 +35,7 @@ class LoginScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                     height: size.height,
                     width: size.width,
-                    image: const AssetImage(
-                        'assets/background/login.jpg')), //TODO: no usar cte
+                    image: const AssetImage(AppTheme.loginBackgroundPath)),
               ),
             ),
             Center(
@@ -63,8 +63,7 @@ class LoginScreen extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.only(top: 20),
                             child: Image(
-                              image: AssetImage(
-                                  'assets/logo.png'), //TODO: no usar cte
+                              image: AssetImage(AppTheme.logoPath),
                               height: 95,
                               width: 95,
                             ),
@@ -130,22 +129,39 @@ class LoginScreen extends StatelessWidget {
                             child: Padding(
                               padding:
                                   const EdgeInsets.only(left: 40, right: 40),
-                              child: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                      elevation: 10,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      backgroundColor: AppTheme.primary),
-                                  onPressed: () async {
-                                    loginFunction(emailController,
-                                        passwordController, context, server);
-                                  },
-                                  child: const Text(
-                                    "Login",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  )),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: size.width * 0.10,
+                                    height: 50,
+                                    child: OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                            elevation: 10,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            backgroundColor: AppTheme.primary),
+                                        onPressed: () async {
+                                          loginFunction(
+                                              emailController,
+                                              passwordController,
+                                              context,
+                                              server);
+                                        },
+                                        child: const Text(
+                                          "Login",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22),
+                                        )),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 20.0),
+                                    child: GoogleLoginButton(),
+                                  )
+                                ],
+                              ),
                             ),
                           )),
                         ),

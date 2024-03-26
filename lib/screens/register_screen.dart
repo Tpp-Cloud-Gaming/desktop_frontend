@@ -3,10 +3,10 @@ import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
+import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:flutter/widgets.dart';
 
 class RegisterScreen extends StatelessWidget {
   final ServerService server;
@@ -34,9 +34,20 @@ class RegisterScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                     height: size.height,
                     width: size.width,
-                    image: const AssetImage(
-                        'assets/background/login.jpg')), //TODO: no usar cte
+                    image: const AssetImage(AppTheme.loginBackgroundPath)),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 10),
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_sharp,
+                    color: Colors.white,
+                    size: 35,
+                  )),
             ),
             Center(
               child: Container(
@@ -63,8 +74,7 @@ class RegisterScreen extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.only(top: 20),
                             child: Image(
-                              image: AssetImage(
-                                  'assets/logo.png'), //TODO: no usar cte
+                              image: AssetImage(AppTheme.logoPath),
                               height: 95,
                               width: 95,
                             ),
@@ -150,30 +160,9 @@ class RegisterScreen extends StatelessWidget {
                                               fontSize: 22),
                                         )),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: SizedBox(
-                                      width: 100,
-                                      height: 50,
-                                      child: OutlinedButton(
-                                        style: OutlinedButton.styleFrom(
-                                            elevation: 10,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            backgroundColor: AppTheme.primary),
-                                        onPressed: () async {
-                                          Navigator.pushNamed(
-                                              context, 'google_auth');
-                                        },
-                                        child: const Image(
-                                          image: AssetImage(
-                                              'assets/google_icon.png'),
-                                          height: 30,
-                                          width: 30,
-                                        ),
-                                      ),
-                                    ),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 20.0),
+                                    child: GoogleLoginButton(),
                                   )
                                 ],
                               ),
@@ -214,7 +203,6 @@ void registerFunction(
         "Not Valid credentials", Colors.red, AppTheme.loginPannelColor);
   } else {
     await FirebaseAuthService().registerWithEmail(email, password, username);
-    print("mande validacion");
     server.register(email, username, password, context);
     usernameController.clear();
     passwordController.clear();

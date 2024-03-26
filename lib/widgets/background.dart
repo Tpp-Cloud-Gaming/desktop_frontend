@@ -20,8 +20,7 @@ class BackGround extends StatelessWidget {
                 fit: BoxFit.cover,
                 height: size.height,
                 width: size.width,
-                image: const AssetImage(
-                    'assets/background/wallhaven-d6mkv3.jpg')), //TODO: no usar cte
+                image: const AssetImage(AppTheme.appBackgroundPath)),
           ),
         )
       ],

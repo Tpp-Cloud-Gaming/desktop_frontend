@@ -2,11 +2,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:oauth2/oauth2.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:window_to_front/window_to_front.dart';
+
+const String redirectUrl = 'http://localhost:';
+const String googleAuthApi = "https://accounts.google.com/o/oauth2/v2/auth";
+const String googleTokenApi = "https://oauth2.googleapis.com/token";
+const String revokeTokenUrl = 'https://oauth2.googleapis.com/revoke';
 
 class DesktopLoginManager {
   HttpServer? redirectServer;
@@ -44,11 +50,9 @@ class DesktopOAuthManager extends DesktopLoginManager {
     await redirectServer?.close();
     // Bind to an ephemeral port on localhost
     redirectServer = await HttpServer.bind('localhost', 0);
-    final redirectURL = 'http://localhost:' + redirectServer!.port.toString();
+    final redirectURL = redirectUrl + redirectServer!.port.toString();
     var authenticatedHttpClient = await _getOauthClient(Uri.parse(redirectURL));
-    print("CREDENTIALS ${authenticatedHttpClient.credentials}");
 
-    /// HANDLE SUCCESSFULL LOGIN RESPONSE HERE
     return authenticatedHttpClient.credentials;
   }
 
@@ -64,7 +68,6 @@ class DesktopOAuthManager extends DesktopLoginManager {
       UserCredential userCredential = await _signInWithFirebase(authCredential);
       user = userCredential.user;
     }
-    print(user!.displayName);
     return user;
   }
 
@@ -83,12 +86,11 @@ class DesktopOAuthManager extends DesktopLoginManager {
 
   Future<oauth2.Client> _getOauthClient(Uri redirectUrl) async {
     var grant = oauth2.AuthorizationCodeGrant(
-        "788138999982-du6sv7n0rkrdnqr2p9amlvi22nagfqbi.apps.googleusercontent.com", //Your google client ID
-        Uri.parse("https://accounts.google.com/o/oauth2/v2/auth"),
-        Uri.parse("https://oauth2.googleapis.com/token"),
+        dotenv.env["CLIENT_ID"]!, //Your google client ID
+        Uri.parse(googleAuthApi),
+        Uri.parse(googleTokenApi),
         httpClient: JsonAcceptingHttpClient(),
-        secret:
-            "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" //Your google client secret
+        secret: dotenv.env["TOKEN_API"]! //Your google client secret
         );
 
     var authorizationUrl =
@@ -101,7 +103,7 @@ class DesktopOAuthManager extends DesktopLoginManager {
   }
 
   Future<bool> signOutFromGoogle(String accessToken) async {
-    final Uri uri = Uri.parse('https://oauth2.googleapis.com/revoke')
+    final Uri uri = Uri.parse(revokeTokenUrl)
         .replace(queryParameters: {'token': accessToken});
     final http.Response response = await http.post(uri);
 

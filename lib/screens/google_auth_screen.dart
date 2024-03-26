@@ -1,32 +1,56 @@
 import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
-import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
-import 'package:cloud_gaming/widgets/background.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 
 class GoogleAuthScreen extends StatelessWidget {
-  const GoogleAuthScreen({Key? key}) : super(key: key);
+  const GoogleAuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    final colorGen = ColorFilterGenerator.getInstance();
 
     return FutureBuilder(
         future: DesktopOAuthManager().signInWithGoogle(),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            return Material(
+              child: Stack(
                 children: [
-                  CircularProgressIndicator(
-                    color: Colors.grey[500],
-                  )
-                ]);
+                  Container(
+                    color: AppTheme.primary,
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.matrix(
+                          colorGen.getHighlightedMatrix(value: 0.12)),
+                      child: Image(
+                          fit: BoxFit.cover,
+                          height: size.height,
+                          width: size.width,
+                          image:
+                              const AssetImage(AppTheme.loginBackgroundPath)),
+                    ),
+                  ),
+                  Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: Colors.grey[500],
+                          ),
+                          const Text(
+                            "Please, verify your Google Account",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        ]),
+                  ),
+                ],
+              ),
+            );
           } else {
-            return HomeScreen();
+            return const HomeScreen();
           }
         });
   }
