@@ -8,6 +8,7 @@ import Foundation
 import fhoto_editor
 import firebase_auth
 import firebase_core
+import geolocator_apple
 import url_launcher_macos
 import window_size
 import window_to_front
@@ -16,6 +17,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FhotoEditorPlugin.register(with: registry.registrar(forPlugin: "FhotoEditorPlugin"))
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
+  GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
   UrlLauncherPlugin.register(with: registry.registrar(forPlugin: "UrlLauncherPlugin"))
   WindowSizePlugin.register(with: registry.registrar(forPlugin: "WindowSizePlugin"))
   WindowToFrontPlugin.register(with: registry.registrar(forPlugin: "WindowToFrontPlugin"))

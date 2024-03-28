@@ -50,7 +50,7 @@ class GoogleAuthScreen extends StatelessWidget {
               ),
             );
           } else {
-            return const HomeScreen();
+            return const LocationScreen();
           }
         });
   }

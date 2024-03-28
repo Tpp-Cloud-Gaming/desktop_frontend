@@ -9,5 +9,6 @@ class AppRoutes {
     'email_verification': (BuildContext context) =>
         const EmailVerificationScreen(),
     'google_auth': (BuildContext context) => const GoogleAuthScreen(),
+    'location': (BuildContext context) => const LocationScreen(),
   };
 }

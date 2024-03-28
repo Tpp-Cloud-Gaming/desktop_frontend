@@ -76,6 +76,7 @@ class HomeScreen extends StatelessWidget {
     ];
 
     final size = MediaQuery.of(context).size;
+    final ScrollController _controller = ScrollController();
 
     return Scaffold(
         body: Stack(
@@ -98,23 +99,28 @@ class HomeScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(
                         top: size.width * 0.03, left: size.width * 0.05),
-                    child: SizedBox(
-                      width: size.width * 0.75,
-                      child: GridView.builder(
-                        padding: const EdgeInsets.only(right: 400, top: 100),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, // number of items in each row
-                          mainAxisSpacing: 5.0, // spacing between rows
-                          crossAxisSpacing: 5.0, // spacing between columns
+                    child: Scrollbar(
+                      controller: _controller,
+                      thumbVisibility: true,
+                      child: SizedBox(
+                        width: size.width * 0.75,
+                        child: GridView.builder(
+                          controller: _controller,
+                          padding: const EdgeInsets.only(right: 400, top: 100),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // number of items in each row
+                            mainAxisSpacing: 5.0, // spacing between rows
+                            crossAxisSpacing: 5.0, // spacing between columns
+                          ),
+                          itemCount: games.length,
+                          itemBuilder: (context, index) {
+                            return GameCard(
+                              title: games[index]["title"],
+                              imagePath: games[index]["image"],
+                            );
+                          },
                         ),
-                        itemCount: games.length,
-                        itemBuilder: (context, index) {
-                          return GameCard(
-                            title: games[index]["title"],
-                            imagePath: games[index]["image"],
-                          );
-                        },
                       ),
                     ),
                   ),

@@ -50,10 +50,7 @@ class _CustomPannelState extends State<CustomPannel> {
               child: Padding(
                 padding: EdgeInsets.only(
                     top: size.width * 0.01, left: 40, right: 40),
-                child: const Image(
-                    image: AssetImage('assets/logo.png'),
-                    height: 100,
-                    width: 100),
+                child: const AppLogoButton(),
               ),
             ),
             Padding(
@@ -72,6 +69,28 @@ class _CustomPannelState extends State<CustomPannel> {
             ),
           ],
         ));
+  }
+}
+
+class AppLogoButton extends StatefulWidget {
+  const AppLogoButton({
+    super.key,
+  });
+
+  @override
+  State<AppLogoButton> createState() => _AppLogoButtonState();
+}
+
+class _AppLogoButtonState extends State<AppLogoButton> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.popAndPushNamed(context, "home");
+      },
+      child: const Image(
+          image: AssetImage(AppTheme.logoPath), height: 100, width: 100),
+    );
   }
 }
 
