@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseAuthService {
   final StreamController<bool> _emailVerificationController =
@@ -12,6 +13,9 @@ class FirebaseAuthService {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username',
+          FirebaseAuth.instance.currentUser!.displayName ?? "username");
       return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -29,7 +33,10 @@ class FirebaseAuthService {
       String email, String password, String username) async {
     UserCredential user = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
-    //await changeUsername(username);
+
+    await user.user!.updateDisplayName(username);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
     //return sendEmailVerification();
   }
 

@@ -1,17 +1,17 @@
-import 'package:cloud_gaming/services/notifications_service.dart';
-import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'package:socket_io_client/socket_io_client.dart';
 
 class ServerService {
+  late SharedPreferences prefs;
   final socket = io.io('http://127.0.0.1:3000', <String, dynamic>{
     'transports': ['websocket'],
     "autoConnect": true,
     "reconnection": true,
   });
 
-  void start() {
+  void start() async {
+    prefs = await SharedPreferences.getInstance();
     try {
       // Connect to websocket
       socket.connect();
@@ -72,6 +72,7 @@ class ServerService {
 
   void register(
       String email, String username, String password, BuildContext context) {
+    //prefs.setString("username", username);
     Navigator.of(context).pushReplacementNamed('location');
     //Habilitar cuando este la api
     // socket.emitWithAck(

@@ -1,7 +1,12 @@
+import 'package:cloud_gaming/screens/authentication/login_screen.dart';
+
+import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:geolocator/geolocator.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BackGround extends StatelessWidget {
   const BackGround({super.key});
@@ -24,11 +29,11 @@ class BackGround extends StatelessWidget {
                 image: const AssetImage(AppTheme.appBackgroundPath)),
           ),
         ),
-        Positioned(
+        const Positioned(
           top: 30,
           right: 40,
           child: ProfileCard(),
-        )
+        ),
       ],
     );
   }
@@ -46,43 +51,98 @@ class ProfileCard extends StatefulWidget {
 class _ProfileCardState extends State<ProfileCard> {
   Color color = AppTheme.pannelColor.withOpacity(0.75);
   Color personColor = Colors.grey.withOpacity(0.6);
+  String _username = "user";
+  bool showWidget = false;
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  // Method to load the shared preference data
+  void _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _username = prefs.getString('username') ?? 'user';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    String username = "username";
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          setState(() {
+            showWidget = !showWidget;
+          });
+        },
         onHover: (value) {
-          if (value) {
-            setState(() {
-              color = AppTheme.onHoverColor.withOpacity(0.7);
-              personColor = Colors.black.withOpacity(0.6);
-            });
-          } else {
-            setState(() {
-              color = AppTheme.pannelColor.withOpacity(0.75);
-              personColor = Colors.grey.withOpacity(0.6);
-            });
+          if (!showWidget) {
+            if (value) {
+              setState(() {
+                color = AppTheme.onHoverColor.withOpacity(0.7);
+                personColor = Colors.black.withOpacity(0.6);
+              });
+            } else {
+              setState(() {
+                color = AppTheme.pannelColor.withOpacity(0.75);
+                personColor = Colors.grey.withOpacity(0.6);
+              });
+            }
           }
         },
-        child: Container(
-          color: color,
-          height: 75,
-          width: 160,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Icon(Icons.person, color: personColor, size: 40),
-              Text(
-                username.length > 14
-                    ? "${username.substring(0, 11)}..."
-                    : username, //TODO: load real username
-                style: const TextStyle(color: Colors.white, fontSize: 14),
+        child: Column(
+          children: [
+            Container(
+              color: color,
+              height: 75,
+              width: 160,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(Icons.person, color: personColor, size: 40),
+                  Text(
+                    _username.length > 14
+                        ? "${_username.substring(0, 11)}..."
+                        : _username,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            showWidget
+                ? Container(
+                    color: AppTheme.pannelColor.withOpacity(0.75),
+                    height: 40,
+                    width: 160,
+                    child: ListTile(
+                      focusColor: AppTheme.onHoverColor.withOpacity(0.7),
+                      title: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(
+                            Icons.logout_rounded,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "Log Out",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  LoginScreen(server: ServerService()),
+                            ));
+                      },
+                    ),
+                  )
+                : Container(),
+          ],
         ),
       ),
     );

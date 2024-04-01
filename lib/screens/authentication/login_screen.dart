@@ -143,6 +143,20 @@ class LoginScreen extends StatelessWidget {
                                                     BorderRadius.circular(5)),
                                             backgroundColor: AppTheme.primary),
                                         onPressed: () async {
+                                          //TODO: Implementar el pop up de recordar cuenta
+                                          // await showDialog<void>(
+                                          //     context: context,
+                                          //     builder: (context) => AlertDialog(
+                                          //           content: Stack(
+                                          //             children: [
+                                          //               Container(
+                                          //                 height: 100,
+                                          //                 width: 100,
+                                          //                 color: Colors.red,
+                                          //               )
+                                          //             ],
+                                          //           ),
+                                          //         ));
                                           loginFunction(
                                               emailController,
                                               passwordController,
@@ -262,5 +276,35 @@ void loginFunction(
       //   await authService.sendEmailVerification();
       // }
     }
+  }
+}
+
+class RememberCheck extends StatefulWidget {
+  const RememberCheck({super.key});
+
+  @override
+  State<RememberCheck> createState() => _RememberCheckState();
+}
+
+class _RememberCheckState extends State<RememberCheck> {
+  bool value = false;
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: EdgeInsets.only(left: 70, right: size.width * 0.125, top: 10),
+      child: CheckboxListTile(
+          title: const Text("Remember",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              )),
+          value: value,
+          onChanged: (newValue) {
+            setState(() {
+              value = newValue!;
+            });
+          }),
+    );
   }
 }

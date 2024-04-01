@@ -114,8 +114,11 @@ class _LocationScreenState extends State<LocationScreen> {
             } else {
               print(snapshot.data!.latitude);
             }
-
-            return const HomeScreen();
+            Navigator.pop(context);
+            Future.microtask(() {
+              Navigator.of(context).pushReplacementNamed("home");
+            });
+            return Container();
           }
         });
   }

@@ -12,46 +12,52 @@ class GoogleAuthScreen extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     final colorGen = ColorFilterGenerator.getInstance();
 
-    return FutureBuilder(
-        future: DesktopOAuthManager().signInWithGoogle(),
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            return Material(
-              child: Stack(
-                children: [
-                  Container(
-                    color: AppTheme.primary,
-                    child: ColorFiltered(
-                      colorFilter: ColorFilter.matrix(
-                          colorGen.getHighlightedMatrix(value: 0.12)),
-                      child: Image(
-                          fit: BoxFit.cover,
-                          height: size.height,
-                          width: size.width,
-                          image:
-                              const AssetImage(AppTheme.loginBackgroundPath)),
+    return Scaffold(
+      body: FutureBuilder(
+          future: DesktopOAuthManager().signInWithGoogle(),
+          builder: (context, snapshot) {
+            if (snapshot.data == null) {
+              return Material(
+                child: Stack(
+                  children: [
+                    Container(
+                      color: AppTheme.primary,
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.matrix(
+                            colorGen.getHighlightedMatrix(value: 0.12)),
+                        child: Image(
+                            fit: BoxFit.cover,
+                            height: size.height,
+                            width: size.width,
+                            image:
+                                const AssetImage(AppTheme.loginBackgroundPath)),
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            color: Colors.grey[500],
-                          ),
-                          const Text(
-                            "Please, verify your Google Account",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        ]),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return const LocationScreen();
-          }
-        });
+                    Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              color: Colors.grey[500],
+                            ),
+                            const Text(
+                              "Please, verify your Google Account",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                          ]),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              Future.microtask(() {
+                Navigator.of(context).pushReplacementNamed("location");
+              });
+              return Container();
+            }
+          }),
+    );
   }
 }

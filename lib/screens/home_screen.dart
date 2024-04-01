@@ -155,7 +155,9 @@ class _GameCardState extends State<GameCard> {
       width: size.width * 0.1,
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.pushNamed(context, "game");
+        },
         onHover: (value) {
           if (value) {
             setState(() {
