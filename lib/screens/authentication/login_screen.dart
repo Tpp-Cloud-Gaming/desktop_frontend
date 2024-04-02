@@ -1,4 +1,5 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
+import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
@@ -8,7 +9,7 @@ import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
   final ServerService server;
@@ -69,11 +70,11 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 30, left: 40),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30, left: 40),
                           child: Text(
                             "Email",
-                            style: TextStyle(color: Colors.white, fontSize: 22),
+                            style: AppTheme.loginTextStyle,
                           ),
                         ),
                         Padding(
@@ -84,11 +85,11 @@ class LoginScreen extends StatelessWidget {
                               obscureText: false,
                               textType: TextInputType.emailAddress,
                             )),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 15, left: 40),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15, left: 40),
                           child: Text(
                             "Password",
-                            style: TextStyle(color: Colors.white, fontSize: 22),
+                            style: AppTheme.loginTextStyle,
                           ),
                         ),
                         Padding(
@@ -102,22 +103,8 @@ class LoginScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 40, top: 10),
                           child: InkWell(
                             onTap: () {},
-                            child: Text(
-                              "Forgot your password?",
-                              style: TextStyle(
-                                color: AppTheme.loginButtonTextColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    offset: const Offset(0.0, 00.0),
-                                    blurRadius: 0.5,
-                                    color: const Color.fromARGB(255, 0, 0, 0)
-                                        .withOpacity(0.8),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: Text("Forgot your password?",
+                                style: AppTheme.loginTextButtonsStyle),
                           ),
                         ),
                         Padding(
@@ -143,31 +130,16 @@ class LoginScreen extends StatelessWidget {
                                                     BorderRadius.circular(5)),
                                             backgroundColor: AppTheme.primary),
                                         onPressed: () async {
-                                          //TODO: Implementar el pop up de recordar cuenta
-                                          // await showDialog<void>(
-                                          //     context: context,
-                                          //     builder: (context) => AlertDialog(
-                                          //           content: Stack(
-                                          //             children: [
-                                          //               Container(
-                                          //                 height: 100,
-                                          //                 width: 100,
-                                          //                 color: Colors.red,
-                                          //               )
-                                          //             ],
-                                          //           ),
-                                          //         ));
                                           loginFunction(
                                               emailController,
                                               passwordController,
                                               context,
                                               server);
                                         },
-                                        child: const Text(
+                                        child: Text(
                                           "Login",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 22),
+                                          style: AppTheme.commonText(
+                                              Colors.white, 18),
                                         )),
                                   ),
                                   const Padding(
@@ -183,12 +155,11 @@ class LoginScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 25),
                           child: Row(
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 40),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 40),
                                 child: Text(
                                   "Need an account?",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
+                                  style: AppTheme.commonText(Colors.white, 16),
                                 ),
                               ),
                               Padding(
@@ -202,23 +173,8 @@ class LoginScreen extends StatelessWidget {
                                               RegisterScreen(server: server),
                                         ));
                                   },
-                                  child: Text(
-                                    "Register",
-                                    style: TextStyle(
-                                      color: AppTheme.loginButtonTextColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: <Shadow>[
-                                        Shadow(
-                                          offset: const Offset(0.0, 00.0),
-                                          blurRadius: 0.5,
-                                          color:
-                                              const Color.fromARGB(255, 0, 0, 0)
-                                                  .withOpacity(0.8),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  child: Text("Register",
+                                      style: AppTheme.loginTextButtonsStyle),
                                 ),
                               ),
                             ],
@@ -267,6 +223,7 @@ void loginFunction(
       server.login(email, password, context);
       emailController.clear();
       passwordController.clear();
+      await ShowRememberDialog(context);
 
       // } else {
       //   NotificationsService.showSnackBar(
@@ -276,35 +233,5 @@ void loginFunction(
       //   await authService.sendEmailVerification();
       // }
     }
-  }
-}
-
-class RememberCheck extends StatefulWidget {
-  const RememberCheck({super.key});
-
-  @override
-  State<RememberCheck> createState() => _RememberCheckState();
-}
-
-class _RememberCheckState extends State<RememberCheck> {
-  bool value = false;
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(left: 70, right: size.width * 0.125, top: 10),
-      child: CheckboxListTile(
-          title: const Text("Remember",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              )),
-          value: value,
-          onChanged: (newValue) {
-            setState(() {
-              value = newValue!;
-            });
-          }),
-    );
   }
 }

@@ -1,15 +1,16 @@
 import 'dart:io';
-
 import 'package:cloud_gaming/firebase_options.dart';
 import 'package:cloud_gaming/routes/app_routes.dart';
 import 'package:cloud_gaming/screens/authentication/login_screen.dart';
 import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
+import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_size/window_size.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -26,14 +27,16 @@ void main() async {
     //setWindowMaxSize(const Size(1920, 1080));
     setWindowMinSize(const Size(1700, 900));
   }
+  final prefs = await SharedPreferences.getInstance();
 
   //Esto es para hacer la com con RUST
   //await comunication();
-  runApp(const MyApp());
+  runApp(MyApp(prefs: prefs));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final SharedPreferences prefs;
+  const MyApp({super.key, required this.prefs});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -51,7 +54,9 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    bool remember = widget.prefs.getBool('remember') ?? false;
     return MaterialApp(
+      theme: AppTheme.lightTheme,
       locale: const Locale('es', ''), // Default English
       supportedLocales: const [
         Locale('en', ''), // English
@@ -65,7 +70,7 @@ class _MyAppState extends State<MyApp> {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Cloud Gaming',
-      home: LoginScreen(server: server),
+      home: remember ? const HomeScreen() : LoginScreen(server: server),
       routes: AppRoutes.routes,
       scaffoldMessengerKey: NotificationsService.messengerKey,
     );

@@ -54,7 +54,7 @@ class ServerService {
   }
 
   void login(String email, String password, BuildContext context) {
-    Navigator.pushNamed(context, 'location');
+    //Navigator.pushNamed(context, 'location');
     //Habilitar cuando este la api
     // socket.emitWithAck(
     //   "Login",
@@ -73,7 +73,7 @@ class ServerService {
   void register(
       String email, String username, String password, BuildContext context) {
     //prefs.setString("username", username);
-    Navigator.of(context).pushReplacementNamed('location');
+    //Navigator.of(context).pushReplacementNamed('location');
     //Habilitar cuando este la api
     // socket.emitWithAck(
     //   "Register",

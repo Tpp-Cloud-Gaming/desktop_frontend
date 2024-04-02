@@ -1,4 +1,5 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
+import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
@@ -7,6 +8,7 @@ import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatelessWidget {
   final ServerService server;
@@ -80,11 +82,11 @@ class RegisterScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 30, left: 40),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30, left: 40),
                           child: Text(
                             "Email",
-                            style: TextStyle(color: Colors.white, fontSize: 22),
+                            style: AppTheme.loginTextStyle,
                           ),
                         ),
                         Padding(
@@ -95,11 +97,11 @@ class RegisterScreen extends StatelessWidget {
                               textType: TextInputType.emailAddress,
                               obscureText: false,
                             )),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 15, left: 40),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15, left: 40),
                           child: Text(
                             "Username",
-                            style: TextStyle(color: Colors.white, fontSize: 22),
+                            style: AppTheme.loginTextStyle,
                           ),
                         ),
                         Padding(
@@ -109,11 +111,11 @@ class RegisterScreen extends StatelessWidget {
                               controller: usernameController,
                               obscureText: false,
                             )),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 15, left: 40),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 15, left: 40),
                           child: Text(
                             "Password",
-                            style: TextStyle(color: Colors.white, fontSize: 22),
+                            style: AppTheme.loginTextStyle,
                           ),
                         ),
                         Padding(
@@ -153,11 +155,10 @@ class RegisterScreen extends StatelessWidget {
                                               context,
                                               server);
                                         },
-                                        child: const Text(
+                                        child: Text(
                                           "Register",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 22),
+                                          style: AppTheme.commonText(
+                                              Colors.white, 18),
                                         )),
                                   ),
                                   const Padding(
@@ -207,5 +208,6 @@ void registerFunction(
     usernameController.clear();
     passwordController.clear();
     emailController.clear();
+    await ShowRememberDialog(context);
   }
 }

@@ -14,6 +14,7 @@ class FirebaseAuthService {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      print(await FirebaseAuth.instance.currentUser!.getIdToken());
       await prefs.setString('username',
           FirebaseAuth.instance.currentUser!.displayName ?? "username");
       return null;

@@ -30,7 +30,8 @@ class GameScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(
                   top: size.width * 0.08, left: size.height * 0.05),
-              child: const Text("Valorant",
+              child: const Text(
+                  "Valorant", //TODO: el nombre se cargaría jutno al map de users
                   style: TextStyle(color: Colors.white, fontSize: 45)),
             ),
             Expanded(
@@ -39,7 +40,7 @@ class GameScreen extends StatelessWidget {
                     top: size.width * 0.03, left: size.width * 0.05),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(5)),
                   height: 100,
                   width: size.width * 0.55,
@@ -86,7 +87,7 @@ class UserCustomItem extends StatefulWidget {
 }
 
 class _UserCustomItemState extends State<UserCustomItem> {
-  Color color = Colors.black.withOpacity(0.6);
+  Color color = Colors.white;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -98,7 +99,7 @@ class _UserCustomItemState extends State<UserCustomItem> {
           });
         } else {
           setState(() {
-            color = Colors.black.withOpacity(0.6);
+            color = Colors.white;
           });
         }
       },

@@ -1,4 +1,4 @@
-import 'package:cloud_gaming/screens/screens.dart';
+import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
@@ -52,10 +52,27 @@ class GoogleAuthScreen extends StatelessWidget {
                 ),
               );
             } else {
-              Future.microtask(() {
+              Future.microtask(() async {
+                await ShowRememberDialog(context);
                 Navigator.of(context).pushReplacementNamed("location");
               });
-              return Container();
+              return Stack(
+                children: [
+                  Container(
+                    color: AppTheme.primary,
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.matrix(
+                          colorGen.getHighlightedMatrix(value: 0.12)),
+                      child: Image(
+                          fit: BoxFit.cover,
+                          height: size.height,
+                          width: size.width,
+                          image:
+                              const AssetImage(AppTheme.loginBackgroundPath)),
+                    ),
+                  ),
+                ],
+              );
             }
           }),
     );

@@ -1,3 +1,4 @@
+import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomInputField extends StatelessWidget {
@@ -20,7 +21,7 @@ class CustomInputField extends StatelessWidget {
       child: SizedBox(
         height: 45,
         child: TextFormField(
-          style: const TextStyle(color: Colors.white),
+          style: AppTheme.commonText(Colors.white, 18),
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
           ),

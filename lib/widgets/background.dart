@@ -1,8 +1,6 @@
 import 'package:cloud_gaming/screens/authentication/login_screen.dart';
-
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
-
 import 'package:flutter/material.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 
@@ -106,7 +104,7 @@ class _ProfileCardState extends State<ProfileCard> {
                     _username.length > 14
                         ? "${_username.substring(0, 11)}..."
                         : _username,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    style: AppTheme.commonText(Colors.white, 14),
                   ),
                 ],
               ),
@@ -118,20 +116,22 @@ class _ProfileCardState extends State<ProfileCard> {
                     width: 160,
                     child: ListTile(
                       focusColor: AppTheme.onHoverColor.withOpacity(0.7),
-                      title: const Row(
+                      title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.logout_rounded,
                             color: Colors.white,
                           ),
                           Text(
                             "Log Out",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            style: AppTheme.commonText(Colors.white, 14),
                           ),
                         ],
                       ),
-                      onTap: () {
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setBool("remember", false);
                         Navigator.push(
                             context,
                             MaterialPageRoute<void>(
