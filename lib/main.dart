@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_gaming/firebase_options.dart';
 import 'package:cloud_gaming/routes/app_routes.dart';
-import 'package:cloud_gaming/screens/authentication/login_screen.dart';
 import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
@@ -70,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       ],
       debugShowCheckedModeBanner: false,
       title: 'Cloud Gaming',
-      home: remember ? const HomeScreen() : LoginScreen(server: server),
+      home: remember ? const HomeScreen() : const LocationScreen(),
       routes: AppRoutes.routes,
       scaffoldMessengerKey: NotificationsService.messengerKey,
     );

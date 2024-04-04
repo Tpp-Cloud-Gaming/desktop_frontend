@@ -52,7 +52,7 @@ class _RememberAlertState extends State<RememberAlert> {
                 padding: const EdgeInsets.only(top: 10.0, left: 20.0),
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, 'location');
+                    Navigator.pushNamed(context, 'home');
                   },
                   child: Text(
                     "Omit",
