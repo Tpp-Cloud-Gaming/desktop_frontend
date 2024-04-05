@@ -1,5 +1,6 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
 import 'package:cloud_gaming/helpers/remember_helper.dart';
+import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatelessWidget {
   final ServerService server;
@@ -203,7 +205,18 @@ void registerFunction(
     NotificationsService.showSnackBar(
         "Not Valid credentials", Colors.red, AppTheme.loginPannelColor);
   } else {
-    await FirebaseAuthService().registerWithEmail(email, password, username);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    double latitude = prefs.getDouble("latitude") ?? 0;
+    double longitude = prefs.getDouble("longitude") ?? 0;
+    Map<String, dynamic> values = {
+      "email": email,
+      "username": username,
+      "password": password,
+      "latitude": latitude,
+      "longitude": longitude
+    };
+    String? result = await BackendService().createUser(values);
+    print(result);
     server.register(email, username, password, context);
     usernameController.clear();
     passwordController.clear();

@@ -42,12 +42,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ServerService server = ServerService();
   @override
   void initState() {
     super.initState();
-    server.start();
-    server.sendMessage("Hola desde Flutter");
   }
 
   // This widget is the root of your application.

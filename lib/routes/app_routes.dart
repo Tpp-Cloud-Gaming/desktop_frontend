@@ -11,5 +11,6 @@ class AppRoutes {
     'google_auth': (BuildContext context) => const GoogleAuthScreen(),
     'location': (BuildContext context) => const LocationScreen(),
     'game': (BuildContext context) => const GameScreen(),
+    'login': (BuildContext context) => const LoginScreen(),
   };
 }

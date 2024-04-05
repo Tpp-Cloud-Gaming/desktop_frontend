@@ -2,6 +2,7 @@ import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({super.key});
@@ -112,9 +113,12 @@ class _LocationScreenState extends State<LocationScreen> {
             } else {
               print(snapshot.data!.latitude);
             }
-            Navigator.pop(context);
-            Future.microtask(() {
-              Navigator.of(context).pushReplacementNamed("home");
+            //Navigator.pop(context);
+            Future.microtask(() async {
+              final prefs = await SharedPreferences.getInstance();
+              prefs.setDouble("latitude", snapshot.data!.latitude);
+              prefs.setDouble("longitude", snapshot.data!.longitude);
+              Navigator.of(context).pushReplacementNamed("login");
             });
             return Container();
           }

@@ -8,10 +8,18 @@ class BackendService {
   final String _baseUrl = 'cloud-gaming-server.onrender.com';
 
   Future<String?> createUser(Map<String, dynamic> formValues) async {
+    String? token = await firebaseAuth.registerWithEmail(
+        formValues["email"], formValues["password"], formValues["username"]);
+    if (token == null) {
+      return "No se pudo obtener el token de autenticación";
+    }
+
     final url = Uri.https(_baseUrl, '/users/' + formValues["username"]);
 
+    print(formValues);
     final resp = await http.post(url, body: json.encode(formValues), headers: {
       HttpHeaders.contentTypeHeader: "application/json",
+      HttpHeaders.authorizationHeader: token
     });
 
     try {
@@ -28,9 +36,6 @@ class BackendService {
           return 'No fué posible realizar el registro';
         }
       }
-
-      firebaseAuth.registerWithEmail(
-          formValues["email"], formValues["password"], formValues["username"]);
 
       return null;
     } on FormatException catch (_) {

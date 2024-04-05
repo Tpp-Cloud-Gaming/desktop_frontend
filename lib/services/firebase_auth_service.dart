@@ -30,7 +30,7 @@ class FirebaseAuthService {
     return 'Error inesperado';
   }
 
-  Future<void> registerWithEmail(
+  Future<String?> registerWithEmail(
       String email, String password, String username) async {
     UserCredential user = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
@@ -39,6 +39,7 @@ class FirebaseAuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
     //return sendEmailVerification();
+    return user.user!.getIdToken();
   }
 
   Future<bool> changeUsername(String username) async {
@@ -69,5 +70,9 @@ class FirebaseAuthService {
     await user?.sendEmailVerification();
     await user?.reload();
     _emailVerificationController.add(user?.emailVerified ?? false);
+  }
+
+  Future<String?> getToken() async {
+    return await FirebaseAuth.instance.currentUser!.getIdToken();
   }
 }

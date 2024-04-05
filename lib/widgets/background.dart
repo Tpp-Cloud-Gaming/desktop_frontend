@@ -135,8 +135,7 @@ class _ProfileCardState extends State<ProfileCard> {
                         Navigator.push(
                             context,
                             MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  LoginScreen(server: ServerService()),
+                              builder: (BuildContext context) => LoginScreen(),
                             ));
                       },
                     ),
