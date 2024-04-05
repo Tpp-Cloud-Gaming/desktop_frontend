@@ -8,7 +8,6 @@ class AppRoutes {
     'settings': (BuildContext context) => const SettingsScreen(),
     'email_verification': (BuildContext context) =>
         const EmailVerificationScreen(),
-    'google_auth': (BuildContext context) => const GoogleAuthScreen(),
     'location': (BuildContext context) => const LocationScreen(),
     'game': (BuildContext context) => const GameScreen(),
     'login': (BuildContext context) => const LoginScreen(),

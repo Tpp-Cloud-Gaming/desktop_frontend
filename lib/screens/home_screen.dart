@@ -1,3 +1,4 @@
+import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -220,4 +221,86 @@ class _GameCardState extends State<GameCard> {
       ),
     );
   }
+}
+
+//TODO: integrar la funcion al home con un future builder
+//Cargar imagenes de juegos y datos del usuario
+Future<Map<String, dynamic>> loadData() async {
+  Map<String, dynamic> data = {};
+
+  //esto vendría de un request a la API
+  List<Map<String, dynamic>> games = [
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'The Finals',
+    },
+    {
+      'image': 'assets/example-games/nba.webp',
+      'title': 'Nba 2K',
+    },
+    {
+      'image': 'assets/example-games/terraria.webp',
+      'title': 'Terraria',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'Valorant',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'The Finals',
+    },
+    {
+      'image': 'assets/example-games/nba.webp',
+      'title': 'Nba 2K',
+    },
+    {
+      'image': 'assets/example-games/terraria.webp',
+      'title': 'Terraria',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'Valorant',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'The Finals',
+    },
+    {
+      'image': 'assets/example-games/nba.webp',
+      'title': 'Nba 2K',
+    },
+    {
+      'image': 'assets/example-games/terraria.webp',
+      'title': 'Terraria',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'Valorant',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'The Finals',
+    },
+    {
+      'image': 'assets/example-games/nba.webp',
+      'title': 'Nba 2K',
+    },
+    {
+      'image': 'assets/example-games/terraria.webp',
+      'title': 'Terraria',
+    },
+    {
+      'image': 'assets/example-games/finals.webp',
+      'title': 'Valorant',
+    },
+  ];
+
+  data['games'] = games;
+
+  Map<String, dynamic>? user = await BackendService()
+      .getUser(); //TODO:quiza conviene que se lo pasen, no que lo cree nuevamente
+  data['user'] = user;
+
+  return data;
 }

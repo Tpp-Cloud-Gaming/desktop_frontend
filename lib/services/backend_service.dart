@@ -7,11 +7,20 @@ class BackendService {
   final FirebaseAuthService firebaseAuth = FirebaseAuthService();
   final String _baseUrl = 'cloud-gaming-server.onrender.com';
 
-  Future<String?> createUser(Map<String, dynamic> formValues) async {
-    String? token = await firebaseAuth.registerWithEmail(
-        formValues["email"], formValues["password"], formValues["username"]);
-    if (token == null) {
-      return "No se pudo obtener el token de autenticación";
+  Future<String?> createUser(
+      Map<String, dynamic> formValues, bool createInFirebase) async {
+    String? token = "";
+    if (createInFirebase) {
+      token = await firebaseAuth.registerWithEmail(
+          formValues["email"], formValues["password"], formValues["username"]);
+      if (token == null) {
+        return "No se pudo obtener el token de autenticación";
+      }
+    } else {
+      token = await firebaseAuth.getToken();
+      if (token == null) {
+        return "No se pudo obtener el token de autenticación";
+      }
     }
 
     final url = Uri.https(_baseUrl, '/users/' + formValues["username"]);
@@ -40,6 +49,27 @@ class BackendService {
       return null;
     } on FormatException catch (_) {
       return "No se pudo realizar el registro: error ${resp.statusCode}";
+    }
+  }
+
+  Future<Map<String, dynamic>?> getUser() async {
+    String? username = firebaseAuth.getUsername();
+    if (username == null) {
+      return null;
+    }
+
+    final url = Uri.https(_baseUrl, '/users/' + username);
+    final resp = await http.get(url);
+    print(resp);
+    try {
+      final Map<String, dynamic> decodedResp =
+          json.decode(utf8.decode(resp.bodyBytes));
+      if (decodedResp.containsKey("detail")) {
+        return null;
+      }
+      return decodedResp;
+    } on FormatException catch (_) {
+      return null;
     }
   }
 }

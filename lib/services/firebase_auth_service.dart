@@ -30,6 +30,14 @@ class FirebaseAuthService {
     return 'Error inesperado';
   }
 
+  String? getUsername() {
+    return FirebaseAuth.instance.currentUser!.displayName;
+  }
+
+  String? getEmail() {
+    return FirebaseAuth.instance.currentUser!.email;
+  }
+
   Future<String?> registerWithEmail(
       String email, String password, String username) async {
     UserCredential user = await FirebaseAuth.instance

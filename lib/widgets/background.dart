@@ -61,6 +61,7 @@ class _ProfileCardState extends State<ProfileCard> {
   void _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
+      //TODO: esto trae un bug, si no se cambia en shared preferences en username no se actualiza
       _username = prefs.getString('username') ?? 'user';
     });
   }

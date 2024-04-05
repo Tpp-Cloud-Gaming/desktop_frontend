@@ -165,7 +165,9 @@ class RegisterScreen extends StatelessWidget {
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 20.0),
-                                    child: GoogleLoginButton(),
+                                    child: GoogleLoginButton(
+                                      isRegister: true,
+                                    ),
                                   )
                                 ],
                               ),
@@ -215,7 +217,7 @@ void registerFunction(
       "latitude": latitude,
       "longitude": longitude
     };
-    String? result = await BackendService().createUser(values);
+    String? result = await BackendService().createUser(values, true);
     print(result);
     server.register(email, username, password, context);
     usernameController.clear();

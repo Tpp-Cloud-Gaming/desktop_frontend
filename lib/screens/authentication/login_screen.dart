@@ -145,7 +145,9 @@ class LoginScreen extends StatelessWidget {
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 20.0),
-                                    child: GoogleLoginButton(),
+                                    child: GoogleLoginButton(
+                                      isRegister: false,
+                                    ),
                                   )
                                 ],
                               ),
