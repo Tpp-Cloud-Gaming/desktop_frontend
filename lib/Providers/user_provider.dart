@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
-  Map<String, dynamic> _user = {
+  final Map<String, dynamic> _user = {
     'username': '',
     'email': '',
     'credits': 0,
     'longitude': 0.0,
     'latitude': 0.0,
   };
+  final List<Map<String, dynamic>> _userGames = [];
+
   void updateFormValue(Map<String, dynamic> user) {
     _user["username"] = user["username"];
     _user["email"] = user["email"];

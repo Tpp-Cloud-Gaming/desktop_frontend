@@ -78,4 +78,48 @@ class BackendService {
       return null;
     }
   }
+
+  Future<List<Map<String, dynamic>>?> getAllGames() async {
+    final url = Uri.https(_baseUrl, '/games');
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return null;
+    }
+    final resp = await http.get(url, headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      HttpHeaders.authorizationHeader: token
+    });
+    final List<dynamic> jsonData;
+    try {
+      jsonData = json.decode(utf8.decode(resp.bodyBytes));
+    } on FormatException catch (_) {
+      return null;
+    }
+    final List<Map<String, dynamic>> decodedResp =
+        jsonData.map((dynamic item) => item as Map<String, dynamic>).toList();
+
+    return decodedResp;
+  }
+
+  Future<Map<String, dynamic>?> getGame(String name) async {
+    final url = Uri.https(_baseUrl, '/games/$name');
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return null;
+    }
+    final resp = await http.get(url, headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      HttpHeaders.authorizationHeader: token
+    });
+    try {
+      final Map<String, dynamic> decodedResp =
+          json.decode(utf8.decode(resp.bodyBytes));
+      if (decodedResp.containsKey("detail")) {
+        return null;
+      }
+      return decodedResp;
+    } on FormatException catch (_) {
+      return null;
+    }
+  }
 }
