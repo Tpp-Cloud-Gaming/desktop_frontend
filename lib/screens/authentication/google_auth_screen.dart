@@ -1,10 +1,10 @@
+import 'package:cloud_gaming/helpers/google_username_helper.dart';
 import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,6 +59,7 @@ class GoogleAuthScreen extends StatelessWidget {
             } else {
               Future.microtask(() async {
                 if (isRegister) {
+                  await ShowUsernameInput(context);
                   //TODO: modularizar
                   FirebaseAuthService firebaseAuth = FirebaseAuthService();
                   String username = firebaseAuth.getUsername() ?? "";
