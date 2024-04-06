@@ -58,9 +58,15 @@ class BackendService {
       return null;
     }
 
-    final url = Uri.https(_baseUrl, '/users/' + username);
-    final resp = await http.get(url);
-    print(resp);
+    final url = Uri.https(_baseUrl, '/users/$username');
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return null;
+    }
+    final resp = await http.get(url, headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+      HttpHeaders.authorizationHeader: token
+    });
     try {
       final Map<String, dynamic> decodedResp =
           json.decode(utf8.decode(resp.bodyBytes));
