@@ -28,7 +28,7 @@ void main() async {
     setWindowMinSize(const Size(1700, 900));
   }
   final prefs = await SharedPreferences.getInstance();
-
+  prefs.setBool("first_login", true);
   //Esto es para hacer la com con RUST
   //await comunication();
   runApp(MyApp(prefs: prefs));
