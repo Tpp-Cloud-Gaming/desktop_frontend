@@ -64,7 +64,7 @@ class GoogleAuthScreen extends StatelessWidget {
                   FirebaseAuthService firebaseAuth = FirebaseAuthService();
                   String username = firebaseAuth.getUsername() ?? "";
                   String email = firebaseAuth.getEmail() ?? "";
-
+                  //TODO: aca se pdría revisar los valores y mostrar un error, volver al home y no completar el registro,dar de baja en firebase
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   double latitude = prefs.getDouble("latitude") ?? 0;

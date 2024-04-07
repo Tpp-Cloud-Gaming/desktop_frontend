@@ -103,7 +103,10 @@ class LoginScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 40, top: 10),
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed("forgot_password");
+                            },
                             child: Text("Forgot your password?",
                                 style: AppTheme.loginTextButtonsStyle),
                           ),

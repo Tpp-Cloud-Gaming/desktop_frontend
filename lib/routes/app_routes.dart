@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../screens/screens.dart';
 
 class AppRoutes {
@@ -11,5 +10,6 @@ class AppRoutes {
     'location': (BuildContext context) => const LocationScreen(),
     'game': (BuildContext context) => const GameScreen(),
     'login': (BuildContext context) => const LoginScreen(),
+    'forgot_password': (BuildContext context) => const ForgotPasswordScreen(),
   };
 }

@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
-        locale: const Locale('es', ''), // Default English
+        locale: const Locale('es', ''), // Default
         supportedLocales: const [
           Locale('en', ''), // English
           Locale('es', ''), // Spanish

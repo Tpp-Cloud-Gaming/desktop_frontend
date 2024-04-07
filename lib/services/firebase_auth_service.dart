@@ -83,4 +83,8 @@ class FirebaseAuthService {
   Future<String?> getToken() async {
     return await FirebaseAuth.instance.currentUser!.getIdToken();
   }
+
+  Future<void> resetPassword(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
 }
