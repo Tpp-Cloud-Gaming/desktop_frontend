@@ -224,5 +224,6 @@ void registerFunction(
     passwordController.clear();
     emailController.clear();
     await ShowRememberDialog(context);
+    Navigator.of(context).pushReplacementNamed("home");
   }
 }

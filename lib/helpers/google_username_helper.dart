@@ -8,20 +8,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future ShowUsernameInput(BuildContext context) {
+Future ShowUsernameInput(BuildContext context, FirebaseAuthService auth) {
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(
             backgroundColor: AppTheme.primary,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            content: const UsernameAlert(),
+            content: UsernameAlert(
+              auth: auth,
+            ),
           ));
 }
 
 class UsernameAlert extends StatefulWidget {
+  final FirebaseAuthService auth;
   const UsernameAlert({
     super.key,
+    required this.auth,
   });
 
   @override
@@ -67,7 +71,13 @@ class _UsernameAlertState extends State<UsernameAlert> {
                               Colors.red,
                               AppTheme.loginPannelColor);
                         } else {
-                          await FirebaseAuthService().changeUsername(username);
+                          bool result =
+                              await widget.auth.changeUsername(username);
+                          if (result) {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString('username', username);
+                          }
 
                           Navigator.pop(context);
                         }

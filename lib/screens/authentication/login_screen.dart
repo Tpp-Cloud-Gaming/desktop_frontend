@@ -230,6 +230,7 @@ void loginFunction(
       emailController.clear();
       passwordController.clear();
       await ShowRememberDialog(context);
+      Navigator.of(context).pushReplacementNamed("home");
 
       // } else {
       //   NotificationsService.showSnackBar(

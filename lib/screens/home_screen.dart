@@ -6,7 +6,6 @@ import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -214,8 +213,6 @@ class _GameCardState extends State<GameCard> {
 
 //Cargar imagenes de juegos y datos del usuario
 Future<Map<String, dynamic>> loadData(UserProvider provider) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-
   //esto vendría de un request a la API
   List<Map<String, dynamic>> games = [
     {
@@ -283,15 +280,15 @@ Future<Map<String, dynamic>> loadData(UserProvider provider) async {
       'title': 'Valorant',
     },
   ];
-  bool? first_login = prefs.getBool("first_login");
+
   Map<String, dynamic> data = {};
-  if (first_login == null || first_login) {
+  if (provider.firstLogin) {
     data['games'] = games;
 
     Map<String, dynamic>? user = await BackendService().getUser();
     provider.updateFormValue(user!["user"]); //TODO:handlear los casos de error
     data['user'] = user;
-    prefs.setBool("first_login", false);
+    provider.setLoggin(false);
     return data;
   } else {
     data['games'] = games;

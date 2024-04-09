@@ -59,16 +59,18 @@ class GoogleAuthScreen extends StatelessWidget {
             } else {
               Future.microtask(() async {
                 if (isRegister) {
-                  await ShowUsernameInput(context);
-                  //TODO: modularizar
                   FirebaseAuthService firebaseAuth = FirebaseAuthService();
-                  String username = firebaseAuth.getUsername() ?? "";
+                  await ShowUsernameInput(context, firebaseAuth);
+                  //TODO: modularizar
+
                   String email = firebaseAuth.getEmail() ?? "";
                   //TODO: aca se pdría revisar los valores y mostrar un error, volver al home y no completar el registro,dar de baja en firebase
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   double latitude = prefs.getDouble("latitude") ?? 0;
                   double longitude = prefs.getDouble("longitude") ?? 0;
+                  String username = prefs.getString("username") ?? "";
+                  // String username = firebaseAuth.getUsername() ?? ""; trae el nombre viejo sin actualizar..
 
                   Map<String, dynamic> values = {
                     "username": username,
@@ -76,6 +78,7 @@ class GoogleAuthScreen extends StatelessWidget {
                     "latitude": latitude,
                     "longitude": longitude
                   };
+                  print("Envio datos al Back");
                   print(values);
 
                   String? resp =
@@ -85,7 +88,7 @@ class GoogleAuthScreen extends StatelessWidget {
                 }
 
                 await ShowRememberDialog(context);
-                Navigator.of(context).pushReplacementNamed("location");
+                Navigator.of(context).pushReplacementNamed("home");
               });
               return Stack(
                 children: [

@@ -31,6 +31,9 @@ class FirebaseAuthService {
   }
 
   String? getUsername() {
+    if (FirebaseAuth.instance.currentUser == null) {
+      return null;
+    }
     return FirebaseAuth.instance.currentUser!.displayName;
   }
 

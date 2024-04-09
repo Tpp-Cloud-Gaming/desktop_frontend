@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
+  bool _firstLogin = true;
   final Map<String, dynamic> _user = {
     'username': '',
     'email': '',
@@ -19,5 +20,15 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLoggin(bool value) {
+    _firstLogin = value;
+  }
+
+  void changeUsername(String username) {
+    _user["username"] = username;
+    notifyListeners();
+  }
+
   Map<String, dynamic> get user => _user;
+  bool get firstLogin => _firstLogin;
 }
