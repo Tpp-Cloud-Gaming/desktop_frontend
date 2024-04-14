@@ -24,11 +24,6 @@ class UserProvider extends ChangeNotifier {
     _firstLogin = value;
   }
 
-  void changeUsername(String username) {
-    _user["username"] = username;
-    notifyListeners();
-  }
-
   Map<String, dynamic> get user => _user;
   bool get firstLogin => _firstLogin;
 }

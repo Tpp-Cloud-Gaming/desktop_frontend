@@ -128,6 +128,9 @@ class _ProfileCardState extends State<ProfileCard> {
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
                         prefs.setBool("remember", false);
+                        prefs.setString('email', '');
+                        prefs.setString('password', '');
+                        prefs.setString('username', '');
                         Navigator.push(
                             context,
                             MaterialPageRoute<void>(

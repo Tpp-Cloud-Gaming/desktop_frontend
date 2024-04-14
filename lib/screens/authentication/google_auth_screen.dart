@@ -60,7 +60,7 @@ class GoogleAuthScreen extends StatelessWidget {
               Future.microtask(() async {
                 if (isRegister) {
                   FirebaseAuthService firebaseAuth = FirebaseAuthService();
-                  await ShowUsernameInput(context, firebaseAuth);
+                  await showUsernameInput(context, firebaseAuth);
                   //TODO: modularizar
 
                   String email = firebaseAuth.getEmail() ?? "";
@@ -76,7 +76,8 @@ class GoogleAuthScreen extends StatelessWidget {
                     "username": username,
                     "email": email,
                     "latitude": latitude,
-                    "longitude": longitude
+                    "longitude": longitude,
+                    "credits": 0
                   };
                   print("Envio datos al Back");
                   print(values);
@@ -86,8 +87,8 @@ class GoogleAuthScreen extends StatelessWidget {
                   //TODO: check error
                   print(resp);
                 }
-
-                await ShowRememberDialog(context);
+                //por ahora desactivado el remember para google, trae problemas para relogueaarse desppues de un tiempo sin uso de la app
+                //await ShowRememberDialog(context);
                 Navigator.of(context).pushReplacementNamed("home");
               });
               return Stack(

@@ -122,4 +122,33 @@ class BackendService {
       return null;
     }
   }
+
+  Future<String?> changeUserData(
+      String username, Map<String, dynamic> data) async {
+    final url = Uri.https(_baseUrl, '/users/$username');
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return null;
+    }
+    final resp = await http.put(url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: token
+        },
+        body: json.encode(data));
+    try {
+      final Map<String, dynamic> decodedResp =
+          json.decode(utf8.decode(resp.bodyBytes));
+      if (decodedResp.containsKey("detail")) {
+        return decodedResp["detail"];
+      }
+      if (decodedResp.containsKey('error')) {
+        return decodedResp['error'];
+      }
+
+      return null;
+    } on FormatException catch (_) {
+      return "No se pudo actualizar los datos: error ${resp.statusCode}";
+    }
+  }
 }

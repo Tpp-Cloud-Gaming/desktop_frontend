@@ -30,6 +30,10 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   //Esto es para hacer la com con RUST
   //await comunication();
+
+  //Descomentar esto si se traba por el remember account
+  //prefs.setBool('remember', false);
+
   runApp(MyApp(prefs: prefs));
 }
 

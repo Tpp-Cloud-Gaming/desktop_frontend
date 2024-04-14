@@ -1,5 +1,6 @@
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/helpers/helper_validations.dart';
+import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -177,19 +178,52 @@ class ChangeUsername extends StatelessWidget {
                             backgroundColor: AppTheme.primary),
                         onPressed: () async {
                           String username = usernameController.text;
-                          //TODO: hay que chequear que el username se pueda cambiar, desde el return de firebase pero tmb del backend
+                          usernameController.clear();
                           if (!isValidUsername(username)) {
                             NotificationsService.showSnackBar(
                                 "Please enter a valid username",
                                 Colors.red,
                                 AppTheme.loginPannelColor);
-                            usernameController.clear();
                           } else {
-                            FirebaseAuthService().changeUsername(username);
                             final provider = Provider.of<UserProvider>(context,
                                 listen: false);
-                            provider.changeUsername(username);
+
+                            String oldUsername = provider.user["username"];
+
+                            if (await FirebaseAuthService()
+                                .changeUsername(username)) {
+                              String? resp = await BackendService()
+                                  .changeUserData(oldUsername, provider.user);
+                              if (resp != null) {
+                                //Error en el cambio de nombre desde el back
+                                NotificationsService.showSnackBar(
+                                    "Error changing username: $resp",
+                                    Colors.red,
+                                    AppTheme.loginPannelColor);
+                                //Revertir el cambio de nombre en firebase
+                                await FirebaseAuthService()
+                                    .changeUsername(oldUsername);
+                              } else {
+                                //Actualizar el usuario en el provider
+                                Map<String, dynamic>? newData =
+                                    await BackendService().getUser();
+                                if (newData == null) {
+                                  NotificationsService.showSnackBar(
+                                      "Error getting new user data",
+                                      Colors.red,
+                                      AppTheme.loginPannelColor);
+                                } else {
+                                  provider.updateFormValue(newData);
+                                }
+                              }
+                            } else {
+                              NotificationsService.showSnackBar(
+                                  "Username already taken",
+                                  Colors.red,
+                                  AppTheme.loginPannelColor);
+                            }
                           }
+                          usernameController.clear();
                         },
                         child: Text(
                           "Change",

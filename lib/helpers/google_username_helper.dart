@@ -4,11 +4,9 @@ import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future ShowUsernameInput(BuildContext context, FirebaseAuthService auth) {
+Future showUsernameInput(BuildContext context, FirebaseAuthService auth) {
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(

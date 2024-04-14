@@ -17,6 +17,9 @@ class FirebaseAuthService {
       print(await FirebaseAuth.instance.currentUser!.getIdToken());
       await prefs.setString('username',
           FirebaseAuth.instance.currentUser!.displayName ?? "username");
+      await prefs.setString('email', email);
+      //TODO: encriptar?
+      await prefs.setString('password', password);
       return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -49,6 +52,9 @@ class FirebaseAuthService {
     await user.user!.updateDisplayName(username);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
+    await prefs.setString('email', email);
+    //TODO: encriptar?
+    await prefs.setString('password', password);
     //return sendEmailVerification();
     return user.user!.getIdToken();
   }

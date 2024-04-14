@@ -1,11 +1,13 @@
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
+import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -17,7 +19,7 @@ class HomeScreen extends StatelessWidget {
     final colorGen = ColorFilterGenerator.getInstance();
     final provider = Provider.of<UserProvider>(context, listen: false);
     return FutureBuilder(
-        future: loadData(provider),
+        future: loadData(context, provider),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return Material(
@@ -212,7 +214,8 @@ class _GameCardState extends State<GameCard> {
 }
 
 //Cargar imagenes de juegos y datos del usuario
-Future<Map<String, dynamic>> loadData(UserProvider provider) async {
+Future<Map<String, dynamic>> loadData(
+    BuildContext context, UserProvider provider) async {
   //esto vendría de un request a la API
   List<Map<String, dynamic>> games = [
     {
@@ -283,9 +286,33 @@ Future<Map<String, dynamic>> loadData(UserProvider provider) async {
 
   Map<String, dynamic> data = {};
   if (provider.firstLogin) {
+    //Validar que este la info de login guardada
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool remember = prefs.getBool('remember') ?? false;
+
+    if (remember) {
+      String email = prefs.getString('email') ?? '';
+      String password = prefs.getString('password') ?? '';
+      if (email == '' || password == '') {
+        //Volver al login
+        prefs.setBool('remeber', false);
+        Navigator.pushReplacementNamed(context, 'login');
+        return {};
+      }
+      //loguear al usuario
+      String? resp = await FirebaseAuthService().loginUser(email, password);
+      print(resp);
+      if (resp != null) {
+        return {};
+      }
+    }
+
     data['games'] = games;
 
     Map<String, dynamic>? user = await BackendService().getUser();
+    if (user == null) {
+      print("fallo en obtener datos del usuario");
+    }
     provider.updateFormValue(user!["user"]); //TODO:handlear los casos de error
     data['user'] = user;
     provider.setLoggin(false);
