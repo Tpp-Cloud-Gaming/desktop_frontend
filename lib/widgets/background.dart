@@ -21,13 +21,8 @@ class BackGround extends StatelessWidget {
         Container(
           color: AppTheme.primary,
           child: ColorFiltered(
-            colorFilter:
-                ColorFilter.matrix(colorGen.getExposureMatrix(value: 0.2)),
-            child: Image(
-                fit: BoxFit.cover,
-                height: size.height,
-                width: size.width,
-                image: const AssetImage(AppTheme.appBackgroundPath)),
+            colorFilter: ColorFilter.matrix(colorGen.getExposureMatrix(value: 0.2)),
+            child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.appBackgroundPath)),
           ),
         ),
         Positioned(
@@ -62,7 +57,7 @@ class _ProfileCardState extends State<ProfileCard> {
 
   @override
   Widget build(BuildContext context) {
-    String username = widget.provider.user["username"];
+    String username = widget.provider.user["username"] ?? "";
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
@@ -97,9 +92,7 @@ class _ProfileCardState extends State<ProfileCard> {
                 children: [
                   Icon(Icons.person, color: personColor, size: 40),
                   Text(
-                    username.length > 14
-                        ? "${username.substring(0, 11)}..."
-                        : username,
+                    username.length > 14 ? "${username.substring(0, 11)}..." : username,
                     style: AppTheme.commonText(Colors.white, 14),
                   ),
                 ],

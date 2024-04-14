@@ -9,14 +9,20 @@ class UserProvider extends ChangeNotifier {
     'longitude': 0.0,
     'latitude': 0.0,
   };
+
+  final List<Map<String, dynamic>> _games = [];
+
   final List<Map<String, dynamic>> _userGames = [];
 
   void updateFormValue(Map<String, dynamic> user) {
-    _user["username"] = user["username"];
-    _user["email"] = user["email"];
-    _user["credits"] = user["credits"];
-    _user["longitude"] = user["longitude"];
-    _user["latitude"] = user["latitude"];
+    _user.updateAll((key, value) => user[key] ?? value);
+    notifyListeners();
+  }
+
+  void setGames(List<Map<String, dynamic>> games) {
+    _games.clear();
+    _games.addAll(games);
+
     notifyListeners();
   }
 
@@ -25,5 +31,6 @@ class UserProvider extends ChangeNotifier {
   }
 
   Map<String, dynamic> get user => _user;
+  List<Map<String, dynamic>> get games => _games;
   bool get firstLogin => _firstLogin;
 }

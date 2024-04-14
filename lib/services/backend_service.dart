@@ -7,12 +7,10 @@ class BackendService {
   final FirebaseAuthService firebaseAuth = FirebaseAuthService();
   final String _baseUrl = 'cloud-gaming-server.onrender.com';
 
-  Future<String?> createUser(
-      Map<String, dynamic> formValues, bool createInFirebase) async {
+  Future<String?> createUser(Map<String, dynamic> formValues, bool createInFirebase) async {
     String? token = "";
     if (createInFirebase) {
-      token = await firebaseAuth.registerWithEmail(
-          formValues["email"], formValues["password"], formValues["username"]);
+      token = await firebaseAuth.registerWithEmail(formValues["email"], formValues["password"], formValues["username"]);
       if (token == null) {
         return "No se pudo obtener el token de autenticación";
       }
@@ -32,14 +30,12 @@ class BackendService {
     });
 
     try {
-      final Map<String, dynamic> decodedResp =
-          json.decode(utf8.decode(resp.bodyBytes));
+      final Map<String, dynamic> decodedResp = json.decode(utf8.decode(resp.bodyBytes));
       if (decodedResp.containsKey("detail")) {
         return decodedResp["detail"];
       }
       if (decodedResp.containsKey('error')) {
-        if (decodedResp['error'] ==
-            'user with the provided email already exists') {
+        if (decodedResp['error'] == 'user with the provided email already exists') {
           return 'Usuario existente';
         } else {
           return 'No fué posible realizar el registro';
@@ -68,8 +64,7 @@ class BackendService {
       HttpHeaders.authorizationHeader: token
     });
     try {
-      final Map<String, dynamic> decodedResp =
-          json.decode(utf8.decode(resp.bodyBytes));
+      final Map<String, dynamic> decodedResp = json.decode(utf8.decode(resp.bodyBytes));
       if (decodedResp.containsKey("detail")) {
         return null;
       }
@@ -95,8 +90,7 @@ class BackendService {
     } on FormatException catch (_) {
       return null;
     }
-    final List<Map<String, dynamic>> decodedResp =
-        jsonData.map((dynamic item) => item as Map<String, dynamic>).toList();
+    final List<Map<String, dynamic>> decodedResp = jsonData.map((dynamic item) => item as Map<String, dynamic>).toList();
 
     return decodedResp;
   }
@@ -112,8 +106,7 @@ class BackendService {
       HttpHeaders.authorizationHeader: token
     });
     try {
-      final Map<String, dynamic> decodedResp =
-          json.decode(utf8.decode(resp.bodyBytes));
+      final Map<String, dynamic> decodedResp = json.decode(utf8.decode(resp.bodyBytes));
       if (decodedResp.containsKey("detail")) {
         return null;
       }
@@ -123,8 +116,7 @@ class BackendService {
     }
   }
 
-  Future<String?> changeUserData(
-      String username, Map<String, dynamic> data) async {
+  Future<String?> changeUserData(String username, Map<String, dynamic> data) async {
     final url = Uri.https(_baseUrl, '/users/$username');
     String? token = await firebaseAuth.getToken();
     if (token == null) {
@@ -137,8 +129,7 @@ class BackendService {
         },
         body: json.encode(data));
     try {
-      final Map<String, dynamic> decodedResp =
-          json.decode(utf8.decode(resp.bodyBytes));
+      final Map<String, dynamic> decodedResp = json.decode(utf8.decode(resp.bodyBytes));
       if (decodedResp.containsKey("detail")) {
         return decodedResp["detail"];
       }
