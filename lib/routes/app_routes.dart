@@ -1,6 +1,5 @@
 import 'package:cloud_gaming/screens/my_games_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../screens/screens.dart';
 
 class AppRoutes {
@@ -9,9 +8,10 @@ class AppRoutes {
     'settings': (BuildContext context) => const SettingsScreen(),
     'email_verification': (BuildContext context) =>
         const EmailVerificationScreen(),
-    'google_auth': (BuildContext context) => const GoogleAuthScreen(),
     'location': (BuildContext context) => const LocationScreen(),
     'game': (BuildContext context) => const GameScreen(),
     'my_games': (BuildContext context) => const MyGamesScreen(),
+    'login': (BuildContext context) => const LoginScreen(),
+    'forgot_password': (BuildContext context) => const ForgotPasswordScreen(),
   };
 }

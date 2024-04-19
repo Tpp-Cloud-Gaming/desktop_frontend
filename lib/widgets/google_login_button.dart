@@ -1,8 +1,10 @@
+import 'package:cloud_gaming/screens/authentication/google_auth_screen.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class GoogleLoginButton extends StatelessWidget {
-  const GoogleLoginButton({super.key});
+  final bool isRegister;
+  const GoogleLoginButton({super.key, required this.isRegister});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,13 @@ class GoogleLoginButton extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             backgroundColor: AppTheme.primary),
         onPressed: () async {
-          Navigator.pushNamed(context, 'google_auth');
+          Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => GoogleAuthScreen(
+                  isRegister: isRegister,
+                ),
+              ));
         },
         child: const Image(
           image: AssetImage(AppTheme.googleIconPath),

@@ -9,11 +9,9 @@ import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
-  final ServerService server;
-  const LoginScreen({super.key, required this.server});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +20,9 @@ class LoginScreen extends StatelessWidget {
 
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    ServerService server = ServerService();
+    server.start();
+    //server.sendMessage("Hola desde Flutter");
 
     return Scaffold(
       body: Material(
@@ -102,7 +103,10 @@ class LoginScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 40, top: 10),
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed("forgot_password");
+                            },
                             child: Text("Forgot your password?",
                                 style: AppTheme.loginTextButtonsStyle),
                           ),
@@ -144,7 +148,9 @@ class LoginScreen extends StatelessWidget {
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 20.0),
-                                    child: GoogleLoginButton(),
+                                    child: GoogleLoginButton(
+                                      isRegister: false,
+                                    ),
                                   )
                                 ],
                               ),
@@ -224,6 +230,7 @@ void loginFunction(
       emailController.clear();
       passwordController.clear();
       await ShowRememberDialog(context);
+      Navigator.of(context).pushReplacementNamed("home");
 
       // } else {
       //   NotificationsService.showSnackBar(

@@ -3,20 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseAuthService {
-  final StreamController<bool> _emailVerificationController =
-      StreamController<bool>.broadcast();
+  final StreamController<bool> _emailVerificationController = StreamController<bool>.broadcast();
 
-  Stream<bool> get emailVerificationStatus =>
-      _emailVerificationController.stream;
+  Stream<bool> get emailVerificationStatus => _emailVerificationController.stream;
 
   Future<String?> loginUser(String email, String password) async {
     try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      //Comentar si no se quiere imprimir el token
       print(await FirebaseAuth.instance.currentUser!.getIdToken());
-      await prefs.setString('username',
-          FirebaseAuth.instance.currentUser!.displayName ?? "username");
+      await prefs.setString('username', FirebaseAuth.instance.currentUser!.displayName ?? "username");
       return null;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -30,15 +28,28 @@ class FirebaseAuthService {
     return 'Error inesperado';
   }
 
-  Future<void> registerWithEmail(
-      String email, String password, String username) async {
-    UserCredential user = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
+  String? getUsername() {
+    if (FirebaseAuth.instance.currentUser == null) {
+      return null;
+    }
+    return FirebaseAuth.instance.currentUser!.displayName;
+  }
+
+  String? getEmail() {
+    return FirebaseAuth.instance.currentUser!.email;
+  }
+
+  Future<String?> registerWithEmail(String email, String password, String username) async {
+    UserCredential user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
     await user.user!.updateDisplayName(username);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', username);
+    await prefs.setString('email', email);
+    //TODO: encriptar?
+    await prefs.setString('password', password);
     //return sendEmailVerification();
+    return user.user!.getIdToken();
   }
 
   Future<bool> changeUsername(String username) async {
@@ -69,5 +80,13 @@ class FirebaseAuthService {
     await user?.sendEmailVerification();
     await user?.reload();
     _emailVerificationController.add(user?.emailVerified ?? false);
+  }
+
+  Future<String?> getToken() async {
+    return await FirebaseAuth.instance.currentUser!.getIdToken();
+  }
+
+  Future<void> resetPassword(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 }

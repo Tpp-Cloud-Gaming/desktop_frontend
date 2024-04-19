@@ -1,8 +1,9 @@
+import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/screens/authentication/login_screen.dart';
-import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,24 +14,21 @@ class BackGround extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final colorGen = ColorFilterGenerator.getInstance();
+    final provider = Provider.of<UserProvider>(context, listen: true);
+
     return Stack(
       children: [
         Container(
           color: AppTheme.primary,
           child: ColorFiltered(
-            colorFilter:
-                ColorFilter.matrix(colorGen.getExposureMatrix(value: 0.2)),
-            child: Image(
-                fit: BoxFit.cover,
-                height: size.height,
-                width: size.width,
-                image: const AssetImage(AppTheme.appBackgroundPath)),
+            colorFilter: ColorFilter.matrix(colorGen.getExposureMatrix(value: 0.2)),
+            child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.appBackgroundPath)),
           ),
         ),
-        const Positioned(
+        Positioned(
           top: 30,
           right: 40,
-          child: ProfileCard(),
+          child: ProfileCard(provider: provider),
         ),
       ],
     );
@@ -38,8 +36,10 @@ class BackGround extends StatelessWidget {
 }
 
 class ProfileCard extends StatefulWidget {
+  final UserProvider provider;
   const ProfileCard({
     super.key,
+    required this.provider,
   });
 
   @override
@@ -49,24 +49,15 @@ class ProfileCard extends StatefulWidget {
 class _ProfileCardState extends State<ProfileCard> {
   Color color = AppTheme.pannelColor.withOpacity(0.75);
   Color personColor = Colors.grey.withOpacity(0.6);
-  String _username = "user";
   bool showWidget = false;
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
-  }
-
-  // Method to load the shared preference data
-  void _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _username = prefs.getString('username') ?? 'user';
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    String username = widget.provider.user["username"] ?? "";
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
@@ -101,9 +92,7 @@ class _ProfileCardState extends State<ProfileCard> {
                 children: [
                   Icon(Icons.person, color: personColor, size: 40),
                   Text(
-                    _username.length > 14
-                        ? "${_username.substring(0, 11)}..."
-                        : _username,
+                    username.length > 14 ? "${username.substring(0, 11)}..." : username,
                     style: AppTheme.commonText(Colors.white, 14),
                   ),
                 ],
@@ -132,11 +121,13 @@ class _ProfileCardState extends State<ProfileCard> {
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
                         prefs.setBool("remember", false);
+                        prefs.setString('email', '');
+                        prefs.setString('password', '');
+                        prefs.setString('username', '');
                         Navigator.push(
                             context,
                             MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  LoginScreen(server: ServerService()),
+                              builder: (BuildContext context) => LoginScreen(),
                             ));
                       },
                     ),

@@ -1,11 +1,16 @@
+import 'package:cloud_gaming/helpers/google_username_helper.dart';
 import 'package:cloud_gaming/helpers/remember_helper.dart';
+import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
+import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleAuthScreen extends StatelessWidget {
-  const GoogleAuthScreen({super.key});
+  final bool isRegister;
+  const GoogleAuthScreen({super.key, required this.isRegister});
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +58,38 @@ class GoogleAuthScreen extends StatelessWidget {
               );
             } else {
               Future.microtask(() async {
-                await ShowRememberDialog(context);
-                Navigator.of(context).pushReplacementNamed("location");
+                if (isRegister) {
+                  FirebaseAuthService firebaseAuth = FirebaseAuthService();
+                  await showUsernameInput(context, firebaseAuth);
+                  //TODO: modularizar
+
+                  String email = firebaseAuth.getEmail() ?? "";
+                  //TODO: aca se pdría revisar los valores y mostrar un error, volver al home y no completar el registro,dar de baja en firebase
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  double latitude = prefs.getDouble("latitude") ?? 0;
+                  double longitude = prefs.getDouble("longitude") ?? 0;
+                  String username = prefs.getString("username") ?? "";
+                  // String username = firebaseAuth.getUsername() ?? ""; trae el nombre viejo sin actualizar..
+
+                  Map<String, dynamic> values = {
+                    "username": username,
+                    "email": email,
+                    "latitude": latitude,
+                    "longitude": longitude,
+                    "credits": 0
+                  };
+                  print("Envio datos al Back");
+                  print(values);
+
+                  String? resp =
+                      await BackendService().createUser(values, false);
+                  //TODO: check error
+                  print(resp);
+                }
+                //por ahora desactivado el remember para google, trae problemas para relogueaarse desppues de un tiempo sin uso de la app
+                //await ShowRememberDialog(context);
+                Navigator.of(context).pushReplacementNamed("home");
               });
               return Stack(
                 children: [

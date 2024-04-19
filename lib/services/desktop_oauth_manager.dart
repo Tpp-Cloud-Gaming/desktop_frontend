@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -78,9 +79,12 @@ class DesktopOAuthManager extends DesktopLoginManager {
 
     try {
       userCredential = await auth.signInWithCredential(authCredential);
+      //TODO: cambiar el nombre de usuario
+      await auth.currentUser!.updateDisplayName("Google");
     } on FirebaseAuthException catch (error) {
       throw Exception('Could not authenticated $error');
     }
+
     return userCredential;
   }
 

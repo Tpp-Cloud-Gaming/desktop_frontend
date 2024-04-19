@@ -46,13 +46,14 @@ class _RememberAlertState extends State<RememberAlert> {
                     });
                     final prefs = await SharedPreferences.getInstance();
                     prefs.setBool("remember", newValue ?? false);
-                    Navigator.pushNamed(context, 'location');
+
+                    Navigator.pop(context);
                   }),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0, left: 20.0),
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, 'location');
+                    Navigator.pop(context);
                   },
                   child: Text(
                     "Omit",
@@ -65,36 +66,6 @@ class _RememberAlertState extends State<RememberAlert> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class RememberCheck extends StatefulWidget {
-  const RememberCheck({super.key});
-
-  @override
-  State<RememberCheck> createState() => _RememberCheckState();
-}
-
-class _RememberCheckState extends State<RememberCheck> {
-  bool value = false;
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(left: 70, right: size.width * 0.125, top: 10),
-      child: CheckboxListTile(
-          title: const Text("Remember",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              )),
-          value: value,
-          onChanged: (newValue) {
-            setState(() {
-              value = newValue!;
-            });
-          }),
     );
   }
 }

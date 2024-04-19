@@ -1,3 +1,4 @@
+export 'package:cloud_gaming/screens/authentication/forgot_password_screen.dart';
 export 'package:cloud_gaming/screens/game_screen.dart';
 export 'package:cloud_gaming/screens/authentication/location_screen.dart';
 export 'package:cloud_gaming/screens/authentication/google_auth_screen.dart';
