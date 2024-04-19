@@ -32,6 +32,11 @@ class _CustomPannelState extends State<CustomPannel> {
       'title': 'Favoritos',
       'page': 'settings'
     },
+    {
+      'image': 'assets/pannel-icons/joystick.png',
+      'title': 'Mis Juegos',
+      'page': 'my_games'
+    },
   ];
 
   @override
