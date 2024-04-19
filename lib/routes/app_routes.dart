@@ -1,3 +1,4 @@
+import 'package:cloud_gaming/screens/my_games_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/screens.dart';
@@ -11,5 +12,6 @@ class AppRoutes {
     'google_auth': (BuildContext context) => const GoogleAuthScreen(),
     'location': (BuildContext context) => const LocationScreen(),
     'game': (BuildContext context) => const GameScreen(),
+    'my_games': (BuildContext context) => const MyGamesScreen(),
   };
 }
