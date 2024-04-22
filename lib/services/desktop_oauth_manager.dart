@@ -32,8 +32,7 @@ class DesktopLoginManager {
   Future<Map<String, String>> listen() async {
     var request = await redirectServer!.first;
     var params = request.uri.queryParameters;
-    await WindowToFront
-        .activate(); // Using window_to_front package to bring the window to the front after successful login.
+    await WindowToFront.activate(); // Using window_to_front package to bring the window to the front after successful login.
     request.response.statusCode = 200;
     request.response.headers.set('content-type', 'text/plain');
     request.response.writeln('Authenticated! You can close this tab.');
@@ -63,8 +62,7 @@ class DesktopOAuthManager extends DesktopLoginManager {
     if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
       Credentials credentials = await login();
 
-      AuthCredential authCredential = GoogleAuthProvider.credential(
-          idToken: credentials.idToken, accessToken: credentials.accessToken);
+      AuthCredential authCredential = GoogleAuthProvider.credential(idToken: credentials.idToken, accessToken: credentials.accessToken);
 
       UserCredential userCredential = await _signInWithFirebase(authCredential);
       user = userCredential.user;
@@ -72,15 +70,12 @@ class DesktopOAuthManager extends DesktopLoginManager {
     return user;
   }
 
-  Future<UserCredential> _signInWithFirebase(
-      AuthCredential authCredential) async {
+  Future<UserCredential> _signInWithFirebase(AuthCredential authCredential) async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     UserCredential userCredential;
 
     try {
       userCredential = await auth.signInWithCredential(authCredential);
-      //TODO: cambiar el nombre de usuario
-      await auth.currentUser!.updateDisplayName("Google");
     } on FirebaseAuthException catch (error) {
       throw Exception('Could not authenticated $error');
     }
@@ -97,18 +92,19 @@ class DesktopOAuthManager extends DesktopLoginManager {
         secret: dotenv.env["TOKEN_API"]! //Your google client secret
         );
 
-    var authorizationUrl =
-        grant.getAuthorizationUrl(redirectUrl, scopes: ['email']);
+    var authorizationUrl = grant.getAuthorizationUrl(redirectUrl, scopes: [
+      'email'
+    ]);
     await redirect(authorizationUrl);
     var responseQueryParameters = await listen();
-    var client =
-        await grant.handleAuthorizationResponse(responseQueryParameters);
+    var client = await grant.handleAuthorizationResponse(responseQueryParameters);
     return client;
   }
 
   Future<bool> signOutFromGoogle(String accessToken) async {
-    final Uri uri = Uri.parse(revokeTokenUrl)
-        .replace(queryParameters: {'token': accessToken});
+    final Uri uri = Uri.parse(revokeTokenUrl).replace(queryParameters: {
+      'token': accessToken
+    });
     final http.Response response = await http.post(uri);
 
     if (response.statusCode == 200) {

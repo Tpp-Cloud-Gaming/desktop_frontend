@@ -23,7 +23,6 @@ class BackendService {
 
     final url = Uri.https(_baseUrl, '/users/' + formValues["username"]);
 
-    print(formValues);
     final resp = await http.post(url, body: json.encode(formValues), headers: {
       HttpHeaders.contentTypeHeader: "application/json",
       HttpHeaders.authorizationHeader: token
@@ -50,6 +49,7 @@ class BackendService {
 
   Future<Map<String, dynamic>?> getUser() async {
     String? username = firebaseAuth.getUsername();
+    print("$username");
     if (username == null) {
       return null;
     }
@@ -88,6 +88,7 @@ class BackendService {
     try {
       jsonData = json.decode(utf8.decode(resp.bodyBytes));
     } on FormatException catch (_) {
+      //TODO: handle exception
       return null;
     }
     final List<Map<String, dynamic>> decodedResp = jsonData.map((dynamic item) => item as Map<String, dynamic>).toList();

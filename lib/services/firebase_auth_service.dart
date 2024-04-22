@@ -53,7 +53,12 @@ class FirebaseAuthService {
   }
 
   Future<bool> changeUsername(String username) async {
-    FirebaseAuth.instance.currentUser?.updateDisplayName(username);
+    String? token = await FirebaseAuth.instance.currentUser!.getIdToken();
+    if (token == null) {
+      return false;
+    }
+    print("Voy a cambiar el username a $username y leo el token: $token");
+    await FirebaseAuth.instance.currentUser?.updateDisplayName(username);
     return true;
   }
 

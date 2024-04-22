@@ -26,11 +26,19 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setUserGames(List<Map<String, dynamic>> userGames) {
+    _userGames.clear();
+    _userGames.addAll(userGames);
+
+    notifyListeners();
+  }
+
   void setLoggin(bool value) {
     _firstLogin = value;
   }
 
   Map<String, dynamic> get user => _user;
   List<Map<String, dynamic>> get games => _games;
+  List<Map<String, dynamic>> get userGames => _userGames;
   bool get firstLogin => _firstLogin;
 }

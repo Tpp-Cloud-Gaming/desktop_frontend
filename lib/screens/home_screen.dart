@@ -50,8 +50,8 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           } else {
-            if (snapshot.data == {}) {
-              Navigator.pop(context);
+            if (snapshot.data == {} || snapshot.data!["games"] == null) {
+              //Navigator.pop(context);
               return Container();
             }
             return Scaffold(
@@ -198,20 +198,23 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool remember = prefs.getBool('remember') ?? false;
 
-    if (remember) {
-      //Obtengo el token para refrescar el usuario
-      await FirebaseAuthService().getToken();
-    }
+    String? token = await FirebaseAuthService().getToken();
 
     Map<String, dynamic>? user = await BackendService().getUser();
+
     List<Map<String, dynamic>>? games = await BackendService().getAllGames();
 
     if (user == null || games == null) {
       prefs.setBool('remember', false);
       return {};
     }
+    //Decodificar la lista de juegos del usuario
+    final List<dynamic> dataGames = user["userGames"];
+    List<Map<String, dynamic>> userGames = dataGames.map((dynamic item) => item as Map<String, dynamic>).toList();
 
+    provider.setUserGames(userGames);
     provider.updateFormValue(user['user']);
+
     data['user'] = provider.user;
 
     provider.setGames(games);

@@ -1,5 +1,4 @@
 import 'package:cloud_gaming/helpers/google_username_helper.dart';
-import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
@@ -8,6 +7,7 @@ import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//TODO: SI ES UN LOGIN NO SE PUEDE MANDAR A CREAR LA CUENTA, SI NO EXISTE EN EL BACKEND
 class GoogleAuthScreen extends StatelessWidget {
   final bool isRegister;
   const GoogleAuthScreen({super.key, required this.isRegister});
@@ -28,30 +28,20 @@ class GoogleAuthScreen extends StatelessWidget {
                     Container(
                       color: AppTheme.primary,
                       child: ColorFiltered(
-                        colorFilter: ColorFilter.matrix(
-                            colorGen.getHighlightedMatrix(value: 0.12)),
-                        child: Image(
-                            fit: BoxFit.cover,
-                            height: size.height,
-                            width: size.width,
-                            image:
-                                const AssetImage(AppTheme.loginBackgroundPath)),
+                        colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
+                        child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
                       ),
                     ),
                     Center(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: Colors.grey[500],
-                            ),
-                            const Text(
-                              "Please, verify your Google Account",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                          ]),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        CircularProgressIndicator(
+                          color: Colors.grey[500],
+                        ),
+                        const Text(
+                          "Please, verify your Google Account",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      ]),
                     ),
                   ],
                 ),
@@ -65,8 +55,7 @@ class GoogleAuthScreen extends StatelessWidget {
 
                   String email = firebaseAuth.getEmail() ?? "";
                   //TODO: aca se pdría revisar los valores y mostrar un error, volver al home y no completar el registro,dar de baja en firebase
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
                   double latitude = prefs.getDouble("latitude") ?? 0;
                   double longitude = prefs.getDouble("longitude") ?? 0;
                   String username = prefs.getString("username") ?? "";
@@ -82,8 +71,7 @@ class GoogleAuthScreen extends StatelessWidget {
                   print("Envio datos al Back");
                   print(values);
 
-                  String? resp =
-                      await BackendService().createUser(values, false);
+                  String? resp = await BackendService().createUser(values, false);
                   //TODO: check error
                   print(resp);
                 }
@@ -96,14 +84,8 @@ class GoogleAuthScreen extends StatelessWidget {
                   Container(
                     color: AppTheme.primary,
                     child: ColorFiltered(
-                      colorFilter: ColorFilter.matrix(
-                          colorGen.getHighlightedMatrix(value: 0.12)),
-                      child: Image(
-                          fit: BoxFit.cover,
-                          height: size.height,
-                          width: size.width,
-                          image:
-                              const AssetImage(AppTheme.loginBackgroundPath)),
+                      colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
+                      child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
                     ),
                   ),
                 ],

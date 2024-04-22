@@ -11,8 +11,7 @@ Future showUsernameInput(BuildContext context, FirebaseAuthService auth) {
       context: context,
       builder: (context) => AlertDialog(
             backgroundColor: AppTheme.primary,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             content: UsernameAlert(
               auth: auth,
             ),
@@ -55,26 +54,19 @@ class _UsernameAlertState extends State<UsernameAlert> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 20.0),
                   child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          elevation: 10,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          backgroundColor: AppTheme.primary),
+                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                       onPressed: () async {
                         String username = usernameController.text;
                         if (!isValidUsername(username)) {
                           usernameController.clear();
-                          NotificationsService.showSnackBar(
-                              "Not Valid username",
-                              Colors.red,
-                              AppTheme.loginPannelColor);
+                          NotificationsService.showSnackBar("Not Valid username", Colors.red, AppTheme.loginPannelColor);
                         } else {
-                          bool result =
-                              await widget.auth.changeUsername(username);
+                          bool result = await widget.auth.changeUsername(username);
                           if (result) {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
                             await prefs.setString('username', username);
+                            String? nuevoUser = await widget.auth.getUsername();
+                            print("El nuevo user: $nuevoUser");
                           }
 
                           Navigator.pop(context);
