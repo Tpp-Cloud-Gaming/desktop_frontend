@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/services/backend_service.dart';
+import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/background.dart';
 import 'package:cloud_gaming/widgets/custom_pannel.dart';
@@ -8,6 +11,7 @@ import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:filesystem_picker/filesystem_picker.dart';
 
 class MyGamesScreen extends StatefulWidget {
   const MyGamesScreen({super.key});
@@ -19,265 +23,6 @@ class MyGamesScreen extends StatefulWidget {
 class _MyGamesScreenState extends State<MyGamesScreen> {
   void refresh() {
     setState(() {});
-  }
-
-  _showDialog() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          final size = MediaQuery.of(context).size;
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Dialog(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                  border: Border.all(
-                    color: Colors.blueAccent.withOpacity(0.5),
-                    width: 1.0,
-                  ),
-                  color: const Color(0xff0c1d43),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blueAccent.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 2, // changes position of shadow
-                    ),
-                  ],
-                ),
-                height: size.height * 0.85,
-                width: size.width * 0.35,
-                child: Expanded(
-                  child: Column(children: [
-                    //IMAGEN
-                    Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.02),
-                      child: SizedBox(
-                          width: size.width * 0.1,
-                          height: size.height * 0.3,
-                          child: Stack(children: [
-                            Center(
-                                child: Container(
-                              width: size.width * 0.08,
-                              height: size.height * 0.185,
-                              decoration: const BoxDecoration(
-                                color: Color(0xff100f22),
-                                boxShadow: [
-                                  BoxShadow(spreadRadius: 2, blurRadius: 10, color: Color(0xff100f22))
-                                ],
-                                shape: BoxShape.rectangle,
-
-                                // image: const DecorationImage(
-                                //   fit: BoxFit.cover,
-                                //   image: AssetImage('assets/example-games/terraria.webp')
-                                // )
-                              ),
-                              child: Icon(
-                                Icons.image_outlined,
-                                size: size.height * 0.1,
-                                color: Colors.black.withOpacity(.4),
-                              ),
-                            )),
-                            Positioned(
-                              bottom: 35,
-                              right: 0,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 3),
-                                  color: const Color(0xff100f22),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  icon: const Icon(
-                                    Icons.add_photo_alternate_outlined,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {},
-                                ),
-                              ),
-                            )
-                          ])),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 0.0, left: size.width * 0.02),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text("Título",
-                            style: GoogleFonts.kanit(
-                              color: Colors.white,
-                              fontSize: size.height * 0.03,
-                              fontWeight: FontWeight.normal,
-                            )),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.only(left: size.width * 0.02, right: size.width * 0.02),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Ingrese un título...",
-                          hintStyle: GoogleFonts.roboto(
-                            color: Colors.grey,
-                            fontSize: size.height * 0.016,
-                            fontWeight: FontWeight.w100,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xff100f22),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                          ),
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                            borderSide: BorderSide(
-                              color: Color(0xff100f22),
-                            ),
-                          ),
-                        ),
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: size.height * 0.016,
-                          fontWeight: FontWeight.w200,
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0, left: size.width * 0.02),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text("Categoría",
-                            style: GoogleFonts.kanit(
-                              color: Colors.white,
-                              fontSize: size.height * 0.03,
-                              fontWeight: FontWeight.normal,
-                            )),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.only(left: size.width * 0.02, right: size.width * 0.02),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Ingrese una categoría...",
-                          hintStyle: GoogleFonts.roboto(
-                            color: Colors.grey,
-                            fontSize: size.height * 0.016,
-                            fontWeight: FontWeight.w100,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xff100f22),
-                          border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                            borderSide: BorderSide(
-                              color: Color(0xff100f22),
-                            ),
-                          ),
-                        ),
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: size.height * 0.016,
-                          fontWeight: FontWeight.w200,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0, left: size.width * 0.02),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text("Descripción",
-                            style: GoogleFonts.kanit(
-                              color: Colors.white,
-                              fontSize: size.height * 0.03,
-                              fontWeight: FontWeight.normal,
-                            )),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: size.width * 0.02, right: size.width * 0.02),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Ingrese una descripción...",
-                          hintStyle: GoogleFonts.roboto(
-                            color: Colors.grey,
-                            fontSize: size.height * 0.016,
-                            fontWeight: FontWeight.w100,
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xff100f22),
-                          border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                          enabledBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                            borderSide: BorderSide(
-                              color: Color(0xff100f22),
-                            ),
-                          ),
-                        ),
-                        style: GoogleFonts.roboto(
-                          color: Colors.white,
-                          fontSize: size.height * 0.016,
-                          fontWeight: FontWeight.w200,
-                        ),
-                        maxLines: 4,
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.03),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: size.height * 0.04,
-                            ),
-                            label: Text(
-                              "Guardar",
-                              style: GoogleFonts.kanit(
-                                color: Colors.white,
-                                fontSize: size.height * 0.04,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(Colors.blue.withOpacity(0.6)),
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                ))),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: size.height * 0.04,
-                            ),
-                            label: Text(
-                              "Cancelar",
-                              style: GoogleFonts.kanit(
-                                color: Colors.white,
-                                fontSize: size.height * 0.04,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(Colors.red.withOpacity(0.6)),
-                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                ))),
-                          ),
-                        ],
-                      ),
-                    )
-                  ]),
-                ),
-              ),
-            ),
-          );
-        });
   }
 
   @override
@@ -371,8 +116,8 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                         height: 60,
                         width: 300,
                         child: ElevatedButton(
-                            onPressed: () {
-                              _showDialog();
+                            onPressed: () async {
+                              saveGame(context);
                             },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -547,4 +292,205 @@ Future<List<Game>> loadGames(BuildContext context) async {
   });
 
   return gamesList;
+}
+
+void saveGame(BuildContext context) async {
+  //Obtener el path del juego
+  String? path = await FilesystemPicker.open(
+    theme: FilesystemPickerTheme(
+        topBar: FilesystemPickerTopBarThemeData(backgroundColor: AppTheme.onHoverColor),
+        backgroundColor: AppTheme.pannelColor,
+        messageTextStyle: const TextStyle(color: Colors.white),
+        fileList: FilesystemPickerFileListThemeData(
+          folderTextStyle: const TextStyle(color: Colors.white),
+          fileTextStyle: const TextStyle(color: Colors.white),
+        )),
+    title: 'Select Game Path',
+    context: context,
+    rootDirectory: Directory("C:"), //TODO: podria no ser el disco C
+    fsType: FilesystemType.file,
+    allowedExtensions: [
+      '.exe',
+      '.url'
+    ],
+    fileTileSelectMode: FileTileSelectMode.wholeTile,
+  );
+
+  if (path != null && path.isNotEmpty) {
+    //Mostrar el dialogo para que el usuario confirme la carga del juego
+    _showDialog(context, path);
+  }
+}
+
+void _showDialog(BuildContext context, String path) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final size = MediaQuery.of(context).size;
+        final provider = Provider.of<UserProvider>(context, listen: false);
+        String? dropdownvalue;
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Dialog(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                border: Border.all(
+                  color: Colors.blueAccent.withOpacity(0.5),
+                  width: 1.0,
+                ),
+                color: const Color(0xff0c1d43),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueAccent.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 2, // changes position of shadow
+                  ),
+                ],
+              ),
+              height: size.height * 0.85,
+              width: size.width * 0.35,
+              child: Expanded(
+                child: Column(children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.0, left: size.width * 0.02),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text("Selected Path: $path",
+                          style: GoogleFonts.kanit(
+                            color: Colors.white,
+                            fontSize: size.height * 0.03,
+                            fontWeight: FontWeight.normal,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
+                    child: DropdownGames(provider: provider),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: size.height * 0.03),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            if (path.isEmpty || provider.newGame.isEmpty) {
+                              NotificationsService.showSnackBar("No game name or path selected", Colors.red, AppTheme.loginPannelColor);
+                            } else {
+                              Map<String, dynamic> newGame = {
+                                "path": path.replaceAll(r"\", r"\\"),
+                                "gamename": provider.newGame,
+                              };
+                              BackendService backendService = BackendService();
+                              provider.addNewUserGame(newGame);
+                              String? resp = await backendService.addUserGames(provider.userGames);
+                              print(resp);
+                              print(provider.userGames);
+                              provider.newGame = '';
+                              if (resp == null) {
+                                Navigator.of(context).pop();
+                                NotificationsService.showSnackBar("Game added successfully", Colors.green, AppTheme.loginPannelColor);
+                                return;
+                              } else {
+                                provider.removeLastUserGame();
+                                Navigator.of(context).pop();
+                                NotificationsService.showSnackBar("Error adding game: $resp", Colors.red, AppTheme.loginPannelColor);
+                                return;
+                              }
+                            }
+                          },
+                          icon: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: size.height * 0.04,
+                          ),
+                          label: Text(
+                            "Guardar",
+                            style: GoogleFonts.kanit(
+                              color: Colors.white,
+                              fontSize: size.height * 0.04,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.blue.withOpacity(0.6)),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ))),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: size.height * 0.04,
+                          ),
+                          label: Text(
+                            "Cancelar",
+                            style: GoogleFonts.kanit(
+                              color: Colors.white,
+                              fontSize: size.height * 0.04,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.red.withOpacity(0.6)),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ))),
+                        ),
+                      ],
+                    ),
+                  )
+                ]),
+              ),
+            ),
+          ),
+        );
+      });
+}
+
+class DropdownGames extends StatefulWidget {
+  DropdownGames({super.key, required this.provider});
+
+  final UserProvider provider;
+
+  @override
+  State<DropdownGames> createState() => _DropdownGamesState();
+}
+
+class _DropdownGamesState extends State<DropdownGames> {
+  String? dropdownvalue;
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData.dark(),
+      child: DropdownButton(
+        // Initial Value
+        icon: const Icon(Icons.keyboard_arrow_down),
+        isExpanded: true,
+        items: widget.provider.games.map((value) {
+          return DropdownMenuItem(
+            value: value["name"] as String,
+            child: Text(
+              value["name"] ?? '',
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        }).toList(),
+        hint: const Text(
+          'Games',
+          style: TextStyle(color: Colors.white),
+        ),
+        onChanged: (String? newValue) async {
+          setState(() {
+            dropdownvalue = newValue;
+          });
+          widget.provider.newGame = newValue ?? '';
+        },
+      ),
+    );
+  }
 }

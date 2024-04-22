@@ -14,6 +14,8 @@ class UserProvider extends ChangeNotifier {
 
   final List<Map<String, dynamic>> _userGames = [];
 
+  String newGame = '';
+
   void updateFormValue(Map<String, dynamic> user) {
     _user.updateAll((key, value) => user[key] ?? value);
     notifyListeners();
@@ -35,6 +37,16 @@ class UserProvider extends ChangeNotifier {
 
   void setLoggin(bool value) {
     _firstLogin = value;
+  }
+
+  void addNewUserGame(Map<String, dynamic> game) {
+    _userGames.add(game);
+    notifyListeners();
+  }
+
+  void removeLastUserGame() {
+    _userGames.removeLast();
+    notifyListeners();
   }
 
   Map<String, dynamic> get user => _user;

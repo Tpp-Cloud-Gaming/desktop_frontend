@@ -49,7 +49,6 @@ class BackendService {
 
   Future<Map<String, dynamic>?> getUser() async {
     String? username = firebaseAuth.getUsername();
-    print("$username");
     if (username == null) {
       return null;
     }
@@ -141,6 +140,28 @@ class BackendService {
       return null;
     } on FormatException catch (_) {
       return "No se pudo actualizar los datos: error ${resp.statusCode}";
+    }
+  }
+
+  Future<String?> addUserGames(List<Map<String, dynamic>> games) async {
+    String? username = firebaseAuth.getUsername();
+    if (username == null) {
+      return "User username not found";
+    }
+
+    final url = Uri.https(_baseUrl, '/users/$username/games');
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return "User token not found";
+    }
+    final resp = await http.post(url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: token
+        },
+        body: jsonEncode(games));
+    if (resp.statusCode >= 400) {
+      return resp.body;
     }
   }
 }

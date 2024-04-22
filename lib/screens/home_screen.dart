@@ -199,7 +199,7 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     bool remember = prefs.getBool('remember') ?? false;
 
     String? token = await FirebaseAuthService().getToken();
-
+    print(token);
     Map<String, dynamic>? user = await BackendService().getUser();
 
     List<Map<String, dynamic>>? games = await BackendService().getAllGames();
