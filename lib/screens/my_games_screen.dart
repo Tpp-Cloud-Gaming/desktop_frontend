@@ -117,7 +117,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                         width: 300,
                         child: ElevatedButton(
                             onPressed: () async {
-                              saveGame(context);
+                              saveGame(context, refresh);
                             },
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -163,7 +163,7 @@ class GameItemState extends State<GameItem> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    final provider = Provider.of<UserProvider>(context, listen: false);
     return Card(
       margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
       color: const Color(0xFF000000).withOpacity(0.3),
@@ -203,11 +203,19 @@ class GameItemState extends State<GameItem> {
                     color: Colors.grey,
                     fontSize: 18.0,
                     fontWeight: FontWeight.normal,
+                  )),
+              Text("Path: ${widget.games[widget.index].path}",
+                  style: GoogleFonts.roboto(
+                    color: Colors.grey,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.normal,
                   ))
             ],
           )),
           IconButton(
-            onPressed: () => {},
+            onPressed: () => {
+              editGame(widget.index, context, widget.callback)
+            },
             icon: Icon(
               Icons.edit,
               color: Colors.white.withOpacity(0.7),
@@ -215,8 +223,16 @@ class GameItemState extends State<GameItem> {
             ),
           ),
           IconButton(
-            onPressed: () {
+            onPressed: () async {
               widget.games.removeAt(widget.index);
+              provider.removeAtIndexUserGame(widget.index);
+              BackendService backendService = BackendService();
+              String? resp = await backendService.addUserGames(provider.userGames);
+              if (resp == null) {
+                NotificationsService.showSnackBar("Game deleted successfully", Colors.green, AppTheme.loginPannelColor);
+              } else {
+                NotificationsService.showSnackBar("Error deleting game: $resp", Colors.red, AppTheme.loginPannelColor);
+              }
               widget.callback();
             },
             icon: Icon(
@@ -236,36 +252,10 @@ class Game {
   String description;
   String category;
   String image;
+  String path;
 
-  Game(this.image, this.title, this.description, this.category);
+  Game(this.image, this.title, this.description, this.category, this.path);
 }
-
-// class AddGameButton extends StatelessWidget {
-//   const AddGameButton({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return
-//       SizedBox(
-//         height: 60,
-//         width: 300,
-//         child: ElevatedButton(
-//           onPressed: () {_showDialog()},
-//           child: const Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: [
-//               Text(
-//                 "Agregar Juego",
-//                 style: TextStyle(fontSize: 34.0),
-//               ),
-//               Icon(Icons.add_box_outlined, size: 34.0),
-//             ],
-//           )
-//         ),
-//       );
-//   }
-// }
 
 class GameDialog extends StatelessWidget {
   const GameDialog({super.key});
@@ -287,14 +277,14 @@ Future<List<Game>> loadGames(BuildContext context) async {
   //Armar cada game segun los userGames y los datos del game.
   userGames.forEach((element) {
     Map<String, dynamic> gameData = games.firstWhere((gameElement) => element["gamename"] == gameElement["name"]);
-    Game game = Game(gameData["image_1"], gameData["name"], gameData["description"], gameData["category"]);
+    Game game = Game(gameData["image_1"], gameData["name"], gameData["description"], gameData["category"], element["path"]);
     gamesList.add(game);
   });
 
   return gamesList;
 }
 
-void saveGame(BuildContext context) async {
+void saveGame(BuildContext context, Function() notifyParent) async {
   //Obtener el path del juego
   String? path = await FilesystemPicker.open(
     theme: FilesystemPickerTheme(
@@ -302,8 +292,8 @@ void saveGame(BuildContext context) async {
         backgroundColor: AppTheme.pannelColor,
         messageTextStyle: const TextStyle(color: Colors.white),
         fileList: FilesystemPickerFileListThemeData(
-          folderTextStyle: const TextStyle(color: Colors.white),
-          fileTextStyle: const TextStyle(color: Colors.white),
+          folderTextStyle: AppTheme.commonText(Colors.white, 14),
+          fileTextStyle: AppTheme.commonText(Colors.white, 14),
         )),
     title: 'Select Game Path',
     context: context,
@@ -318,11 +308,11 @@ void saveGame(BuildContext context) async {
 
   if (path != null && path.isNotEmpty) {
     //Mostrar el dialogo para que el usuario confirme la carga del juego
-    _showDialog(context, path);
+    _showCreateDialog(context, path, notifyParent);
   }
 }
 
-void _showDialog(BuildContext context, String path) {
+void _showCreateDialog(BuildContext context, String path, Function() notifyParent) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -386,12 +376,11 @@ void _showDialog(BuildContext context, String path) {
                               BackendService backendService = BackendService();
                               provider.addNewUserGame(newGame);
                               String? resp = await backendService.addUserGames(provider.userGames);
-                              print(resp);
-                              print(provider.userGames);
                               provider.newGame = '';
                               if (resp == null) {
                                 Navigator.of(context).pop();
                                 NotificationsService.showSnackBar("Game added successfully", Colors.green, AppTheme.loginPannelColor);
+                                notifyParent();
                                 return;
                               } else {
                                 provider.removeLastUserGame();
@@ -421,7 +410,11 @@ void _showDialog(BuildContext context, String path) {
                               ))),
                         ),
                         ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            provider.newGame = '';
+                            Navigator.of(context).pop();
+                            return;
+                          },
                           icon: Icon(
                             Icons.close,
                             color: Colors.white,
@@ -468,6 +461,7 @@ class _DropdownGamesState extends State<DropdownGames> {
     return Theme(
       data: ThemeData.dark(),
       child: DropdownButton(
+        value: dropdownvalue,
         // Initial Value
         icon: const Icon(Icons.keyboard_arrow_down),
         isExpanded: true,
@@ -493,4 +487,175 @@ class _DropdownGamesState extends State<DropdownGames> {
       ),
     );
   }
+}
+
+void editGame(int index, BuildContext context, Function() notifyParent) async {
+  //Obtener el path del juego
+  String? path = await FilesystemPicker.open(
+    theme: FilesystemPickerTheme(
+        topBar: FilesystemPickerTopBarThemeData(backgroundColor: AppTheme.onHoverColor),
+        backgroundColor: AppTheme.pannelColor,
+        messageTextStyle: const TextStyle(color: Colors.white),
+        fileList: FilesystemPickerFileListThemeData(
+          folderTextStyle: AppTheme.commonText(Colors.white, 14),
+          fileTextStyle: AppTheme.commonText(Colors.white, 14),
+        )),
+    title: 'Select Game Path',
+    context: context,
+    rootDirectory: Directory("C:"), //TODO: podria no ser el disco C
+    fsType: FilesystemType.file,
+    allowedExtensions: [
+      '.exe',
+      '.url'
+    ],
+    fileTileSelectMode: FileTileSelectMode.wholeTile,
+  );
+
+  if (path != null && path.isNotEmpty) {
+    //Mostrar el dialogo para que el usuario confirme la carga del juego
+    _showEditDialog(context, path, index, notifyParent);
+  }
+}
+
+void _showEditDialog(BuildContext context, String path, index, Function() notifyParent) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final size = MediaQuery.of(context).size;
+        final provider = Provider.of<UserProvider>(context, listen: false);
+        Map<String, dynamic> game = provider.userGames[index];
+
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: SizedBox(
+            child: Dialog(
+              child: Container(
+                height: size.height * 0.6,
+                width: size.width * 0.4,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                  border: Border.all(
+                    color: Colors.blueAccent.withOpacity(0.5),
+                    width: 1.0,
+                  ),
+                  color: const Color(0xff0c1d43),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blueAccent.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 2, // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Expanded(
+                  child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 40.0, left: size.width * 0.02),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("GameName: " + game['gamename'] ?? 'no name',
+                            style: GoogleFonts.kanit(
+                              color: Colors.white,
+                              fontSize: size.height * 0.03,
+                              fontWeight: FontWeight.normal,
+                            )),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.0, left: size.width * 0.02),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Selected Path: $path",
+                            style: GoogleFonts.kanit(
+                              color: Colors.white,
+                              fontSize: size.height * 0.03,
+                              fontWeight: FontWeight.normal,
+                            )),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: size.height * 0.08),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              if (path.isEmpty) {
+                                NotificationsService.showSnackBar("No game path selected", Colors.red, AppTheme.loginPannelColor);
+                              } else {
+                                Map<String, dynamic> newGame = {
+                                  "path": path.replaceAll(r"\", r"\\"),
+                                  "gamename": provider.newGame,
+                                };
+                                BackendService backendService = BackendService();
+                                provider.userGames[index]["path"] = path;
+
+                                String? resp = await backendService.addUserGames(provider.userGames);
+                                provider.newGame = '';
+                                if (resp == null) {
+                                  Navigator.of(context).pop();
+                                  NotificationsService.showSnackBar("Game edited successfully", Colors.green, AppTheme.loginPannelColor);
+                                  notifyParent();
+                                  return;
+                                } else {
+                                  provider.removeLastUserGame();
+                                  Navigator.of(context).pop();
+                                  NotificationsService.showSnackBar("Error editing game: $resp", Colors.red, AppTheme.loginPannelColor);
+                                  return;
+                                }
+                              }
+                            },
+                            icon: Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: size.height * 0.04,
+                            ),
+                            label: Text(
+                              "Save",
+                              style: GoogleFonts.kanit(
+                                color: Colors.white,
+                                fontSize: size.height * 0.04,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.blue.withOpacity(0.6)),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ))),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              return;
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: size.height * 0.04,
+                            ),
+                            label: Text(
+                              "Cancel",
+                              style: GoogleFonts.kanit(
+                                color: Colors.white,
+                                fontSize: size.height * 0.04,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.red.withOpacity(0.6)),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ))),
+                          ),
+                        ],
+                      ),
+                    )
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        );
+      });
 }

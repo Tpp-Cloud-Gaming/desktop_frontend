@@ -49,6 +49,11 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAtIndexUserGame(int index) {
+    _userGames.removeAt(index);
+    notifyListeners();
+  }
+
   Map<String, dynamic> get user => _user;
   List<Map<String, dynamic>> get games => _games;
   List<Map<String, dynamic>> get userGames => _userGames;
