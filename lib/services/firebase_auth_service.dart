@@ -43,11 +43,6 @@ class FirebaseAuthService {
     UserCredential user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
 
     await user.user!.updateDisplayName(username);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', username);
-    await prefs.setString('email', email);
-    //TODO: encriptar?
-    await prefs.setString('password', password);
     //return sendEmailVerification();
     return user.user!.getIdToken();
   }
@@ -57,7 +52,6 @@ class FirebaseAuthService {
     if (token == null) {
       return false;
     }
-    print("Voy a cambiar el username a $username y leo el token: $token");
     await FirebaseAuth.instance.currentUser?.updateDisplayName(username);
     return true;
   }

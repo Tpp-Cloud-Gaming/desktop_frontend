@@ -37,22 +37,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               const CustomPannel(),
               Padding(
-                padding: EdgeInsets.only(
-                    top: size.width * 0.08, left: size.height * 0.05),
+                padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
                 child: Container(
                   height: size.height * 0.5,
                   width: size.width * 0.55,
-                  decoration: BoxDecoration(
-                      color: AppTheme.pannelColor.withOpacity(0.45),
-                      borderRadius: BorderRadius.circular(5)),
+                  decoration: BoxDecoration(color: AppTheme.pannelColor.withOpacity(0.45), borderRadius: BorderRadius.circular(5)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 20, left: 40),
-                        child: Text("Settings",
-                            style: AppTheme.commonText(Colors.white54, 40)),
+                        child: Text("Settings", style: AppTheme.commonText(Colors.white54, 40)),
                       ),
                       //Aca listar las distintas opciones, se podría usar un GriView para mostrarlas
                       Row(
@@ -102,7 +98,7 @@ class SettingOption extends StatefulWidget {
   final Widget settingContainer;
   final Function(Widget) notifyParent;
   final String title;
-  SettingOption({
+  const SettingOption({
     super.key,
     required this.title,
     required this.notifyParent,
@@ -145,7 +141,7 @@ class ChangeUsername extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextEditingController usernameController = TextEditingController();
-    return Container(
+    return SizedBox(
         height: 300,
         width: 500,
         child: Padding(
@@ -171,56 +167,35 @@ class ChangeUsername extends StatelessWidget {
                     width: 120,
                     height: 50,
                     child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                            elevation: 10,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5)),
-                            backgroundColor: AppTheme.primary),
+                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                         onPressed: () async {
                           String username = usernameController.text;
                           usernameController.clear();
                           if (!isValidUsername(username)) {
-                            NotificationsService.showSnackBar(
-                                "Please enter a valid username",
-                                Colors.red,
-                                AppTheme.loginPannelColor);
+                            NotificationsService.showSnackBar("Please enter a valid username", Colors.red, AppTheme.loginPannelColor);
                           } else {
-                            final provider = Provider.of<UserProvider>(context,
-                                listen: false);
+                            final provider = Provider.of<UserProvider>(context, listen: false);
 
                             String oldUsername = provider.user["username"];
 
-                            if (await FirebaseAuthService()
-                                .changeUsername(username)) {
-                              String? resp = await BackendService()
-                                  .changeUserData(oldUsername, provider.user);
+                            if (await FirebaseAuthService().changeUsername(username)) {
+                              String? resp = await BackendService().changeUserData(oldUsername, provider.user);
                               if (resp != null) {
                                 //Error en el cambio de nombre desde el back
-                                NotificationsService.showSnackBar(
-                                    "Error changing username: $resp",
-                                    Colors.red,
-                                    AppTheme.loginPannelColor);
+                                NotificationsService.showSnackBar("Error changing username: $resp", Colors.red, AppTheme.loginPannelColor);
                                 //Revertir el cambio de nombre en firebase
-                                await FirebaseAuthService()
-                                    .changeUsername(oldUsername);
+                                await FirebaseAuthService().changeUsername(oldUsername);
                               } else {
                                 //Actualizar el usuario en el provider
-                                Map<String, dynamic>? newData =
-                                    await BackendService().getUser();
+                                Map<String, dynamic>? newData = await BackendService().getUser();
                                 if (newData == null) {
-                                  NotificationsService.showSnackBar(
-                                      "Error getting new user data",
-                                      Colors.red,
-                                      AppTheme.loginPannelColor);
+                                  NotificationsService.showSnackBar("Error getting new user data", Colors.red, AppTheme.loginPannelColor);
                                 } else {
                                   provider.updateFormValue(newData);
                                 }
                               }
                             } else {
-                              NotificationsService.showSnackBar(
-                                  "Username already taken",
-                                  Colors.red,
-                                  AppTheme.loginPannelColor);
+                              NotificationsService.showSnackBar("Username already taken", Colors.red, AppTheme.loginPannelColor);
                             }
                           }
                           usernameController.clear();

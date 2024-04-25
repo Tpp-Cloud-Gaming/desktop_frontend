@@ -74,7 +74,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.20),
-                          child: const Text("Mis Juegos", style: TextStyle(color: Colors.white, fontSize: 45)),
+                          child: const Text("Mi games", style: TextStyle(color: Colors.white, fontSize: 45)),
                         )),
                     Expanded(
                       child: Padding(
@@ -83,7 +83,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                           height: 100,
                           width: size.width * 0.55,
                           child: snapshot.data!.isEmpty
-                              ? const Text("No tienes juegos",
+                              ? const Text("You don't have any games yet. Add one!",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 24.0,
@@ -124,7 +124,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Agregar Juego",
+                                  "Add Game",
                                   style: TextStyle(fontSize: 34.0),
                                 ),
                                 Icon(Icons.add_box_outlined, size: 34.0),
@@ -191,7 +191,7 @@ class GameItemState extends State<GameItem> {
                 ),
               ),
               Text(
-                "Categoría: ${widget.games[widget.index].category}",
+                "Category: ${widget.games[widget.index].category}",
                 style: GoogleFonts.roboto(
                   color: Colors.grey,
                   fontSize: 18.0,
@@ -275,11 +275,11 @@ Future<List<Game>> loadGames(BuildContext context) async {
   List<Game> gamesList = [];
 
   //Armar cada game segun los userGames y los datos del game.
-  userGames.forEach((element) {
+  for (var element in userGames) {
     Map<String, dynamic> gameData = games.firstWhere((gameElement) => element["gamename"] == gameElement["name"]);
     Game game = Game(gameData["image_1"], gameData["name"], gameData["description"], gameData["category"], element["path"]);
     gamesList.add(game);
-  });
+  }
 
   return gamesList;
 }
@@ -446,7 +446,7 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
 }
 
 class DropdownGames extends StatefulWidget {
-  DropdownGames({super.key, required this.provider});
+  const DropdownGames({super.key, required this.provider});
 
   final UserProvider provider;
 
@@ -553,7 +553,7 @@ void _showEditDialog(BuildContext context, String path, index, Function() notify
                       padding: EdgeInsets.only(top: 40.0, left: size.width * 0.02),
                       child: Align(
                         alignment: Alignment.topLeft,
-                        child: Text("GameName: " + game['gamename'] ?? 'no name',
+                        child: Text("GameName: $game['gamename']",
                             style: GoogleFonts.kanit(
                               color: Colors.white,
                               fontSize: size.height * 0.03,
@@ -583,10 +583,6 @@ void _showEditDialog(BuildContext context, String path, index, Function() notify
                               if (path.isEmpty) {
                                 NotificationsService.showSnackBar("No game path selected", Colors.red, AppTheme.loginPannelColor);
                               } else {
-                                Map<String, dynamic> newGame = {
-                                  "path": path.replaceAll(r"\", r"\\"),
-                                  "gamename": provider.newGame,
-                                };
                                 BackendService backendService = BackendService();
                                 provider.userGames[index]["path"] = path;
 

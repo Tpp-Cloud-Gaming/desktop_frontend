@@ -2,12 +2,11 @@ import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future ShowRememberDialog(BuildContext context) {
+Future showRememberDialog(BuildContext context) {
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             content: const RememberAlert(),
           ));
 }
@@ -57,8 +56,7 @@ class _RememberAlertState extends State<RememberAlert> {
                   },
                   child: Text(
                     "Omit",
-                    style:
-                        AppTheme.commonText(AppTheme.loginButtonTextColor, 14),
+                    style: AppTheme.commonText(AppTheme.loginButtonTextColor, 14),
                   ),
                 ),
               )

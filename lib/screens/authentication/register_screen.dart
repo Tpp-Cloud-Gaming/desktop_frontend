@@ -1,7 +1,6 @@
 import 'package:cloud_gaming/helpers/helpers.dart';
 import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
-import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
@@ -9,7 +8,6 @@ import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -32,13 +30,8 @@ class RegisterScreen extends StatelessWidget {
             Container(
               color: AppTheme.primary,
               child: ColorFiltered(
-                colorFilter: ColorFilter.matrix(
-                    colorGen.getHighlightedMatrix(value: 0.12)),
-                child: Image(
-                    fit: BoxFit.cover,
-                    height: size.height,
-                    width: size.width,
-                    image: const AssetImage(AppTheme.loginBackgroundPath)),
+                colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
+                child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
               ),
             ),
             Padding(
@@ -92,8 +85,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 40, right: 40),
+                            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
                             child: CustomInputField(
                               controller: emailController,
                               textType: TextInputType.emailAddress,
@@ -107,8 +99,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 40, right: 40),
+                            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
                             child: CustomInputField(
                               controller: usernameController,
                               obscureText: false,
@@ -121,8 +112,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 40, right: 40),
+                            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
                             child: CustomInputField(
                               controller: passwordController,
                               obscureText: true,
@@ -134,8 +124,7 @@ class RegisterScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 60,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 40, right: 40),
+                              padding: const EdgeInsets.only(left: 40, right: 40),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -143,24 +132,13 @@ class RegisterScreen extends StatelessWidget {
                                     width: size.width * 0.10,
                                     height: 50,
                                     child: OutlinedButton(
-                                        style: OutlinedButton.styleFrom(
-                                            elevation: 10,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            backgroundColor: AppTheme.primary),
+                                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                                         onPressed: () async {
-                                          registerFunction(
-                                              emailController,
-                                              usernameController,
-                                              passwordController,
-                                              context,
-                                              server);
+                                          registerFunction(emailController, usernameController, passwordController, context, server);
                                         },
                                         child: Text(
                                           "Register",
-                                          style: AppTheme.commonText(
-                                              Colors.white, 18),
+                                          style: AppTheme.commonText(Colors.white, 18),
                                         )),
                                   ),
                                   const Padding(
@@ -187,12 +165,7 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-void registerFunction(
-    TextEditingController emailController,
-    TextEditingController usernameController,
-    TextEditingController passwordController,
-    BuildContext context,
-    ServerService server) async {
+void registerFunction(TextEditingController emailController, TextEditingController usernameController, TextEditingController passwordController, BuildContext context, ServerService server) async {
   String email = emailController.text;
   String username = usernameController.text;
   String password = passwordController.text;
@@ -204,8 +177,7 @@ void registerFunction(
   if (!validUsername || !validPassword || !validEmail) {
     //Mensaje por pantalla de error
     passwordController.clear();
-    NotificationsService.showSnackBar(
-        "Not Valid credentials", Colors.red, AppTheme.loginPannelColor);
+    NotificationsService.showSnackBar("Not Valid credentials", Colors.red, AppTheme.loginPannelColor);
   } else {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     double latitude = prefs.getDouble("latitude") ?? 0;
@@ -218,12 +190,11 @@ void registerFunction(
       "longitude": longitude
     };
     String? result = await BackendService().createUser(values, true);
-    print(result);
     server.register(email, username, password, context);
     usernameController.clear();
     passwordController.clear();
     emailController.clear();
-    await ShowRememberDialog(context);
+    await showRememberDialog(context);
     Navigator.of(context).pushReplacementNamed("home");
   }
 }

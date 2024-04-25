@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../themes/app_theme.dart';
 
@@ -53,14 +52,12 @@ class _CustomPannelState extends State<CustomPannel> {
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
-                padding: EdgeInsets.only(
-                    top: size.width * 0.01, left: 40, right: 40),
+                padding: EdgeInsets.only(top: size.width * 0.01, left: 40, right: 40),
                 child: const AppLogoButton(),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  top: size.height * 0.2, left: size.width * 0.02),
+              padding: EdgeInsets.only(top: size.height * 0.2, left: size.width * 0.02),
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: items.length,
@@ -93,8 +90,7 @@ class _AppLogoButtonState extends State<AppLogoButton> {
       onTap: () {
         Navigator.popAndPushNamed(context, "home");
       },
-      child: const Image(
-          image: AssetImage(AppTheme.logoPath), height: 100, width: 100),
+      child: const Image(image: AssetImage(AppTheme.logoPath), height: 100, width: 100),
     );
   }
 }

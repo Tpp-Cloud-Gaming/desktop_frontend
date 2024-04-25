@@ -7,7 +7,6 @@ import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//TODO: SI ES UN LOGIN NO SE PUEDE MANDAR A CREAR LA CUENTA, SI NO EXISTE EN EL BACKEND
 class GoogleAuthScreen extends StatelessWidget {
   final bool isRegister;
   const GoogleAuthScreen({super.key, required this.isRegister});
@@ -49,34 +48,8 @@ class GoogleAuthScreen extends StatelessWidget {
             } else {
               Future.microtask(() async {
                 if (isRegister) {
-                  FirebaseAuthService firebaseAuth = FirebaseAuthService();
-                  await showUsernameInput(context, firebaseAuth);
-                  //TODO: modularizar
-
-                  String email = firebaseAuth.getEmail() ?? "";
-                  //TODO: aca se pdría revisar los valores y mostrar un error, volver al home y no completar el registro,dar de baja en firebase
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  double latitude = prefs.getDouble("latitude") ?? 0;
-                  double longitude = prefs.getDouble("longitude") ?? 0;
-                  String username = prefs.getString("username") ?? "";
-                  // String username = firebaseAuth.getUsername() ?? ""; trae el nombre viejo sin actualizar..
-
-                  Map<String, dynamic> values = {
-                    "username": username,
-                    "email": email,
-                    "latitude": latitude,
-                    "longitude": longitude,
-                    "credits": 0
-                  };
-                  print("Envio datos al Back");
-                  print(values);
-
-                  String? resp = await BackendService().createUser(values, false);
-                  //TODO: check error
-                  print(resp);
+                  registerUserInBack(context);
                 }
-                //por ahora desactivado el remember para google, trae problemas para relogueaarse desppues de un tiempo sin uso de la app
-                //await ShowRememberDialog(context);
                 Navigator.of(context).pushReplacementNamed("home");
               });
               return Stack(
@@ -94,4 +67,25 @@ class GoogleAuthScreen extends StatelessWidget {
           }),
     );
   }
+}
+
+void registerUserInBack(BuildContext context) async {
+  FirebaseAuthService firebaseAuth = FirebaseAuthService();
+  await showUsernameInput(context, firebaseAuth);
+  String email = firebaseAuth.getEmail() ?? "";
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  double latitude = prefs.getDouble("latitude") ?? 0;
+  double longitude = prefs.getDouble("longitude") ?? 0;
+  String username = prefs.getString("username") ?? "";
+
+  Map<String, dynamic> values = {
+    "username": username,
+    "email": email,
+    "latitude": latitude,
+    "longitude": longitude,
+    "credits": 0
+  };
+
+  String? resp = await BackendService().createUser(values, false);
 }

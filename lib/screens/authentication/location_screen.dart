@@ -27,14 +27,8 @@ class _LocationScreenState extends State<LocationScreen> {
                   Container(
                     color: AppTheme.primary,
                     child: ColorFiltered(
-                      colorFilter: ColorFilter.matrix(
-                          colorGen.getHighlightedMatrix(value: 0.12)),
-                      child: Image(
-                          fit: BoxFit.cover,
-                          height: size.height,
-                          width: size.width,
-                          image:
-                              const AssetImage(AppTheme.loginBackgroundPath)),
+                      colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
+                      child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
                     ),
                   ),
                   Column(
@@ -52,18 +46,13 @@ class _LocationScreenState extends State<LocationScreen> {
                           width: size.width * 0.10,
                           height: 50,
                           child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                  elevation: 10,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  backgroundColor: AppTheme.primary),
+                              style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                               onPressed: () {
                                 setState(() {});
                               },
                               child: const Text(
                                 "Reload",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 22),
+                                style: TextStyle(color: Colors.white, fontSize: 22),
                               )),
                         ),
                       )
@@ -80,41 +69,27 @@ class _LocationScreenState extends State<LocationScreen> {
                   Container(
                     color: AppTheme.primary,
                     child: ColorFiltered(
-                      colorFilter: ColorFilter.matrix(
-                          colorGen.getHighlightedMatrix(value: 0.12)),
-                      child: Image(
-                          fit: BoxFit.cover,
-                          height: size.height,
-                          width: size.width,
-                          image:
-                              const AssetImage(AppTheme.loginBackgroundPath)),
+                      colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
+                      child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
                     ),
                   ),
                   Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            color: Colors.grey[500],
-                          ),
-                          const Text(
-                            "Please, verify your Google Account",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        ]),
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                      CircularProgressIndicator(
+                        color: Colors.grey[500],
+                      ),
+                      const Text(
+                        "Please, verify your Google Account",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ]),
                   ),
                 ],
               ),
             );
           } else {
-            if (snapshot.data == null) {
-              print("ERROR");
-            } else {
-              print(snapshot.data!.latitude);
-            }
-            //Navigator.pop(context);
             Future.microtask(() async {
+              //Save the location in the shared preferences
               final prefs = await SharedPreferences.getInstance();
               prefs.setDouble("latitude", snapshot.data!.latitude);
               prefs.setDouble("longitude", snapshot.data!.longitude);
@@ -158,8 +133,7 @@ Future<Position> _determinePosition() async {
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are denied forever, handle appropriately.
-    return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
+    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
   }
 
   // When we reach here, permissions are granted and we can
