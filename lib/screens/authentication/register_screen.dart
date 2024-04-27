@@ -189,6 +189,7 @@ void registerFunction(TextEditingController emailController, TextEditingControll
       "latitude": latitude,
       "longitude": longitude
     };
+
     String? result = await BackendService().createUser(values, true);
     server.register(email, username, password, context);
     usernameController.clear();

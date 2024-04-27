@@ -4,6 +4,7 @@ import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future showUsernameInput(BuildContext context, FirebaseAuthService auth) {
   return showDialog(
@@ -61,6 +62,8 @@ class _UsernameAlertState extends State<UsernameAlert> {
                           NotificationsService.showSnackBar("Not Valid username", Colors.red, AppTheme.loginPannelColor);
                         } else {
                           bool result = await widget.auth.changeUsername(username);
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          prefs.setString("username", username);
 
                           Navigator.pop(context);
                         }

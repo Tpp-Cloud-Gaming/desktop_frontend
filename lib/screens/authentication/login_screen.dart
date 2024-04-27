@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                     color: AppTheme.loginPannelColor,
-                    height: size.height * 0.55,
+                    height: size.height * 0.65,
                     width: size.width * 0.25,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

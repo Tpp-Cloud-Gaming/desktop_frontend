@@ -23,7 +23,7 @@ class BackendService {
       }
     }
 
-    final url = Uri.https(_baseUrl, '/users/$formValues["username"]');
+    final url = Uri.https(_baseUrl, '/users/' + formValues["username"]); //NO HACER LA SUGERENCIA
 
     final resp = await http.post(url, body: json.encode(formValues), headers: {
       HttpHeaders.contentTypeHeader: "application/json",

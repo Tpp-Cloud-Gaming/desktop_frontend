@@ -48,7 +48,7 @@ class GoogleAuthScreen extends StatelessWidget {
             } else {
               Future.microtask(() async {
                 if (isRegister) {
-                  registerUserInBack(context);
+                  await registerUserInBack(context);
                 }
                 Navigator.of(context).pushReplacementNamed("home");
               });
@@ -69,7 +69,7 @@ class GoogleAuthScreen extends StatelessWidget {
   }
 }
 
-void registerUserInBack(BuildContext context) async {
+Future<String?> registerUserInBack(BuildContext context) async {
   FirebaseAuthService firebaseAuth = FirebaseAuthService();
   await showUsernameInput(context, firebaseAuth);
   String email = firebaseAuth.getEmail() ?? "";
@@ -78,7 +78,6 @@ void registerUserInBack(BuildContext context) async {
   double latitude = prefs.getDouble("latitude") ?? 0;
   double longitude = prefs.getDouble("longitude") ?? 0;
   String username = prefs.getString("username") ?? "";
-
   Map<String, dynamic> values = {
     "username": username,
     "email": email,
@@ -87,5 +86,5 @@ void registerUserInBack(BuildContext context) async {
     "credits": 0
   };
 
-  String? resp = await BackendService().createUser(values, false);
+  return await BackendService().createUser(values, false);
 }
