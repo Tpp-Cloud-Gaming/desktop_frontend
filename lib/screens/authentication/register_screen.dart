@@ -62,7 +62,7 @@ class RegisterScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                     color: AppTheme.loginPannelColor,
-                    height: 500,
+                    height: 600,
                     width: 480,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

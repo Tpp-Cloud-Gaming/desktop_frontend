@@ -86,7 +86,7 @@ class _ProfileCardState extends State<ProfileCard> {
             Container(
               color: color,
               height: 75,
-              width: 160,
+              width: 200,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
