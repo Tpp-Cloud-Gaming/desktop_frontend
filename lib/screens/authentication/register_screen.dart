@@ -62,8 +62,8 @@ class RegisterScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                     color: AppTheme.loginPannelColor,
-                    height: size.height * 0.65,
-                    width: size.width * 0.25,
+                    height: 500,
+                    width: 480,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -78,7 +78,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 40),
+                          padding: const EdgeInsets.only(top: 5, left: 40),
                           child: Text(
                             "Email",
                             style: AppTheme.loginTextStyle,
@@ -118,7 +118,7 @@ class RegisterScreen extends StatelessWidget {
                               obscureText: true,
                             )),
                         Padding(
-                          padding: const EdgeInsets.only(top: 40),
+                          padding: const EdgeInsets.only(top: 30),
                           child: Center(
                               child: SizedBox(
                             width: double.infinity,

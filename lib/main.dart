@@ -19,13 +19,11 @@ void main() async {
 
   await dotenv.load(fileName: '.env');
 
-  await Firebase.initializeApp(
-      options: DefaultFirebaseOptions
-          .currentPlatform); //por mas que es windows usar la config de android para firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); //por mas que es windows usar la config de android para firebase
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     //setWindowMaxSize(const Size(1920, 1080));
-    setWindowMinSize(const Size(1700, 900));
+    setWindowMinSize(const Size(1000, 600));
   }
   final prefs = await SharedPreferences.getInstance();
   //Esto es para hacer la com con RUST

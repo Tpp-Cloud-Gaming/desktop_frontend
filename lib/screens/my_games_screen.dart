@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/helpers/const_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -67,7 +68,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
             const BackGround(),
             Row(
               children: [
-                const CustomPannel(),
+                size.width > 1400 ? const CustomPannel() : Container(),
                 Expanded(
                   child: Column(children: [
                     Align(
@@ -82,6 +83,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                         child: SizedBox(
                           height: 100,
                           width: size.width * 0.55,
+                          //width: size.width > 1400 ? size.width * 0.75 : size.width * 0.9,
                           child: snapshot.data!.isEmpty
                               ? const Text("You don't have any games yet. Add one!",
                                   style: TextStyle(
@@ -186,25 +188,25 @@ class GameItemState extends State<GameItem> {
                 widget.games[widget.index].title,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 24.0,
+                  fontSize: 26.0,
                   fontWeight: FontWeight.normal,
                 ),
               ),
-              Text(
-                "Category: ${widget.games[widget.index].category}",
-                style: GoogleFonts.roboto(
-                  color: Colors.grey,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              Text(widget.games[widget.index].description,
-                  style: GoogleFonts.roboto(
-                    color: Colors.grey,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.normal,
-                  )),
-              Text("Path: ${widget.games[widget.index].path}",
+              // Text(
+              //   "Category: ${widget.games[widget.index].category}",
+              //   style: GoogleFonts.roboto(
+              //     color: Colors.grey,
+              //     fontSize: 18.0,
+              //     fontWeight: FontWeight.normal,
+              //   ),
+              // ),
+              // Text(widget.games[widget.index].description,
+              //     style: GoogleFonts.roboto(
+              //       color: Colors.grey,
+              //       fontSize: 18.0,
+              //       fontWeight: FontWeight.normal,
+              //     )),
+              Text("Game Location: ${widget.games[widget.index].path}",
                   style: GoogleFonts.roboto(
                     color: Colors.grey,
                     fontSize: 18.0,
@@ -299,10 +301,7 @@ void saveGame(BuildContext context, Function() notifyParent) async {
     context: context,
     rootDirectory: Directory("C:"), //TODO: podria no ser el disco C
     fsType: FilesystemType.file,
-    allowedExtensions: [
-      '.exe',
-      '.url'
-    ],
+    allowedExtensions: allowed_extension_games,
     fileTileSelectMode: FileTileSelectMode.wholeTile,
   );
 
@@ -504,10 +503,7 @@ void editGame(int index, BuildContext context, Function() notifyParent) async {
     context: context,
     rootDirectory: Directory("C:"), //TODO: podria no ser el disco C
     fsType: FilesystemType.file,
-    allowedExtensions: [
-      '.exe',
-      '.url'
-    ],
+    allowedExtensions: allowed_extension_games,
     fileTileSelectMode: FileTileSelectMode.wholeTile,
   );
 

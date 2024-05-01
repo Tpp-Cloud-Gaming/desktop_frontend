@@ -50,8 +50,8 @@ class LoginScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                     color: AppTheme.loginPannelColor,
-                    height: size.height * 0.65,
-                    width: size.width * 0.25,
+                    height: 500,
+                    width: 480,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -66,7 +66,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 40),
+                          padding: const EdgeInsets.only(top: 10, left: 40),
                           child: Text(
                             "Email",
                             style: AppTheme.loginTextStyle,
