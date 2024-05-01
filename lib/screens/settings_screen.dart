@@ -171,7 +171,9 @@ class ChangeUsername extends StatelessWidget {
                             String oldUsername = provider.user["username"];
 
                             if (await FirebaseAuthService().changeUsername(username)) {
-                              String? resp = await BackendService().changeUserData(oldUsername, provider.user);
+                              Map<String, dynamic> userData = provider.user;
+                              userData["username"] = username;
+                              String? resp = await BackendService().changeUserData(oldUsername, userData);
                               if (resp != null) {
                                 //Error en el cambio de nombre desde el back
                                 NotificationsService.showSnackBar("Error changing username: $resp", Colors.red, AppTheme.loginPannelColor);
@@ -184,6 +186,7 @@ class ChangeUsername extends StatelessWidget {
                                   NotificationsService.showSnackBar("Error getting new user data", Colors.red, AppTheme.loginPannelColor);
                                 } else {
                                   provider.updateFormValue(newData);
+                                  NotificationsService.showSnackBar("Username was change successfully", Colors.green, AppTheme.loginPannelColor);
                                 }
                               }
                             } else {

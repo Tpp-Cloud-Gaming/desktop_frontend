@@ -124,16 +124,19 @@ class BackendService {
 
   Future<String?> changeUserData(String username, Map<String, dynamic> data) async {
     final url = Uri.https(_baseUrl, '/users/$username');
+
     String? token = await firebaseAuth.getToken();
     if (token == null) {
       return null;
     }
+
     final resp = await http.put(url,
         headers: {
           HttpHeaders.contentTypeHeader: "application/json",
           HttpHeaders.authorizationHeader: token
         },
         body: json.encode(data));
+
     String? error = checkResponse(resp);
     if (error != null) {
       return null;
