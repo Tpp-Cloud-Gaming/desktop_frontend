@@ -1,6 +1,8 @@
+import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
@@ -11,7 +13,7 @@ class GameScreen extends StatelessWidget {
 
     List<Map<String, dynamic>> users = [
       {
-        'username': 'User1',
+        'username': 'franco',
       },
       {
         'username': 'User2',
@@ -91,7 +93,9 @@ class _UserCustomItemState extends State<UserCustomItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        context.read<RustCommunicationProvider>().startGameWithUser();
+      },
       onHover: (value) {
         if (value) {
           setState(() {

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cloud_gaming/Providers/rust_comunication_provider.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
@@ -76,6 +77,12 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                           padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.20),
                           child: const Text("Mi games", style: TextStyle(color: Colors.white, fontSize: 45)),
                         )),
+                    ElevatedButton(
+                      child: const Text('Start Offering'),
+                      onPressed: (){
+                        context.read<RustCommunicationProvider>().startOffering();
+                      },
+                    ),
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.00),
