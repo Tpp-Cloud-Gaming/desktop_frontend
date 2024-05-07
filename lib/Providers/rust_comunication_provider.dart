@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'dart:convert';
 
 class RustCommunicationProvider extends ChangeNotifier {
-  Socket socket;
+  final Socket _socket;
 
-  RustCommunicationProvider(this.socket);
+  RustCommunicationProvider(this._socket);
 
   void doneHandler(){
-    socket.destroy();
+    _socket.destroy();
   }
 
-  void startOffering(){
-    String msg = 'startOffering|franco\n';
-    socket.encoding = utf8;
-    socket.write(msg);
-  }
+  Socket get socket => _socket;
 
-  void startGameWithUser(){
-    String msg = 'startGameWithUser|tadeo|franco|valorant\n';
-    socket.encoding = utf8;
-    socket.writeln(msg);
-  }
 }

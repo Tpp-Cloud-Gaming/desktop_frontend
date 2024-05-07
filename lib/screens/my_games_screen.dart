@@ -5,6 +5,7 @@ import 'package:cloud_gaming/Providers/rust_comunication_provider.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
+import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/background.dart';
 import 'package:cloud_gaming/widgets/custom_pannel.dart';
@@ -30,6 +31,8 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final colorGen = ColorFilterGenerator.getInstance();
+    final rustComunicationProvider = Provider.of<RustCommunicationProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return FutureBuilder(
       future: loadGames(context),
@@ -80,7 +83,8 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                     ElevatedButton(
                       child: const Text('Start Offering'),
                       onPressed: (){
-                        context.read<RustCommunicationProvider>().startOffering();
+                        RustCommunicationService rustCommunicationService = RustCommunicationService(rustComunicationProvider.socket);
+                        rustCommunicationService.startOffering(userProvider.user["username"]);
                       },
                     ),
                     Expanded(
@@ -171,6 +175,7 @@ class GameItemState extends State<GameItem> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final provider = Provider.of<UserProvider>(context, listen: false);
+    
     return Card(
       margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
       color: const Color(0xFF000000).withOpacity(0.3),
