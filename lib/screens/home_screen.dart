@@ -1,4 +1,6 @@
+import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/screens/game_screen.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -128,7 +130,13 @@ class _GameCardState extends State<GameCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, "game");
+        Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => GameScreen(
+                gameName: widget.title,
+              ),
+            ));
       },
       onHover: (value) {
         if (value) {
@@ -164,7 +172,7 @@ class _GameCardState extends State<GameCard> {
                   placeholder: const AssetImage('assets/no-image.jpg'),
                   image: NetworkImage(widget.imagePath),
                   width: 190,
-                  height: 250,
+                  height: 240,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -222,6 +230,10 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     data['games'] = provider.games;
 
     provider.setLoggin(false);
+
+    //Inicializar el web socket
+    final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+    webSocketProvider.connect(provider.user["username"]);
 
     return data;
   } else {

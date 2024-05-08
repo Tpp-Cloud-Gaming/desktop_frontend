@@ -26,8 +26,6 @@ void main() async {
     setWindowMinSize(const Size(1000, 600));
   }
   final prefs = await SharedPreferences.getInstance();
-  //Esto es para hacer la com con RUST
-  //await comunication();
 
   //Descomentar esto si se traba por el remember account
   //prefs.setBool('remember', false);
@@ -56,6 +54,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => WebSocketProvider()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
@@ -78,8 +77,4 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-}
-
-Future<void> comunication() async {
-  //WebRTCService().start();
 }

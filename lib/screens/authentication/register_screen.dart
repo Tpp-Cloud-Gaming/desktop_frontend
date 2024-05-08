@@ -11,8 +11,7 @@ import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatelessWidget {
-  final ServerService server;
-  const RegisterScreen({super.key, required this.server});
+  const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +133,7 @@ class RegisterScreen extends StatelessWidget {
                                     child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                                         onPressed: () async {
-                                          registerFunction(emailController, usernameController, passwordController, context, server);
+                                          registerFunction(emailController, usernameController, passwordController, context);
                                         },
                                         child: Text(
                                           "Register",
@@ -165,7 +164,7 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-void registerFunction(TextEditingController emailController, TextEditingController usernameController, TextEditingController passwordController, BuildContext context, ServerService server) async {
+void registerFunction(TextEditingController emailController, TextEditingController usernameController, TextEditingController passwordController, BuildContext context) async {
   String email = emailController.text;
   String username = usernameController.text;
   String password = passwordController.text;
@@ -191,7 +190,6 @@ void registerFunction(TextEditingController emailController, TextEditingControll
     };
 
     String? result = await BackendService().createUser(values, true);
-    server.register(email, username, password, context);
     usernameController.clear();
     passwordController.clear();
     emailController.clear();
