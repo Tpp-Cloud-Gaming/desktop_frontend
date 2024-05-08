@@ -1,108 +1,51 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'dart:async';
+
+import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ServerService {
-  late SharedPreferences prefs;
-  final socket = io.io('http://127.0.0.1:3000', <String, dynamic>{
-    'transports': ['websocket'],
-    "autoConnect": true,
-    "reconnection": true,
-  });
+  final wsUrl = Uri.parse('wss://cloud-gaming-server.onrender.com');
+  late WebSocketChannel _channel;
 
-  void start() async {
-    prefs = await SharedPreferences.getInstance();
-    try {
-      // Connect to websocket
-      socket.connect();
-
-      // Handle socket events
-      socket.on('connect', (_) => print('connect: ${socket.id}'));
-      socket.on('location', (data) => handleLocationListen);
-      socket.on('typing', (data) => handleTyping);
-      socket.on('message', (data) {
-        print("Recibo Mensaje!!!");
-      });
-      socket.on('disconnect', (_) => print('disconnect'));
-      socket.on('fromServer', (_) => print(_));
-    } catch (e) {
-      print(e.toString());
-    }
+  ServerService() {
+    _channel = WebSocketChannel.connect(wsUrl);
   }
 
-  // Send Location to Server
-  sendLocation(Map<String, dynamic> data) {
-    socket.emit("location", data);
+  Future<void> start(String username) async {
+    await channel.ready;
+
+    channel.sink.add('initOfferer|${username}');
+
+    print("ya mande el start");
   }
 
-  // Listen to Location updates of connected users from server
-  handleLocationListen(Map<String, dynamic> data) async {
-    print(data);
+  Future<void> loadGame(String game) async {
+    await channel.ready;
+
+    channel.sink.add('getUsersForGame|${game}');
+
+    print("ya mande el game");
   }
 
-  // Send update of user's typing status
-  sendTyping(bool typing) {
-    socket.emit("typing", {
-      "id": socket.id,
-      "typing": typing,
-    });
-  }
-
-  // Listen to update of typing status from connected users
-  void handleTyping(Map<String, dynamic> data) {
-    print(data);
-  }
-
-  void login(String email, String password, BuildContext context) {
-    //Navigator.pushNamed(context, 'location');
-    //Habilitar cuando este la api
-    // socket.emitWithAck(
-    //   "Login",
-    //   {"username": username, "password": password},
-    //   ack: (data) {
-    //     if (data) {
-    //       Navigator.pushNamed(context, 'home');
-    //     } else {
-    //       NotificationsService.showSnackBar("Incorrect Username or Password",
-    //           Colors.red, AppTheme.loginPannelColor);
-    //     }
-    //   },
-    // );
-  }
-
-  void register(
-      String email, String username, String password, BuildContext context) {
-    //prefs.setString("username", username);
-    //Navigator.of(context).pushReplacementNamed('location');
-    //Habilitar cuando este la api
-    // socket.emitWithAck(
-    //   "Register",
-    //   {"email": email, "username": username, "password": password},
-    //   ack: (data) {
-    //     if (data) {
-    //       Navigator.pushNamed(context, 'home');
-    //     } else {
-    //       NotificationsService.showSnackBar("Incorrect Username or Password",
-    //           Colors.red, AppTheme.loginPannelColor);
-    //     }
-    //   },
-    // );
-  }
-
-  // Send a Message to the server
-  sendMessage(String message) {
-    socket.emit(
-      "message",
-      {
-        "id": socket.id,
-        "message": message, // Message to be sent
-        "timestamp": DateTime.now().millisecondsSinceEpoch,
+  Future<void> listen() async {
+    channel.stream.listen(
+      (message) {
+        // Handle incoming messages
+        print("Recibo mensaje: $message");
+      },
+      onDone: () {
+        // WebSocket is closed
+        print('Connection closed');
+        channel.sink.close(status.goingAway);
+      },
+      onError: (error) {
+        // Handle errors
+        print('Error received: $error');
+        channel.sink.close(status.goingAway);
       },
     );
+    print("Se va del listen");
   }
 
-  // Listen to all message events from connected users
-  void handleMessage(Map<String, dynamic> data) {
-    print(data);
-  }
+  WebSocketChannel get channel => _channel;
 }

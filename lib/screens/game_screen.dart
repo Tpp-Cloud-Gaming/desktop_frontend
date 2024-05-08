@@ -1,28 +1,22 @@
+
 import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
+import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
-
+  const GameScreen({super.key, required this.gameName});
+  final String gameName;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    List<Map<String, dynamic>> users = [
-      {
-        'username': 'franco_god',
-      },
-      {
-        'username': 'User2',
-      },
-      {
-        'username': 'User3',
-      },
-    ];
+    final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: true);
+    List<User> users = webSocketProvider.getUsersByGame(gameName);
+
     return Scaffold(
         body: Stack(children: [
       const BackGround(),
@@ -31,20 +25,14 @@ class GameScreen extends StatelessWidget {
           const CustomPannel(),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
-              padding: EdgeInsets.only(
-                  top: size.width * 0.08, left: size.height * 0.05),
-              child: const Text(
-                  "Valorant", //TODO: el nombre se cargaría jutno al map de users
-                  style: TextStyle(color: Colors.white, fontSize: 45)),
+              padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
+              child: Text(gameName, style: TextStyle(color: Colors.white, fontSize: 45)),
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                    top: size.width * 0.03, left: size.width * 0.05),
+                padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.05),
                 child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(5)),
+                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(5)),
                   height: 100,
                   width: size.width * 0.55,
                   child: ListView.builder(
@@ -82,7 +70,7 @@ class UserCustomItem extends StatefulWidget {
     required this.index,
   });
 
-  final List<Map<String, dynamic>> users;
+  final List<User> users;
   final int index;
 
   @override
@@ -115,9 +103,10 @@ class _UserCustomItemState extends State<UserCustomItem> {
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20),
+            padding: const EdgeInsets.only(left: 20, top: 10),
             child: Icon(
               Icons.computer_sharp,
               color: color,
@@ -128,9 +117,25 @@ class _UserCustomItemState extends State<UserCustomItem> {
             child: SizedBox(
                 height: 40,
                 child: Text(
-                  widget.users[widget.index]["username"],
-                  style: TextStyle(color: color),
+                  widget.users[widget.index].username,
+                  style: TextStyle(color: color, fontSize: 22),
                 )),
+          ),
+          Expanded(child: Container()),
+          const Padding(
+            padding: EdgeInsets.only(right: 5.0),
+            child: Icon(
+              Icons.star,
+              color: Colors.yellow,
+              size: 30,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 25.0),
+            child: Text(
+              widget.users[widget.index].calification.toString(),
+              style: TextStyle(color: color, fontSize: 22),
+            ),
           ),
         ],
       ),

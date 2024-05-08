@@ -20,8 +20,6 @@ class LoginScreen extends StatelessWidget {
 
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-    ServerService server = ServerService();
-    server.start();
 
     return Scaffold(
       body: Material(
@@ -50,8 +48,8 @@ class LoginScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                     color: AppTheme.loginPannelColor,
-                    height: size.height * 0.65,
-                    width: size.width * 0.25,
+                    height: 600,
+                    width: 480,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -66,7 +64,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 40),
+                          padding: const EdgeInsets.only(top: 10, left: 40),
                           child: Text(
                             "Email",
                             style: AppTheme.loginTextStyle,
@@ -118,7 +116,7 @@ class LoginScreen extends StatelessWidget {
                                     child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                                         onPressed: () async {
-                                          loginFunction(emailController, passwordController, context, server);
+                                          loginFunction(emailController, passwordController, context);
                                         },
                                         child: Text(
                                           "Login",
@@ -154,7 +152,7 @@ class LoginScreen extends StatelessWidget {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute<void>(
-                                          builder: (BuildContext context) => RegisterScreen(server: server),
+                                          builder: (BuildContext context) => RegisterScreen(),
                                         ));
                                   },
                                   child: Text("Register", style: AppTheme.loginTextButtonsStyle),
@@ -176,7 +174,7 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-void loginFunction(TextEditingController emailController, TextEditingController passwordController, BuildContext context, ServerService server) async {
+void loginFunction(TextEditingController emailController, TextEditingController passwordController, BuildContext context) async {
   String email = emailController.text;
   String password = passwordController.text;
 
@@ -197,7 +195,6 @@ void loginFunction(TextEditingController emailController, TextEditingController 
     } else {
       //if (await authService.isEmailVerified()) {
 
-      server.login(email, password, context);
       emailController.clear();
       passwordController.clear();
       await showRememberDialog(context);

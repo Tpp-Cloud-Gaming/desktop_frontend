@@ -19,17 +19,13 @@ void main() async {
 
   await dotenv.load(fileName: '.env');
 
-  await Firebase.initializeApp(
-      options: DefaultFirebaseOptions
-          .currentPlatform); //por mas que es windows usar la config de android para firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform); //por mas que es windows usar la config de android para firebase
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     //setWindowMaxSize(const Size(1920, 1080));
-    setWindowMinSize(const Size(1700, 900));
+    setWindowMinSize(const Size(1000, 600));
   }
   final prefs = await SharedPreferences.getInstance();
-  //Esto es para hacer la com con RUST
-  //await comunication();
 
   //Descomentar esto si se traba por el remember account
   //prefs.setBool('remember', false);
@@ -65,6 +61,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => RustCommunicationProvider(widget.rustCommunicationSocket)),
+        ChangeNotifierProvider(create: (_) => WebSocketProvider()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
@@ -88,9 +85,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-Future<void> comunication() async {
-  //WebRTCService().start();
-}
-
-

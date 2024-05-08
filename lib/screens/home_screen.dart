@@ -1,4 +1,6 @@
+import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/screens/game_screen.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -60,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                 const BackGround(),
                 Row(
                   children: [
-                    const CustomPannel(),
+                    size.width > 1400 ? const CustomPannel() : Container(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -75,12 +77,17 @@ class HomeScreen extends StatelessWidget {
                               controller: _controller,
                               thumbVisibility: true,
                               child: SizedBox(
-                                width: size.width * 0.75,
+                                width: size.width > 1400 ? size.width * 0.75 : size.width * 0.9,
                                 child: GridView.builder(
                                   controller: _controller,
-                                  padding: const EdgeInsets.only(right: 400, top: 100),
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, // number of items in each row
+                                  padding: const EdgeInsets.only(right: 200, top: 100),
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    //segun la resolucion de la pantalla se ajusta el numero de juegos a mostrar
+                                    crossAxisCount: size.width > 1800
+                                        ? 4
+                                        : size.width > 1400
+                                            ? 3
+                                            : 2, // number of items in each row
                                     mainAxisSpacing: 5.0, // spacing between rows
                                     crossAxisSpacing: 5.0, // spacing between columns
                                   ),
@@ -121,70 +128,72 @@ class _GameCardState extends State<GameCard> {
   double scale = 1.0;
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      height: size.height * 0.3,
-      width: size.width * 0.1,
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, "game");
-        },
-        onHover: (value) {
-          if (value) {
-            setState(() {
-              scale = 1.1;
-            });
-          } else {
-            setState(() {
-              scale = 1.0;
-            });
-          }
-        },
-        child: Transform.scale(
-          scale: scale,
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: const Offset(0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: FadeInImage(
-                    placeholder: const AssetImage('assets/no-image.jpg'),
-                    image: NetworkImage(widget.imagePath),
-                    width: size.width * 0.1,
-                    height: size.height * 0.25,
-                    fit: BoxFit.cover,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => GameScreen(
+                gameName: widget.title,
+              ),
+            ));
+      },
+      onHover: (value) {
+        if (value) {
+          setState(() {
+            scale = 1.1;
+          });
+        } else {
+          setState(() {
+            scale = 1.0;
+          });
+        }
+      },
+      child: Transform.scale(
+        scale: scale,
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3), // changes position of shadow
                   ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: FadeInImage(
+                  placeholder: const AssetImage('assets/no-image.jpg'),
+                  image: NetworkImage(widget.imagePath),
+                  width: 190,
+                  height: 240,
+                  fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            SizedBox(
+              height: 25,
+              width: 170,
+              child: Text(
                 widget.title ?? 'no-name',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 22,
+                  fontSize: 24,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -221,6 +230,10 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     data['games'] = provider.games;
 
     provider.setLoggin(false);
+
+    //Inicializar el web socket
+    final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+    webSocketProvider.connect(provider.user["username"]);
 
     return data;
   } else {
