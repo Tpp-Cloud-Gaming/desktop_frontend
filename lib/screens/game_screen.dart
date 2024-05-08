@@ -1,4 +1,3 @@
-
 import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
@@ -81,14 +80,17 @@ class _UserCustomItemState extends State<UserCustomItem> {
   Color color = Colors.white;
   @override
   Widget build(BuildContext context) {
-    
     final rustComunicationProvider = Provider.of<RustCommunicationProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return InkWell(
       onTap: () {
-        RustCommunicationService rustCommunicationService = RustCommunicationService(rustComunicationProvider.socket);
-        rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index]["username"]);
+        //RustCommunicationService rustCommunicationService = RustCommunicationService(rustComunicationProvider.socket);
+        //rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username);
+        //si todo sale bien:
+        final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+        webSocketProvider.setConnected(true);
+        Navigator.pushNamed(context, "play_game");
       },
       onHover: (value) {
         if (value) {

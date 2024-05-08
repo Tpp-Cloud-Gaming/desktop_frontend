@@ -29,7 +29,7 @@ class _CustomPannelState extends State<CustomPannel> {
     {
       'image': 'assets/pannel-icons/star.png',
       'title': 'Favoritos',
-      'page': 'test'
+      'page': 'settings'
     },
     {
       'image': 'assets/pannel-icons/joystick.png',

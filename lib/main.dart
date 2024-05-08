@@ -29,12 +29,12 @@ void main() async {
 
   //Descomentar esto si se traba por el remember account
   //prefs.setBool('remember', false);
-  
+
   String ip = "127.0.0.1";
   int port = 2930;
   Socket rustCommunicationSocket = await Socket.connect(ip, port);
 
-  runApp(MyApp(prefs: prefs, rustCommunicationSocket: rustCommunicationSocket ));
+  runApp(MyApp(prefs: prefs, rustCommunicationSocket: rustCommunicationSocket));
 }
 
 class MyApp extends StatefulWidget {

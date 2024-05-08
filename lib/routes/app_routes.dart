@@ -11,6 +11,6 @@ class AppRoutes {
     'my_games': (BuildContext context) => const MyGamesScreen(),
     'login': (BuildContext context) => const LoginScreen(),
     'forgot_password': (BuildContext context) => const ForgotPasswordScreen(),
-    'test': (BuildContext context) => const TestScreen(),
+    'play_game': (BuildContext context) => const PlayGameScreen(),
   };
 }
