@@ -29,13 +29,19 @@ void main() async {
 
   //Descomentar esto si se traba por el remember account
   //prefs.setBool('remember', false);
+  
+  String ip = "127.0.0.1";
+  int port = 2930;
+  Socket rustCommunicationSocket = await Socket.connect(ip, port);
 
-  runApp(MyApp(prefs: prefs));
+  runApp(MyApp(prefs: prefs, rustCommunicationSocket: rustCommunicationSocket ));
 }
 
 class MyApp extends StatefulWidget {
   final SharedPreferences prefs;
-  const MyApp({super.key, required this.prefs});
+  final Socket rustCommunicationSocket;
+
+  const MyApp({super.key, required this.prefs, required this.rustCommunicationSocket});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -54,6 +60,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => RustCommunicationProvider(widget.rustCommunicationSocket)),
         ChangeNotifierProvider(create: (_) => WebSocketProvider()),
       ],
       child: MaterialApp(
