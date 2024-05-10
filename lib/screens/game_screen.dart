@@ -43,6 +43,7 @@ class GameScreen extends StatelessWidget {
                           UserCustomItem(
                             users: users,
                             index: index,
+                            gameName: gameName,
                           ),
                           Container(
                             height: 1,
@@ -68,8 +69,10 @@ class UserCustomItem extends StatefulWidget {
     super.key,
     required this.users,
     required this.index,
+    required this.gameName,
   });
 
+  final String gameName;
   final List<User> users;
   final int index;
 
@@ -82,13 +85,14 @@ class _UserCustomItemState extends State<UserCustomItem> {
   @override
   Widget build(BuildContext context) {
     
-    final rustComunicationProvider = Provider.of<RustCommunicationProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return InkWell(
-      onTap: () {
-        RustCommunicationService rustCommunicationService = RustCommunicationService(rustComunicationProvider.socket);
-        rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index]["username"]);
+      onTap: () async {
+        RustCommunicationService rustCommunicationService = RustCommunicationService();
+        await rustCommunicationService.connect();
+        rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username, widget.gameName);
+        rustCommunicationService.disconnect();
       },
       onHover: (value) {
         if (value) {
