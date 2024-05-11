@@ -8,17 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class FavScreen extends StatelessWidget {
   const FavScreen({super.key});
-  //late List<String> favGames;
-
-  // initState() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   List<String>? temp = prefs.getStringList('favGames');
-  //   if (temp == null) {
-  //     favGames = [];
-  //   } else {
-  //     favGames = temp;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +19,9 @@ class FavScreen extends StatelessWidget {
         children: [
           const BackGround(),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomPannel(),
+              size.width > 1400 ? const CustomPannel() : Container(),
               FutureBuilder(
                   future: SharedPreferences.getInstance(),
                   builder: (context, snapshot) {

@@ -50,7 +50,7 @@ dependencies:
   firebase_auth: ^4.17.9
   firebase_core: ^2.27.1
   window_to_front: ^0.0.3
-  url_launcher: ^6.1.7
+  url_launcher: ^6.2.6
   oauth2: ^2.0.1
   http: ^0.13.5
   flutter_dotenv: ^5.1.0

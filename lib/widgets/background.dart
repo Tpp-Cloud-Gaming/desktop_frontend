@@ -102,7 +102,7 @@ class _ProfileCardState extends State<ProfileCard> {
                 ? Container(
                     color: AppTheme.pannelColor.withOpacity(0.75),
                     height: 40,
-                    width: 160,
+                    width: 200,
                     child: ListTile(
                       focusColor: AppTheme.onHoverColor.withOpacity(0.7),
                       title: Row(

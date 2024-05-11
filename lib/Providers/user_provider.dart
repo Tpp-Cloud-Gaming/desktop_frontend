@@ -54,8 +54,17 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void loadCredits(int credits) {
+    if (_user['credits'] + credits < 0) {
+      return;
+    }
+    _user['credits'] += credits;
+    notifyListeners();
+  }
+
   Map<String, dynamic> get user => _user;
   List<Map<String, dynamic>> get games => _games;
   List<Map<String, dynamic>> get userGames => _userGames;
   bool get firstLogin => _firstLogin;
+  int get credits => _user['credits'];
 }
