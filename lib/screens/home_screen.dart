@@ -169,6 +169,7 @@ class _GameCardState extends State<GameCard> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: FadeInImage(
+                  fadeInDuration: const Duration(milliseconds: 10),
                   placeholder: const AssetImage('assets/no-image.jpg'),
                   image: NetworkImage(widget.imagePath),
                   width: 190,

@@ -12,29 +12,28 @@ class CustomPannel extends StatefulWidget {
 class _CustomPannelState extends State<CustomPannel> {
   List<Map<String, dynamic>> items = [
     {
-      'image': 'assets/pannel-icons/history.png',
-      'title': 'Biblioteca',
-      'page': 'settings'
+      'image': 'assets/pannel-icons/joystick.png',
+      'title': 'My Games',
+      'page': 'my_games',
+      'color': Colors.white
+    },
+    {
+      'image': 'assets/pannel-icons/favourite.png',
+      'title': 'Favourites',
+      'page': 'fav',
+      'color': Colors.red.withOpacity(0.8)
+    },
+    {
+      'image': 'assets/pannel-icons/load_coin.png',
+      'title': 'My Coins',
+      'page': 'coins',
+      'color': null
     },
     {
       'image': 'assets/pannel-icons/settings.png',
-      'title': 'Configuracion',
-      'page': 'settings'
-    },
-    {
-      'image': 'assets/pannel-icons/friends.png',
-      'title': 'Amigos',
-      'page': 'settings'
-    },
-    {
-      'image': 'assets/pannel-icons/star.png',
-      'title': 'Favoritos',
-      'page': 'test'
-    },
-    {
-      'image': 'assets/pannel-icons/joystick.png',
-      'title': 'Mis Juegos',
-      'page': 'my_games'
+      'title': 'Settings',
+      'page': 'settings',
+      'color': Colors.white
     },
   ];
 
@@ -106,6 +105,7 @@ class CustomItem extends StatefulWidget {
 
 class _CustomItemState extends State<CustomItem> {
   Color color = Colors.white;
+  int imgSize = 40;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -114,10 +114,12 @@ class _CustomItemState extends State<CustomItem> {
         if (value) {
           setState(() {
             color = AppTheme.onHoverColor.withOpacity(0.7);
+            imgSize = 45;
           });
         } else {
           setState(() {
             color = Colors.white;
+            imgSize = 40;
           });
         }
       },
@@ -127,21 +129,30 @@ class _CustomItemState extends State<CustomItem> {
       onPressed: () {
         Navigator.pushNamed(context, widget.item["page"]);
       },
-      child: Row(
-        children: [
-          Image(
-            image: AssetImage(widget.item["image"]),
-            height: 40,
-            width: 40,
-            color: color,
-            filterQuality: FilterQuality.high,
-          ),
-          SizedBox(width: size.width * 0.005), // 2% of width
-          Text(
-            widget.item["title"],
-            style: TextStyle(color: color, fontSize: size.width * 0.012),
-          ),
-        ],
+      child: SizedBox(
+        height: imgSize.toDouble(),
+        width: 300,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage(widget.item["image"]),
+              height: imgSize.toDouble(),
+              width: imgSize.toDouble(),
+              color: widget.item["color"],
+              filterQuality: FilterQuality.high,
+            ),
+            SizedBox(width: size.width * 0.005), // 2% of width
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                widget.item["title"],
+                style: AppTheme.commonText(color, 24),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

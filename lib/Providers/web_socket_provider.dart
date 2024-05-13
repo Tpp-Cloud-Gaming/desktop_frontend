@@ -15,6 +15,7 @@ class WebSocketProvider extends ChangeNotifier {
   late final WebSocketChannel _channel;
   final String _wsUrl = 'wss://cloud-gaming-server.onrender.com';
 
+  bool _isConnected = false;
   Map<String, List<User>> _gamesByUser = {};
 
   void connect(String username) async {
@@ -94,5 +95,12 @@ class WebSocketProvider extends ChangeNotifier {
     _gamesByUser.forEach((key, value) {
       value.removeWhere((element) => element.username == username);
     });
+  }
+
+  bool get isConnected => _isConnected;
+
+  void setConnected(bool value) {
+    _isConnected = value;
+    notifyListeners();
   }
 }
