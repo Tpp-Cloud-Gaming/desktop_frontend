@@ -148,8 +148,10 @@ class UserCustomItem extends StatefulWidget {
     super.key,
     required this.users,
     required this.index,
+    required this.gameName,
   });
 
+  final String gameName;
   final List<User> users;
   final int index;
 
@@ -165,10 +167,11 @@ class _UserCustomItemState extends State<UserCustomItem> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return InkWell(
-      onTap: () {
-        //RustCommunicationService rustCommunicationService = RustCommunicationService(rustComunicationProvider.socket);
-        //rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username);
-        //si todo sale bien:
+      onTap: () async {
+        RustCommunicationService rustCommunicationService = RustCommunicationService();
+        await rustCommunicationService.connect();
+        rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username, widget.gameName);
+        rustCommunicationService.disconnect();
         final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
         webSocketProvider.setConnected(true);
         Navigator.pushNamed(context, "play_game");
