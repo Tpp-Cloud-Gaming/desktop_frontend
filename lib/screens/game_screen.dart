@@ -1,4 +1,5 @@
 import 'package:cloud_gaming/Providers/providers.dart';
+import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,7 @@ class GameScreen extends StatelessWidget {
                                 UserCustomItem(
                                   users: users,
                                   index: index,
+                                  gameName: gameName,
                                 ),
                                 Container(
                                   height: 1,
@@ -163,7 +165,6 @@ class _UserCustomItemState extends State<UserCustomItem> {
   Color color = Colors.white;
   @override
   Widget build(BuildContext context) {
-    final rustComunicationProvider = Provider.of<RustCommunicationProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return InkWell(

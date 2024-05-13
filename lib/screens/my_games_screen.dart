@@ -81,15 +81,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                           padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.20),
                           child: const Text("Mi games", style: TextStyle(color: Colors.white, fontSize: 45)),
                         )),
-                    ElevatedButton(
-                      child: const Text('Start Offering'),
-                      onPressed: () async {
-                        RustCommunicationService rustCommunicationService = RustCommunicationService();
-                        await rustCommunicationService.connect();
-                        rustCommunicationService.startOffering(userProvider.user["username"]);
-                        rustCommunicationService.disconnect();
-                      },
-                    ),
+
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.00),
@@ -128,23 +120,71 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                         child: Padding(
                       padding: EdgeInsets.only(top: size.height * 0.05, bottom: size.height * 0.05),
                       child: SizedBox(
-                        height: 60,
-                        width: 300,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              saveGame(context, refresh);
-                            },
-                            child: const Row(
+                        height: 80,
+                        width: 600,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                                height: 70,
+                                width: 600,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.white.withOpacity(0.1),
+                                )),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                  "Add Game",
-                                  style: TextStyle(fontSize: 34.0),
+                                OutlinedButton(
+                                    style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: Colors.white),
+                                    onPressed: () async {
+                                      saveGame(context, refresh);
+                                    },
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Add Game",
+                                          style: TextStyle(fontSize: 34.0),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 5, left: 5),
+                                          child: Icon(Icons.add_box_outlined, size: 34.0),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40.0),
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: Colors.white),
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Start Offering",
+                                          style: TextStyle(fontSize: 34.0),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 5, left: 5),
+                                          child: Icon(Icons.wifi_rounded, size: 34.0),
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      RustCommunicationService rustCommunicationService = RustCommunicationService();
+                                      await rustCommunicationService.connect();
+                                      rustCommunicationService.startOffering(userProvider.user["username"]);
+                                      rustCommunicationService.disconnect();
+                                    },
+                                  ),
                                 ),
-                                Icon(Icons.add_box_outlined, size: 34.0),
                               ],
-                            )),
+                            ),
+                          ],
+                        ),
                       ),
                     )),
                   ]),
@@ -179,7 +219,7 @@ class GameItemState extends State<GameItem> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final provider = Provider.of<UserProvider>(context, listen: false);
-    
+
     return Card(
       margin: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
       color: const Color(0xFF000000).withOpacity(0.3),
