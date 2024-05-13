@@ -94,8 +94,7 @@ class HomeScreen extends StatelessWidget {
                                   itemCount: snapshot.data!["games"].length,
                                   itemBuilder: (context, index) {
                                     return GameCard(
-                                      title: snapshot.data!["games"][index]["name"],
-                                      imagePath: snapshot.data!["games"][index]["image_1"],
+                                      game: snapshot.data!["games"][index],
                                     );
                                   },
                                 ),
@@ -115,10 +114,9 @@ class HomeScreen extends StatelessWidget {
 }
 
 class GameCard extends StatefulWidget {
-  const GameCard({super.key, required this.title, required this.imagePath});
+  const GameCard({super.key, required this.game});
 
-  final String imagePath;
-  final String title;
+  final Map<String, dynamic> game;
 
   @override
   State<GameCard> createState() => _GameCardState();
@@ -134,7 +132,7 @@ class _GameCardState extends State<GameCard> {
             context,
             MaterialPageRoute<void>(
               builder: (BuildContext context) => GameScreen(
-                gameName: widget.title,
+                game: widget.game,
               ),
             ));
       },
@@ -171,7 +169,7 @@ class _GameCardState extends State<GameCard> {
                 child: FadeInImage(
                   fadeInDuration: const Duration(milliseconds: 10),
                   placeholder: const AssetImage('assets/no-image.jpg'),
-                  image: NetworkImage(widget.imagePath),
+                  image: NetworkImage(widget.game["image_1"]),
                   width: 190,
                   height: 240,
                   fit: BoxFit.cover,
@@ -185,7 +183,7 @@ class _GameCardState extends State<GameCard> {
               height: 25,
               width: 170,
               child: Text(
-                widget.title ?? 'no-name',
+                widget.game["name"] ?? 'no-name',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -211,9 +209,7 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     String? token = await FirebaseAuthService().getToken();
     print(token);
     Map<String, dynamic>? user = await BackendService().getUser();
-
     List<Map<String, dynamic>>? games = await BackendService().getAllGames();
-
     if (user == null || games == null) {
       prefs.setBool('remember', false);
       return {};

@@ -7,16 +7,17 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key, required this.gameName});
-  final String gameName;
+  const GameScreen({super.key, required this.game});
+  final Map<String, dynamic> game;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: true);
-    List<User> users = webSocketProvider.getUsersByGame(gameName);
+    List<User> users = webSocketProvider.getUsersByGame(game["name"]);
 
+    String description = game["description"];
     return FutureBuilder(
       future: SharedPreferences.getInstance(),
       builder: (context, snapshot) {
@@ -32,17 +33,37 @@ class GameScreen extends StatelessWidget {
                     padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
                     child: Row(
                       children: [
-                        Text(gameName, style: const TextStyle(color: Colors.white, fontSize: 45)),
+                        Text(game["name"], style: const TextStyle(color: Colors.white, fontSize: 45)),
                         FavGameButton(
-                          gameName: gameName,
+                          gameName: game["name"],
                           prefs: snapshot.data as SharedPreferences,
                         )
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.only(left: size.width * 0.03),
+                    child: Text(game["category"], style: AppTheme.commonText(Colors.white, 20)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: size.width * 0.03),
+                    child: Text(description.toString().substring(0, description.length > 100 ? 100 : description.length), style: AppTheme.commonText(Colors.white, 20)),
+                  ),
+                  description.length > 100
+                      ? Padding(
+                          padding: EdgeInsets.only(left: size.width * 0.03),
+                          child: Text(description.toString().substring(100, description.length > 200 ? 200 : description.length), style: AppTheme.commonText(Colors.white, 20)),
+                        )
+                      : Container(),
+                  description.length > 200
+                      ? Padding(
+                          padding: EdgeInsets.only(left: size.width * 0.03),
+                          child: Text(description.toString().substring(200, description.length > 300 ? 300 : description.length), style: AppTheme.commonText(Colors.white, 20)),
+                        )
+                      : Container(),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.05),
+                      padding: EdgeInsets.only(top: size.width * 0.02, left: size.width * 0.05),
                       child: Container(
                         decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(5)),
                         height: 100,
@@ -55,7 +76,7 @@ class GameScreen extends StatelessWidget {
                                 UserCustomItem(
                                   users: users,
                                   index: index,
-                                  gameName: gameName,
+                                  gameName: game["name"],
                                 ),
                                 Container(
                                   height: 1,

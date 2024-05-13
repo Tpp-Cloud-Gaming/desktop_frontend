@@ -65,9 +65,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 settingContainer: const ChangeUsername(),
                               ),
                               SettingOption(
-                                title: "Change Payment",
+                                title: "Logout",
                                 notifyParent: refresh,
-                                settingContainer: const ChangePayment(),
+                                settingContainer: const Logout(),
                               ),
                             ],
                           ),
@@ -208,15 +208,31 @@ class ChangeUsername extends StatelessWidget {
   }
 }
 
-class ChangePayment extends StatelessWidget {
-  const ChangePayment({super.key});
+class Logout extends StatelessWidget {
+  const Logout({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blue,
-      height: 100,
-      width: 100,
+    return SizedBox(
+      height: 300,
+      width: 500,
+      child: Padding(
+          padding: const EdgeInsets.only(left: 40),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              "Are you sure you want to ",
+              style: AppTheme.loginTextStyle,
+            ),
+            InkWell(
+              child: Text(
+                "logout?",
+                style: AppTheme.loginTextStyle.copyWith(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold),
+              ),
+              onTap: () async {
+                shutdown(context);
+              },
+            )
+          ])),
     );
   }
 }

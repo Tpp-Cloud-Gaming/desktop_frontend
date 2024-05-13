@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
   bool _firstLogin = true;
-  final Map<String, dynamic> _user = {
+  Map<String, dynamic> _user = {
     'username': '',
     'email': '',
     'credits': 0,
@@ -10,9 +10,9 @@ class UserProvider extends ChangeNotifier {
     'latitude': 0.0,
   };
 
-  final List<Map<String, dynamic>> _games = [];
+  List<Map<String, dynamic>> _games = [];
 
-  final List<Map<String, dynamic>> _userGames = [];
+  List<Map<String, dynamic>> _userGames = [];
 
   String newGame = '';
 
@@ -67,4 +67,17 @@ class UserProvider extends ChangeNotifier {
   List<Map<String, dynamic>> get userGames => _userGames;
   bool get firstLogin => _firstLogin;
   int get credits => _user['credits'];
+
+  void shutdown() {
+    _user = {
+      'username': '',
+      'email': '',
+      'credits': 0,
+      'longitude': 0.0,
+      'latitude': 0.0,
+    };
+    _games = [];
+    _userGames = [];
+    _firstLogin = true;
+  }
 }

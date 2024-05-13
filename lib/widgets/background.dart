@@ -1,3 +1,6 @@
+import 'package:cloud_gaming/Providers/providers.dart';
+import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/screens/authentication/login_screen.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -119,16 +122,7 @@ class _ProfileCardState extends State<ProfileCard> {
                         ],
                       ),
                       onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        prefs.setBool("remember", false);
-                        prefs.setString('email', '');
-                        prefs.setString('password', '');
-                        prefs.setString('username', '');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) => const LoginScreen(),
-                            ));
+                        shutdown(context);
                       },
                     ),
                   )
@@ -138,4 +132,26 @@ class _ProfileCardState extends State<ProfileCard> {
       ),
     );
   }
+}
+
+void shutdown(BuildContext context) async {
+  //Clean the shared preferences
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setBool("remember", false);
+  prefs.setString('email', '');
+  prefs.setString('password', '');
+  prefs.setString('username', '');
+
+  //Clean the providers
+  final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+  final WebSocketProvider webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+
+  userProvider.shutdown();
+  await webSocketProvider.shutdown();
+
+  Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const LoginScreen(),
+      ));
 }

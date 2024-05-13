@@ -62,10 +62,7 @@ class FavScreen extends StatelessWidget {
                                     itemCount: games.length,
                                     itemBuilder: (context, index) {
                                       Map<String, dynamic> game = provider.games.firstWhere((element) => element["name"] == games[index]);
-                                      return GameCard(
-                                        title: game["name"] ?? "",
-                                        imagePath: game["image_1"] ?? "",
-                                      );
+                                      return GameCard(game: game);
                                     },
                                   ),
                                 ),

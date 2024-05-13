@@ -12,11 +12,12 @@ class User {
 }
 
 class WebSocketProvider extends ChangeNotifier {
-  late final WebSocketChannel _channel;
+  WebSocketChannel? _channel;
   final String _wsUrl = 'wss://cloud-gaming-server.onrender.com';
 
   bool _isConnected = false;
   Map<String, List<User>> _gamesByUser = {};
+  StreamSubscription<dynamic>? a;
 
   void connect(String username) async {
     //Conectarse al servidor
@@ -26,7 +27,7 @@ class WebSocketProvider extends ChangeNotifier {
 
     //Validar si se conecto correctamente
     try {
-      await _channel.ready;
+      await _channel!.ready;
       print("se conecto ok");
     } on SocketException catch (e) {
       print("Error: $e");
@@ -35,14 +36,14 @@ class WebSocketProvider extends ChangeNotifier {
       print("Error: $e");
       throw Exception("Error al conectarse al servidor: $e");
     }
-
     //Avisar que se conecto
-    _channel.sink.add("subscribe|$username");
+    _channel!.sink.add("subscribe|$username");
 
     //Escuchar mensajes y establecer los handlers
-    StreamSubscription<dynamic> a = _channel.stream.listen((event) {
+    StreamSubscription<dynamic> a = _channel!.stream.listen((event) {
       print("Recibo: $event");
     });
+
     a.onData((data) {
       print("Data: $data");
       List<String> splitData = data.toString().split('|');
@@ -102,5 +103,15 @@ class WebSocketProvider extends ChangeNotifier {
   void setConnected(bool value) {
     _isConnected = value;
     notifyListeners();
+  }
+
+  Future<void> shutdown() async {
+    if (a != null) {
+      a!.cancel();
+    }
+    _isConnected = false;
+    _gamesByUser = {};
+    _channel!.sink.close();
+    _channel = null;
   }
 }
