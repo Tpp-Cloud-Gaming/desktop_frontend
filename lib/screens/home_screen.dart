@@ -1,5 +1,4 @@
 import 'package:cloud_gaming/Providers/providers.dart';
-import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/screens/game_screen.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
@@ -230,7 +229,7 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
 
     //Inicializar el web socket
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-    webSocketProvider.connect(provider.user["username"]);
+    webSocketProvider.connect(provider.user["username"], provider);
 
     return data;
   } else {

@@ -1,3 +1,5 @@
+import 'package:cloud_gaming/services/notifications_service.dart';
+import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -8,6 +10,7 @@ class UserProvider extends ChangeNotifier {
     'credits': 0,
     'longitude': 0.0,
     'latitude': 0.0,
+    'mercadopago_mail': null
   };
 
   List<Map<String, dynamic>> _games = [];
@@ -59,6 +62,12 @@ class UserProvider extends ChangeNotifier {
       return;
     }
     _user['credits'] += credits;
+    NotificationsService.showSnackBar("The credits were loaded successfully.", Colors.green, AppTheme.loginPannelColor);
+    notifyListeners();
+  }
+
+  void loadMercadoPagoEmail(String email) {
+    _user['mercadopago_mail'] = email;
     notifyListeners();
   }
 
@@ -75,6 +84,7 @@ class UserProvider extends ChangeNotifier {
       'credits': 0,
       'longitude': 0.0,
       'latitude': 0.0,
+      'mercadopago_mail': ''
     };
     _games = [];
     _userGames = [];

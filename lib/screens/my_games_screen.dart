@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -79,7 +80,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                         alignment: Alignment.centerLeft,
                         child: Padding(
                           padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.20),
-                          child: const Text("Mi games", style: TextStyle(color: Colors.white, fontSize: 45)),
+                          child: const Text("My games", style: TextStyle(color: Colors.white, fontSize: 45)),
                         )),
 
                     Expanded(
@@ -139,7 +140,11 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                 OutlinedButton(
                                     style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: Colors.white),
                                     onPressed: () async {
-                                      saveGame(context, refresh);
+                                      String? path = await _showDriveDialog(context, await getDrivesOnWindows());
+                                      if (path != null && path.isNotEmpty) {
+                                        //Mostrar el dialogo para que el usuario confirme la carga del juego
+                                        _showCreateDialog(context, path, refresh);
+                                      }
                                     },
                                     child: const Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -269,8 +274,12 @@ class GameItemState extends State<GameItem> {
             ],
           )),
           IconButton(
-            onPressed: () => {
-              editGame(widget.index, context, widget.callback)
+            onPressed: () async {
+              String? path = await _showDriveDialog(context, await getDrivesOnWindows());
+              if (path != null && path.isNotEmpty) {
+                //Mostrar el dialogo para que el usuario confirme la carga del juego
+                _showEditDialog(context, path, widget.index, widget.callback);
+              }
             },
             icon: Icon(
               Icons.edit,
@@ -340,7 +349,7 @@ Future<List<Game>> loadGames(BuildContext context) async {
   return gamesList;
 }
 
-void saveGame(BuildContext context, Function() notifyParent) async {
+Future<String> selectPath(BuildContext context, String drive) async {
   //Obtener el path del juego
   String? path = await FilesystemPicker.open(
     theme: FilesystemPickerTheme(
@@ -353,16 +362,78 @@ void saveGame(BuildContext context, Function() notifyParent) async {
         )),
     title: 'Select Game Path',
     context: context,
-    rootDirectory: Directory("C:"), //TODO: podria no ser el disco C
+    rootDirectory: Directory(drive),
     fsType: FilesystemType.file,
     allowedExtensions: allowed_extension_games,
     fileTileSelectMode: FileTileSelectMode.wholeTile,
   );
 
-  if (path != null && path.isNotEmpty) {
-    //Mostrar el dialogo para que el usuario confirme la carga del juego
-    _showCreateDialog(context, path, notifyParent);
-  }
+  return path ?? '';
+}
+
+Future<Iterable<String>> getDrivesOnWindows() async => LineSplitter.split((await Process.run(
+            'wmic',
+            [
+              'logicaldisk',
+              'get',
+              'caption'
+            ],
+            stdoutEncoding: const SystemEncoding()))
+        .stdout as String)
+    .map((string) => string.trim())
+    .where((string) => string.isNotEmpty)
+    .skip(1);
+
+Future<String?> _showDriveDialog(BuildContext context, Iterable<String> drives) async {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final size = MediaQuery.of(context).size;
+        String? dropdownvalue;
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Dialog(
+            child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                  border: Border.all(
+                    color: Colors.blueAccent.withOpacity(0.5),
+                    width: 1.0,
+                  ),
+                  color: const Color(0xff0c1d43),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blueAccent.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 2, // changes position of shadow
+                    ),
+                  ],
+                ),
+                height: size.height * 0.85,
+                width: size.width * 0.35,
+                child: Expanded(
+                  child: Column(
+                    children: [
+                      Text("Select Drive", style: AppTheme.commonText(Colors.white, 24)),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: drives.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                              drives.elementAt(index),
+                              style: AppTheme.commonText(Colors.white, 24),
+                            ),
+                            onTap: () => selectPath(context, drives.elementAt(index)),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                )),
+          ),
+        );
+      });
 }
 
 void _showCreateDialog(BuildContext context, String path, Function() notifyParent) {
@@ -539,31 +610,6 @@ class _DropdownGamesState extends State<DropdownGames> {
         },
       ),
     );
-  }
-}
-
-void editGame(int index, BuildContext context, Function() notifyParent) async {
-  //Obtener el path del juego
-  String? path = await FilesystemPicker.open(
-    theme: FilesystemPickerTheme(
-        topBar: FilesystemPickerTopBarThemeData(backgroundColor: AppTheme.onHoverColor),
-        backgroundColor: AppTheme.pannelColor,
-        messageTextStyle: const TextStyle(color: Colors.white),
-        fileList: FilesystemPickerFileListThemeData(
-          folderTextStyle: AppTheme.commonText(Colors.white, 14),
-          fileTextStyle: AppTheme.commonText(Colors.white, 14),
-        )),
-    title: 'Select Game Path',
-    context: context,
-    rootDirectory: Directory("C:"), //TODO: podria no ser el disco C
-    fsType: FilesystemType.file,
-    allowedExtensions: allowed_extension_games,
-    fileTileSelectMode: FileTileSelectMode.wholeTile,
-  );
-
-  if (path != null && path.isNotEmpty) {
-    //Mostrar el dialogo para que el usuario confirme la carga del juego
-    _showEditDialog(context, path, index, notifyParent);
   }
 }
 

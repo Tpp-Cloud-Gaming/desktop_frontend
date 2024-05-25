@@ -173,6 +173,70 @@ class BackendService {
     return null;
   }
 
+  Future<String?> loadMercadoPagoEmail(String username, String email) async {
+    final url = Uri.https(_baseUrl, '/users/$username/mercadopago');
+
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return null;
+    }
+
+    Map<String, dynamic> data = {
+      "mercadopago_mail": email
+    };
+
+    final resp = await http.patch(url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: token
+        },
+        body: json.encode(data));
+
+    String? error = checkResponse(resp);
+    if (error != null) {
+      return null;
+    }
+    try {
+      json.decode(utf8.decode(resp.bodyBytes));
+      return null;
+    } on FormatException catch (_) {
+      return "Cant load the payment email: ${resp.statusCode}";
+    }
+  }
+
+  Future<Map<String, dynamic>?> loadCredits(int hours, String username) async {
+    final url = Uri.https(_baseUrl, '/payments');
+
+    String? token = await firebaseAuth.getToken();
+    if (token == null) {
+      return null;
+    }
+
+    Map<String, dynamic> data = {
+      "hours": hours,
+      "username": username
+    };
+
+    final resp = await http.post(url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader: token
+        },
+        body: json.encode(data));
+
+    String? error = checkResponse(resp);
+    if (error != null) {
+      return null;
+    }
+
+    try {
+      final Map<String, dynamic> decodedResp = json.decode(utf8.decode(resp.bodyBytes));
+      return decodedResp;
+    } on FormatException catch (_) {
+      return null;
+    }
+  }
+
   String? checkResponse(Response resp) {
     if (resp.statusCode < 200 || resp.statusCode > 300) {
       return resp.toString();

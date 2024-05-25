@@ -65,6 +65,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 settingContainer: const ChangeUsername(),
                               ),
                               SettingOption(
+                                title: "Load payment account",
+                                notifyParent: refresh,
+                                settingContainer: const LoadPaymentAccount(),
+                              ),
+                              SettingOption(
                                 title: "Logout",
                                 notifyParent: refresh,
                                 settingContainer: const Logout(),
@@ -194,6 +199,83 @@ class ChangeUsername extends StatelessWidget {
                             }
                           }
                           usernameController.clear();
+                        },
+                        child: Text(
+                          "Change",
+                          style: AppTheme.commonText(Colors.white, 18),
+                        )),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+}
+
+class LoadPaymentAccount extends StatelessWidget {
+  const LoadPaymentAccount({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    final user = Provider.of<UserProvider>(context, listen: true);
+    return SizedBox(
+        height: 300,
+        width: 500,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              user.user["mercadopago_mail"] == null
+                  ? Text(
+                      "Actual payment email: Not set",
+                      style: AppTheme.loginTextStyle,
+                    )
+                  : Text(
+                      "Actual payment email: ${user.user["mercadopago_mail"]}",
+                      style: AppTheme.loginTextStyle,
+                    ),
+              Padding(
+                padding: const EdgeInsets.only(top: 40.0),
+                child: Text(
+                  "New payment email: ",
+                  style: AppTheme.loginTextStyle,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: CustomInputField(
+                  controller: emailController,
+                  obscureText: false,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Center(
+                  child: SizedBox(
+                    width: 120,
+                    height: 50,
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
+                        onPressed: () async {
+                          String email = emailController.text;
+                          emailController.clear();
+                          if (!isValidEmail(email)) {
+                            NotificationsService.showSnackBar("Please enter a valid email", Colors.red, AppTheme.loginPannelColor);
+                          } else {
+                            String username = user.user["username"];
+
+                            String? resp = await BackendService().loadMercadoPagoEmail(username, email);
+                            if (resp != null) {
+                              NotificationsService.showSnackBar("Error locading payment email: $resp", Colors.red, AppTheme.loginPannelColor);
+                            } else {
+                              user.loadMercadoPagoEmail(email);
+                              NotificationsService.showSnackBar("Email Payment was load successfully", Colors.green, AppTheme.loginPannelColor);
+                            }
+                          }
+                          emailController.clear();
                         },
                         child: Text(
                           "Change",

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -19,7 +20,7 @@ class WebSocketProvider extends ChangeNotifier {
   Map<String, List<User>> _gamesByUser = {};
   StreamSubscription<dynamic>? a;
 
-  void connect(String username) async {
+  void connect(String username, UserProvider user) async {
     //Conectarse al servidor
     _channel = WebSocketChannel.connect(
       Uri.parse(_wsUrl),
@@ -54,6 +55,11 @@ class WebSocketProvider extends ChangeNotifier {
       } else if (type == 'notifDisconnection') {
         _removeGames(splitData);
         notifyListeners();
+      } else if (type == 'notifPayment') {
+        _updateCredits(splitData, user);
+        notifyListeners();
+      } else {
+        print("Tipo de mensaje desconocido: $type datos: $splitData");
       }
     });
     // a.onError((error) {
@@ -96,6 +102,16 @@ class WebSocketProvider extends ChangeNotifier {
     _gamesByUser.forEach((key, value) {
       value.removeWhere((element) => element.username == username);
     });
+  }
+
+  void _updateCredits(List<String> data, UserProvider user) {
+    String credits = data[2];
+    try {
+      user.loadCredits(credits as int);
+    } catch (e) {
+      //print("Error casteando str a int al cargar creditos: $e");
+      return;
+    }
   }
 
   bool get isConnected => _isConnected;
