@@ -140,11 +140,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                 OutlinedButton(
                                     style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: Colors.white),
                                     onPressed: () async {
-                                      String? path = await _showDriveDialog(context, await getDrivesOnWindows());
-                                      if (path != null && path.isNotEmpty) {
-                                        //Mostrar el dialogo para que el usuario confirme la carga del juego
-                                        _showCreateDialog(context, path, refresh);
-                                      }
+                                      _showDriveDialog(context, await getDrivesOnWindows(), null, refresh);
                                     },
                                     child: const Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -251,20 +247,6 @@ class GameItemState extends State<GameItem> {
                   fontWeight: FontWeight.normal,
                 ),
               ),
-              // Text(
-              //   "Category: ${widget.games[widget.index].category}",
-              //   style: GoogleFonts.roboto(
-              //     color: Colors.grey,
-              //     fontSize: 18.0,
-              //     fontWeight: FontWeight.normal,
-              //   ),
-              // ),
-              // Text(widget.games[widget.index].description,
-              //     style: GoogleFonts.roboto(
-              //       color: Colors.grey,
-              //       fontSize: 18.0,
-              //       fontWeight: FontWeight.normal,
-              //     )),
               Text("Game Location: ${widget.games[widget.index].path}",
                   style: GoogleFonts.roboto(
                     color: Colors.grey,
@@ -275,11 +257,7 @@ class GameItemState extends State<GameItem> {
           )),
           IconButton(
             onPressed: () async {
-              String? path = await _showDriveDialog(context, await getDrivesOnWindows());
-              if (path != null && path.isNotEmpty) {
-                //Mostrar el dialogo para que el usuario confirme la carga del juego
-                _showEditDialog(context, path, widget.index, widget.callback);
-              }
+              _showDriveDialog(context, await getDrivesOnWindows(), widget.index, widget.callback);
             },
             icon: Icon(
               Icons.edit,
@@ -384,7 +362,7 @@ Future<Iterable<String>> getDrivesOnWindows() async => LineSplitter.split((await
     .where((string) => string.isNotEmpty)
     .skip(1);
 
-Future<String?> _showDriveDialog(BuildContext context, Iterable<String> drives) async {
+void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIndexEdit, Function() dialog) async {
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -424,7 +402,22 @@ Future<String?> _showDriveDialog(BuildContext context, Iterable<String> drives) 
                               drives.elementAt(index),
                               style: AppTheme.commonText(Colors.white, 24),
                             ),
-                            onTap: () => selectPath(context, drives.elementAt(index)),
+                            onTap: () async {
+                              String? path = await selectPath(context, drives.elementAt(index));
+                              if (gameIndexEdit != null) {
+                                if (path != null && path.isNotEmpty) {
+                                  //Mostrar el dialogo para que el usuario confirme la carga del juego
+                                  Navigator.of(context).pop();
+                                  _showEditDialog(context, path, gameIndexEdit, dialog);
+                                }
+                              } else {
+                                if (path != null && path.isNotEmpty) {
+                                  //Mostrar el dialogo para que el usuario confirme la carga del juego
+                                  Navigator.of(context).pop();
+                                  _showCreateDialog(context, path, dialog);
+                                }
+                              }
+                            },
                           );
                         },
                       ),

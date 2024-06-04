@@ -29,7 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1920, 1080);
-  if (!window.Create(L"cloud_gaming", origin, size))
+  if (!window.Create(L"Cloud Gaming - Rental Service", origin, size))
   {
     return EXIT_FAILURE;
   }

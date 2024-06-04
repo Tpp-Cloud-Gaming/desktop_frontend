@@ -2,7 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/services/notifications_service.dart';
+import 'package:cloud_gaming/services/rust_communication_service.dart';
+import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class User {
@@ -19,6 +23,7 @@ class WebSocketProvider extends ChangeNotifier {
   bool _isConnected = false;
   Map<String, List<User>> _gamesByUser = {};
   StreamSubscription<dynamic>? a;
+  UserProvider? userProvider;
 
   void connect(String username, UserProvider user) async {
     //Conectarse al servidor
@@ -58,6 +63,8 @@ class WebSocketProvider extends ChangeNotifier {
       } else if (type == 'notifPayment') {
         _updateCredits(splitData, user);
         notifyListeners();
+      } else if (type == 'notifEndSession') {
+        endSession(splitData);
       } else {
         print("Tipo de mensaje desconocido: $type datos: $splitData");
       }
@@ -86,7 +93,7 @@ class WebSocketProvider extends ChangeNotifier {
     String calification = data[2];
     data.removeRange(0, 3);
 
-    data.forEach((element) {
+    for (var element in data) {
       if (_gamesByUser.containsKey(element)) {
         _gamesByUser[element]!.add(User(username: username, calification: int.parse(calification)));
       } else {
@@ -94,7 +101,7 @@ class WebSocketProvider extends ChangeNotifier {
           User(username: username, calification: int.parse(calification))
         ];
       }
-    });
+    }
   }
 
   void _removeGames(List<String> data) {
@@ -107,9 +114,8 @@ class WebSocketProvider extends ChangeNotifier {
   void _updateCredits(List<String> data, UserProvider user) {
     String credits = data[2];
     try {
-      user.loadCredits(credits as int);
+      user.loadCredits(int.parse(credits));
     } catch (e) {
-      //print("Error casteando str a int al cargar creditos: $e");
       return;
     }
   }
@@ -129,5 +135,33 @@ class WebSocketProvider extends ChangeNotifier {
     _gamesByUser = {};
     _channel!.sink.close();
     _channel = null;
+  }
+
+  void setUserProvider(UserProvider user) {
+    userProvider = user;
+  }
+
+  void endSession(List<String> data) async {
+    if (userProvider == null) {
+      return;
+    }
+
+    String offerer = data[1];
+    String receiver = data[2];
+    //int credits = int.parse(data[3]);
+    //TODO: calcularse como credito redondeado / 60
+    int credits = 5;
+
+    String username = userProvider!.user["username"];
+
+    if (username == offerer) {
+      RustCommunicationService rustCommunicationService = RustCommunicationService();
+      await rustCommunicationService.connect();
+      rustCommunicationService.startOffering(userProvider!.user["username"]);
+      rustCommunicationService.disconnect();
+      userProvider!.loadCredits(credits);
+    } else {
+      userProvider!.loadCredits(credits * -1);
+    }
   }
 }

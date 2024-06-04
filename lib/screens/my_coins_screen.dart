@@ -1,19 +1,12 @@
-import 'dart:ui';
-
 import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/background.dart';
-import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:cloud_gaming/widgets/custom_pannel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-
-import 'package:url_launcher/link.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyCoinsScreen extends StatelessWidget {
@@ -66,24 +59,22 @@ class MyCoinsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 20, top: 80),
                             child: Container(
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.white, width: 1)),
-                              height: 100,
-                              width: 300,
-                              child: Row(
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 2), color: Color.fromARGB(255, 25, 0, 59).withOpacity(0.3)),
+                              height: 300,
+                              width: 500,
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const LoadHours(
+                                  LoadHours(
                                     hours: "1",
                                     price: "1000",
                                   ),
-                                  Container(height: 100, width: 1, color: Colors.white),
-                                  const LoadHours(
+                                  LoadHours(
                                     hours: "5",
                                     price: "4500",
                                   ),
-                                  Container(height: 100, width: 1, color: Colors.white),
-                                  const LoadHours(
+                                  LoadHours(
                                     hours: "10",
                                     price: "9000",
                                   ),
@@ -91,30 +82,6 @@ class MyCoinsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(top: 40.0, left: 10),
-                          //   child: SizedBox(
-                          //     width: 280,
-                          //     height: 55,
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          //       children: [
-                          //         CoinsButton(
-                          //           title: "Load",
-                          //           onPressed: () {
-                          //             _addCoinsDialog(context, provider);
-                          //           },
-                          //         ),
-                          //         CoinsButton(
-                          //           title: "Extract",
-                          //           onPressed: () {
-                          //             _extractCoinsDialog(context, provider);
-                          //           },
-                          //         )
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ],
@@ -129,67 +96,113 @@ class MyCoinsScreen extends StatelessWidget {
   }
 }
 
-class LoadHours extends StatelessWidget {
+class LoadHours extends StatefulWidget {
   const LoadHours({super.key, required this.hours, required this.price});
   final String hours;
   final String price;
 
   @override
+  State<LoadHours> createState() => _LoadHoursState();
+}
+
+class _LoadHoursState extends State<LoadHours> {
+  Color color = Colors.white;
+  double scale = 1.0;
+  double opacity = 0.5;
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        final user = Provider.of<UserProvider>(context, listen: false);
-        if (user.user["mercadopago_mail"] == null || user.user["mercadopago_mail"] == "") {
-          NotificationsService.showSnackBar("To load credits you need a payment email. Load it in settings/Load payment account", Colors.red, AppTheme.loginPannelColor);
-        } else {
-          Map<String, dynamic>? resp = await BackendService().loadCredits(int.parse(hours), user.user["username"]);
+    return Container(
+      height: 270,
+      width: 140,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 3), color: const Color.fromARGB(255, 25, 0, 59).withOpacity(opacity)),
+      child: InkWell(
+        onHover: (value) {
+          if (value) {
+            setState(() {
+              scale = 1.1;
+              opacity = 1.0;
+            });
+          } else {
+            setState(() {
+              scale = 1.0;
+              opacity = 0.5;
+            });
+          }
+        },
+        onTap: () async {
+          final user = Provider.of<UserProvider>(context, listen: false);
+
+          Map<String, dynamic>? resp = await BackendService().loadCredits(int.parse(widget.hours), user.user["username"]);
           if (resp == null) {
             NotificationsService.showSnackBar("Error locading payment: $resp", Colors.red, AppTheme.loginPannelColor);
           } else {
             if (resp["url"] != null) {
+              //Sirve para probar pagos, dsp comentar
+              print(resp["url"]);
               _launchInBrowser(Uri.parse(resp["url"]));
             }
           }
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: hours,
-                  style: AppTheme.commonText(Colors.white, 20),
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Transform.scale(
+              scale: scale,
+              child: SizedBox(
+                height: 130,
+                width: 140,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: Text(
+                        "Coins",
+                        style: AppTheme.commonText(color, 15),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        widget.hours,
+                        style: AppTheme.commonText(color, 34),
+                      ),
+                    ),
+                  ],
                 ),
-                const WidgetSpan(
-                  child: Icon(
-                    Icons.access_time_sharp,
-                    size: 22,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: price,
-                  style: AppTheme.commonText(Colors.white, 20),
-                ),
-                const WidgetSpan(
-                  child: Icon(
-                    Icons.attach_money_rounded,
-                    size: 22,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+            Container(
+              color: Colors.white,
+              width: 140,
+              height: 3,
             ),
-          ),
-        ],
+            Transform.scale(
+              scale: scale,
+              child: SizedBox(
+                height: 130,
+                width: 140,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: Text(
+                        "Price",
+                        style: AppTheme.commonText(color, 15),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text(
+                        widget.price,
+                        style: AppTheme.commonText(color, 34),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

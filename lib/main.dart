@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,
-        locale: const Locale('es', ''), // Default
+        locale: const Locale('en', ''), // Default
         supportedLocales: const [
           Locale('en', ''), // English
           Locale('es', ''), // Spanish
@@ -72,6 +72,7 @@ class _MyAppState extends State<MyApp> {
         ],
         debugShowCheckedModeBanner: false,
         title: 'Cloud Gaming',
+
         home: remember ? const HomeScreen() : const LocationScreen(),
         routes: AppRoutes.routes,
         scaffoldMessengerKey: NotificationsService.messengerKey,

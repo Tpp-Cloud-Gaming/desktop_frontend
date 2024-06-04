@@ -1,5 +1,3 @@
-import 'package:cloud_gaming/services/notifications_service.dart';
-import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -62,7 +60,6 @@ class UserProvider extends ChangeNotifier {
       return;
     }
     _user['credits'] += credits;
-    NotificationsService.showSnackBar("The credits were loaded successfully.", Colors.green, AppTheme.loginPannelColor);
     notifyListeners();
   }
 

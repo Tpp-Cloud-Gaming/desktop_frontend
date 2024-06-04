@@ -230,6 +230,7 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     //Inicializar el web socket
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
     webSocketProvider.connect(provider.user["username"], provider);
+    webSocketProvider.setUserProvider(provider);
 
     return data;
   } else {

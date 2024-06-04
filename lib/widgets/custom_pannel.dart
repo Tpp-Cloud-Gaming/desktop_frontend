@@ -41,7 +41,7 @@ class _CustomPannelState extends State<CustomPannel> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-        width: size.width * 0.20,
+        width: size.width > 1800 ? 350 : 280,
         height: size.height,
         decoration: BoxDecoration(
           color: AppTheme.pannelColor.withOpacity(0.75),
