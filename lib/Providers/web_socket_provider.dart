@@ -6,7 +6,6 @@ import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class User {
@@ -24,6 +23,7 @@ class WebSocketProvider extends ChangeNotifier {
   Map<String, List<User>> _gamesByUser = {};
   StreamSubscription<dynamic>? a;
   UserProvider? userProvider;
+  bool _accredit = false;
 
   void connect(String username, UserProvider user) async {
     //Conectarse al servidor
@@ -62,6 +62,7 @@ class WebSocketProvider extends ChangeNotifier {
         notifyListeners();
       } else if (type == 'notifPayment') {
         _updateCredits(splitData, user);
+        _accredit = true;
         notifyListeners();
       } else if (type == 'notifEndSession') {
         endSession(splitData);
@@ -76,6 +77,12 @@ class WebSocketProvider extends ChangeNotifier {
     //   print("Done");
     // });
   }
+
+  void setAccredit(bool value) {
+    _accredit = value;
+  }
+
+  bool get accredit => _accredit;
 
   List<User> getUsersByGame(String gameName) {
     if (_gamesByUser.isEmpty) {
@@ -155,6 +162,7 @@ class WebSocketProvider extends ChangeNotifier {
     String username = userProvider!.user["username"];
 
     if (username == offerer) {
+      print("Quiero mandar start offering");
       RustCommunicationService rustCommunicationService = RustCommunicationService();
       await rustCommunicationService.connect();
       rustCommunicationService.startOffering(userProvider!.user["username"]);

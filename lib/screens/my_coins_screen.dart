@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
@@ -111,6 +113,7 @@ class _LoadHoursState extends State<LoadHours> {
   double opacity = 0.5;
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<WebSocketProvider>(context, listen: true);
     return Container(
       height: 270,
       width: 140,
@@ -139,7 +142,35 @@ class _LoadHoursState extends State<LoadHours> {
             if (resp["url"] != null) {
               //Sirve para probar pagos, dsp comentar
               print(resp["url"]);
+              provider.setAccredit(false);
               _launchInBrowser(Uri.parse(resp["url"]));
+
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Dialog(
+                          child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(15)),
+                          border: Border.all(
+                            color: Colors.blueAccent.withOpacity(0.5),
+                            width: 1.0,
+                          ),
+                          color: const Color(0xff0c1d43),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blueAccent.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 2, // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: provider.accredit ? const Text("Transaction Completed Successfully!") : const Text("Transaction Failed!"),
+                      )),
+                    );
+                  });
             }
           }
         },

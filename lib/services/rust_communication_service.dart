@@ -5,11 +5,27 @@ class RustCommunicationService {
   String ip = "127.0.0.1";
   int port = 2930;
   Socket? socket;
+  static const int maxAttempts = 5;
+  static const Duration waitDuration = Duration(seconds: 5);
 
   Future<void> connect() async {
-    //TODO: Handle connection error
-    socket = await Socket.connect(ip, port);
-    return;
+    for (int attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        print("Connecting to $ip:$port (Attempt: ${attempt + 1})");
+        socket = await Socket.connect(ip, port);
+        print("Connected successfully");
+        return;
+      } catch (e) {
+        print(e);
+        if (attempt >= maxAttempts - 1) {
+          print("Failed to connect after $maxAttempts attempts.");
+          return;
+        } else {
+          print("Waiting before next attempt...");
+          await Future.delayed(waitDuration);
+        }
+      }
+    }
   }
 
   void startOffering(String username) {
