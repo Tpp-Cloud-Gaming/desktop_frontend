@@ -1,7 +1,4 @@
 import 'package:cloud_gaming/Providers/providers.dart';
-import 'package:cloud_gaming/Providers/user_provider.dart';
-import 'package:cloud_gaming/Providers/user_provider.dart';
-import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/screens/authentication/login_screen.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/providers.dart';
-import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -61,7 +60,7 @@ class MyCoinsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(left: 20, top: 80),
                             child: Container(
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 2), color: Color.fromARGB(255, 25, 0, 59).withOpacity(0.3)),
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 2), color: const Color.fromARGB(255, 25, 0, 59).withOpacity(0.3)),
                               height: 300,
                               width: 500,
                               child: const Row(
@@ -144,33 +143,7 @@ class _LoadHoursState extends State<LoadHours> {
               print(resp["url"]);
               provider.setAccredit(false);
               _launchInBrowser(Uri.parse(resp["url"]));
-
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Dialog(
-                          child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(Radius.circular(15)),
-                          border: Border.all(
-                            color: Colors.blueAccent.withOpacity(0.5),
-                            width: 1.0,
-                          ),
-                          color: const Color(0xff0c1d43),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.blueAccent.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 2, // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: provider.accredit ? const Text("Transaction Completed Successfully!") : const Text("Transaction Failed!"),
-                      )),
-                    );
-                  });
+              Navigator.popAndPushNamed(context, "waitAccredit");
             }
           }
         },
@@ -238,172 +211,6 @@ class _LoadHoursState extends State<LoadHours> {
     );
   }
 }
-
-// class CoinsButton extends StatelessWidget {
-//   const CoinsButton({super.key, required this.title, required this.onPressed});
-//   final String title;
-//   final Function() onPressed;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SizedBox(
-//         width: 120,
-//         height: 50,
-//         child: OutlinedButton(
-//           onPressed: onPressed,
-//           style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
-//           child: Text(
-//             title,
-//             style: AppTheme.commonText(Colors.white, 18),
-//           ),
-//         ));
-//   }
-// }
-
-// void _addCoinsDialog(BuildContext context, UserProvider provider) {
-//   TextEditingController coinController = TextEditingController();
-//   showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return BackdropFilter(
-//           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-//           child: Dialog(
-//               child: Container(
-//             decoration: BoxDecoration(
-//               borderRadius: const BorderRadius.all(Radius.circular(15)),
-//               border: Border.all(
-//                 color: Colors.blueAccent.withOpacity(0.5),
-//                 width: 1.0,
-//               ),
-//               color: const Color(0xff0c1d43),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.blueAccent.withOpacity(0.5),
-//                   spreadRadius: 2,
-//                   blurRadius: 2, // changes position of shadow
-//                 ),
-//               ],
-//             ),
-//             height: 200,
-//             width: 500,
-//             child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-//               Text("Amount to load:", style: AppTheme.commonText(Colors.white, 20)),
-//               Padding(
-//                 padding: const EdgeInsets.only(left: 20, right: 20),
-//                 child: CustomInputField(
-//                   controller: coinController,
-//                   obscureText: false,
-//                   textType: TextInputType.number,
-//                   inputFormatters: <TextInputFormatter>[
-//                     FilteringTextInputFormatter.digitsOnly
-//                   ],
-//                 ),
-//               ),
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: [
-//                   OutlinedButton(
-//                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-//                       onPressed: () {
-//                         //Navigator.popAndPushNamed(context, "home");
-//                         provider.loadCredits(int.parse(coinController.text));
-//                         _launchInBrowser(Uri.parse("https://www.google.com/"));
-//                         Navigator.of(context).pop();
-//                         return;
-//                       },
-//                       child: Text(
-//                         "Confirm",
-//                         style: AppTheme.commonText(Colors.white, 18),
-//                       )),
-//                   OutlinedButton(
-//                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-//                       onPressed: () {
-//                         Navigator.of(context).pop();
-//                         return;
-//                       },
-//                       child: Text(
-//                         "Cancel",
-//                         style: AppTheme.commonText(Colors.white, 18),
-//                       ))
-//                 ],
-//               )
-//             ]),
-//           )),
-//         );
-//       });
-// }
-
-// void _extractCoinsDialog(BuildContext context, UserProvider provider) {
-//   TextEditingController coinController = TextEditingController();
-//   showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return BackdropFilter(
-//           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-//           child: Dialog(
-//               child: Container(
-//             decoration: BoxDecoration(
-//               borderRadius: const BorderRadius.all(Radius.circular(15)),
-//               border: Border.all(
-//                 color: Colors.blueAccent.withOpacity(0.5),
-//                 width: 1.0,
-//               ),
-//               color: const Color(0xff0c1d43),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.blueAccent.withOpacity(0.5),
-//                   spreadRadius: 2,
-//                   blurRadius: 2, // changes position of shadow
-//                 ),
-//               ],
-//             ),
-//             height: 200,
-//             width: 500,
-//             child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-//               Text("Amount to extract:", style: AppTheme.commonText(Colors.white, 20)),
-//               Padding(
-//                 padding: const EdgeInsets.only(left: 20, right: 20),
-//                 child: CustomInputField(
-//                   controller: coinController,
-//                   obscureText: false,
-//                   textType: TextInputType.number,
-//                   inputFormatters: <TextInputFormatter>[
-//                     FilteringTextInputFormatter.digitsOnly
-//                   ],
-//                 ),
-//               ),
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: [
-//                   OutlinedButton(
-//                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-//                       onPressed: () {
-//                         //Navigator.popAndPushNamed(context, "home");
-//                         provider.loadCredits(int.parse(coinController.text) * -1);
-//                         Navigator.of(context).pop();
-//                         return;
-//                       },
-//                       child: Text(
-//                         "Confirm",
-//                         style: AppTheme.commonText(Colors.white, 18),
-//                       )),
-//                   OutlinedButton(
-//                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-//                       onPressed: () {
-//                         Navigator.of(context).pop();
-//                         return;
-//                       },
-//                       child: Text(
-//                         "Cancel",
-//                         style: AppTheme.commonText(Colors.white, 18),
-//                       ))
-//                 ],
-//               )
-//             ]),
-//           )),
-//         );
-//       });
-// }
 
 Future<void> _launchInBrowser(Uri url) async {
   if (!await launchUrl(

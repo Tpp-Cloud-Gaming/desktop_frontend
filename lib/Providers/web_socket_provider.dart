@@ -62,8 +62,7 @@ class WebSocketProvider extends ChangeNotifier {
         notifyListeners();
       } else if (type == 'notifPayment') {
         _updateCredits(splitData, user);
-        _accredit = true;
-        notifyListeners();
+        setAccredit(true);
       } else if (type == 'notifEndSession') {
         endSession(splitData);
       } else {
@@ -80,6 +79,7 @@ class WebSocketProvider extends ChangeNotifier {
 
   void setAccredit(bool value) {
     _accredit = value;
+    notifyListeners();
   }
 
   bool get accredit => _accredit;
