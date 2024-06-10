@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
+import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/background.dart';
 import 'package:flutter/material.dart';
@@ -97,8 +98,12 @@ void _showCreateDialog(BuildContext context) {
                 children: [
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-                      onPressed: () {
+                      onPressed: () async {
                         //Notificar el stop de la sesion
+                        RustCommunicationService rustCommunicationService = RustCommunicationService();
+                        await rustCommunicationService.connect(3132);
+                        rustCommunicationService.endSession();
+                        rustCommunicationService.disconnect();
                         Navigator.popAndPushNamed(context, "home");
                         return;
                       },

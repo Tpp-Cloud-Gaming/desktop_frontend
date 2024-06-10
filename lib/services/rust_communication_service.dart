@@ -3,12 +3,12 @@ import 'dart:convert';
 
 class RustCommunicationService {
   String ip = "127.0.0.1";
-  int port = 2930;
+  //int port = 2930;
   Socket? socket;
   static const int maxAttempts = 5;
   static const Duration waitDuration = Duration(seconds: 5);
 
-  Future<void> connect() async {
+  Future<void> connect(int port) async {
     for (int attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         print("Connecting to $ip:$port (Attempt: ${attempt + 1})");
@@ -38,6 +38,12 @@ class RustCommunicationService {
     String msg = 'startGameWithUser|$usernameClient|$userToConnect|$game\n';
     socket?.encoding = utf8;
     socket?.writeln(msg);
+  }
+
+  void endSession() {
+    String msg = 'disconnect\n';
+    socket?.encoding = utf8;
+    socket?.write(msg);
   }
 
   void disconnect() {

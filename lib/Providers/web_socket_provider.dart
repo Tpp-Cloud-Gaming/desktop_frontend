@@ -164,7 +164,7 @@ class WebSocketProvider extends ChangeNotifier {
     if (username == offerer) {
       print("Quiero mandar start offering");
       RustCommunicationService rustCommunicationService = RustCommunicationService();
-      await rustCommunicationService.connect();
+      await rustCommunicationService.connect(2930);
       rustCommunicationService.startOffering(userProvider!.user["username"]);
       rustCommunicationService.disconnect();
       userProvider!.loadCredits(credits);

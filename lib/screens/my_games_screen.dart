@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/user_provider.dart';
+import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/helpers/const_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
@@ -176,9 +177,12 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                     ),
                                     onPressed: () async {
                                       RustCommunicationService rustCommunicationService = RustCommunicationService();
-                                      await rustCommunicationService.connect();
+                                      await rustCommunicationService.connect(2930);
                                       rustCommunicationService.startOffering(userProvider.user["username"]);
                                       rustCommunicationService.disconnect();
+                                      final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+                                      webSocketProvider.setConnected(true);
+                                      Navigator.pushNamed(context, "play_game");
                                     },
                                   ),
                                 ),

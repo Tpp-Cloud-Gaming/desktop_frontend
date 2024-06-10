@@ -191,7 +191,7 @@ class _UserCustomItemState extends State<UserCustomItem> {
     return InkWell(
       onTap: () async {
         RustCommunicationService rustCommunicationService = RustCommunicationService();
-        await rustCommunicationService.connect();
+        await rustCommunicationService.connect(2930);
         rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username, widget.gameName);
         rustCommunicationService.disconnect();
         final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
