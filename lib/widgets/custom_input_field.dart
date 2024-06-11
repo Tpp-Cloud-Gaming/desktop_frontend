@@ -8,8 +8,9 @@ class CustomInputField extends StatelessWidget {
   final TextEditingController controller;
   final bool obscureText;
   final List<TextInputFormatter>? inputFormatters;
+  final String? hintText;
 
-  const CustomInputField({super.key, this.textType, this.validator, required this.controller, required this.obscureText, this.inputFormatters});
+  const CustomInputField({super.key, this.textType, this.validator, required this.controller, required this.obscureText, this.inputFormatters, this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,9 @@ class CustomInputField extends StatelessWidget {
         height: 45,
         child: TextFormField(
             style: AppTheme.commonText(Colors.white, 18),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: const OutlineInputBorder(),
             ),
             keyboardType: textType,
             controller: controller,

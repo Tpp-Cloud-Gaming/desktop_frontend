@@ -1,6 +1,11 @@
+import 'dart:ui';
+
 import 'package:cloud_gaming/Providers/providers.dart';
+import 'package:cloud_gaming/helpers/helper_validations.dart';
+import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
+import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -190,13 +195,17 @@ class _UserCustomItemState extends State<UserCustomItem> {
 
     return InkWell(
       onTap: () async {
-        RustCommunicationService rustCommunicationService = RustCommunicationService();
-        await rustCommunicationService.connect(2930);
-        rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username, widget.gameName);
-        rustCommunicationService.disconnect();
-        final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-        webSocketProvider.setConnected(true);
-        Navigator.pushNamed(context, "play_game");
+        //disparar un dialog para cargar cantidad de hs y que el back lo apruebe
+        showNegociationDialog(context);
+
+        //Esto lo hace una vez tenga la aprobacion en ek back
+        // RustCommunicationService rustCommunicationService = RustCommunicationService();
+        // await rustCommunicationService.connect(2930);
+        // rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username, widget.gameName);
+        // rustCommunicationService.disconnect();
+        // final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+        // webSocketProvider.setConnected(true);
+        // Navigator.pushNamed(context, "play_game");
       },
       onHover: (value) {
         if (value) {
@@ -249,4 +258,79 @@ class _UserCustomItemState extends State<UserCustomItem> {
       ),
     );
   }
+}
+
+showNegociationDialog(BuildContext context) {
+  TextEditingController controller = TextEditingController();
+
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+  showDialog(
+      context: context,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Dialog(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
+                border: Border.all(
+                  color: Colors.blueAccent.withOpacity(0.5),
+                  width: 1.0,
+                ),
+                color: const Color(0xff0c1d43),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blueAccent.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 2, // changes position of shadow
+                  ),
+                ],
+              ),
+              height: 300,
+              width: 550,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    "How many hours do you want to play?",
+                    style: AppTheme.commonText(Colors.white, 22),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: CustomInputField(
+                      controller: controller,
+                      obscureText: false,
+                      hintText: "Hours",
+                      textType: TextInputType.number,
+                    ),
+                  ),
+                  OutlinedButton(
+                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
+                      onPressed: () {
+                        String hours = controller.text;
+
+                        try {
+                          if (userProvider.user["credits"] < int.parse(hours)) {
+                            Navigator.pop(context);
+                            NotificationsService.showSnackBar("You don't have enough credits", Colors.red, AppTheme.loginPannelColor);
+                          } else {
+                            //Aca iria la logica de validacion
+                            Navigator.pop(context);
+                          }
+                        } catch (e) {
+                          print(e);
+                          controller.clear();
+                        }
+                      },
+                      child: Text(
+                        "Confirm",
+                        style: AppTheme.commonText(Colors.white, 18),
+                      )),
+                ],
+              ),
+            ),
+          ),
+        );
+      });
 }
