@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,14 @@ class User {
   User({required this.username, required this.calification});
 }
 
+class Session {
+  String offerer;
+  int hours;
+  String gameName;
+
+  Session({required this.offerer, required this.hours, required this.gameName});
+}
+
 class WebSocketProvider extends ChangeNotifier {
   WebSocketChannel? _channel;
   final String _wsUrl = 'wss://cloud-gaming-server.onrender.com';
@@ -22,6 +31,7 @@ class WebSocketProvider extends ChangeNotifier {
   StreamSubscription<dynamic>? a;
   UserProvider? userProvider;
   bool _accredit = false;
+  Session? currentSession;
 
   void connect(String username, UserProvider user) async {
     //Conectarse al servidor

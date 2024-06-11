@@ -23,13 +23,8 @@ class _PlayGameScreenState extends State<PlayGameScreen> {
   Widget build(BuildContext context) {
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: true);
 
-    if (!webSocketProvider.isConnected) {
-      Navigator.popAndPushNamed(context, "home");
-      NotificationsService.showSnackBar("Session is disconnected", Colors.red, AppTheme.loginPannelColor);
-    }
-
     return FutureBuilder(
-        future: negociateSession(context, 100, "gameUser", "gameName"),
+        future: negociateSession(context, webSocketProvider.currentSession!),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             final colorGen = ColorFilterGenerator.getInstance();
@@ -62,6 +57,10 @@ class _PlayGameScreenState extends State<PlayGameScreen> {
               ),
             );
           } else {
+            if (!webSocketProvider.isConnected) {
+              Navigator.popAndPushNamed(context, "home");
+              NotificationsService.showSnackBar("Session is disconnected", Colors.red, AppTheme.loginPannelColor);
+            }
             return Material(
               child: Stack(
                 children: [
@@ -104,13 +103,13 @@ class _PlayGameScreenState extends State<PlayGameScreen> {
   }
 }
 
-Future<bool> negociateSession(BuildContext context, int creditos, String gameUser, String gameName) async {
+Future<bool> negociateSession(BuildContext context, Session session) async {
   //Esto lo hace una vez tenga la aprobacion en ek back
   // -> aca mandar a la api validacion de creditos
   final userProvider = Provider.of<UserProvider>(context, listen: false);
   RustCommunicationService rustCommunicationService = RustCommunicationService();
   await rustCommunicationService.connect(2930);
-  rustCommunicationService.startGameWithUser(userProvider.user["username"], gameUser, gameName);
+  rustCommunicationService.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
   rustCommunicationService.disconnect();
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
   webSocketProvider.setConnected(true);

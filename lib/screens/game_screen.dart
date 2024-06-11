@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/providers.dart';
+import 'package:cloud_gaming/Providers/web_socket_provider.dart';
+import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/helpers/helper_validations.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
@@ -196,16 +198,7 @@ class _UserCustomItemState extends State<UserCustomItem> {
     return InkWell(
       onTap: () async {
         //disparar un dialog para cargar cantidad de hs y que el back lo apruebe
-        showNegociationDialog(context);
-
-        //Esto lo hace una vez tenga la aprobacion en ek back
-        // RustCommunicationService rustCommunicationService = RustCommunicationService();
-        // await rustCommunicationService.connect(2930);
-        // rustCommunicationService.startGameWithUser(userProvider.user["username"], widget.users[widget.index].username, widget.gameName);
-        // rustCommunicationService.disconnect();
-        // final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-        // webSocketProvider.setConnected(true);
-        // Navigator.pushNamed(context, "play_game");
+        showNegociationDialog(context, widget.users[widget.index].username, widget.gameName);
       },
       onHover: (value) {
         if (value) {
@@ -260,10 +253,11 @@ class _UserCustomItemState extends State<UserCustomItem> {
   }
 }
 
-showNegociationDialog(BuildContext context) {
+showNegociationDialog(BuildContext context, String offerer, String gameName) {
   TextEditingController controller = TextEditingController();
 
   final userProvider = Provider.of<UserProvider>(context, listen: false);
+  final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
 
   showDialog(
       context: context,
@@ -316,7 +310,8 @@ showNegociationDialog(BuildContext context) {
                             NotificationsService.showSnackBar("You don't have enough credits", Colors.red, AppTheme.loginPannelColor);
                           } else {
                             //Aca iria la logica de validacion
-                            Navigator.pop(context);
+                            webSocketProvider.currentSession = Session(offerer: offerer, gameName: gameName, hours: int.parse(hours));
+                            Navigator.pushNamed(context, "play_game");
                           }
                         } catch (e) {
                           print(e);
