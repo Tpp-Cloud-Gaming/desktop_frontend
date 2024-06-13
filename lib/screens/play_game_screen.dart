@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
+import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -74,9 +75,9 @@ class _PlayGameScreenState extends State<PlayGameScreen> {
                         child: Row(
                           children: [
                             Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: GameTimer(),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: GameTimer(session: webSocketProvider.currentSession!),
                             ),
                           ],
                         ),
@@ -104,16 +105,22 @@ class _PlayGameScreenState extends State<PlayGameScreen> {
 }
 
 Future<bool> negociateSession(BuildContext context, Session session) async {
-  //Esto lo hace una vez tenga la aprobacion en ek back
-  // -> aca mandar a la api validacion de creditos
   final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+  Map<String, dynamic>? user = await BackendService().getUser();
+  if (user == null) return false;
+
+  userProvider.updateFormValue(user['user']);
+
+  if (session.hours > user['user']['credits']) return false;
+
   RustCommunicationService rustCommunicationService = RustCommunicationService();
   await rustCommunicationService.connect(2930);
   rustCommunicationService.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
   rustCommunicationService.disconnect();
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
   webSocketProvider.setConnected(true);
-  return Future(() => true);
+  return true;
 }
 
 void _showCreateDialog(BuildContext context) {
@@ -180,7 +187,8 @@ void _showCreateDialog(BuildContext context) {
 }
 
 class GameTimer extends StatefulWidget {
-  const GameTimer({super.key});
+  final Session session;
+  const GameTimer({super.key, required this.session});
 
   @override
   State<GameTimer> createState() => _GameTimerState();
@@ -200,7 +208,14 @@ class _GameTimerState extends State<GameTimer> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: segun el tiempo restante de sesion verde, amarillo o rojo
-    return Text("$minutes minutes elapsed", style: AppTheme.commonText(Colors.green.withOpacity(0.7), 40));
+    Color textColor;
+    if ((widget.session.hours * 60) > 60) {
+      textColor = Colors.green.withOpacity(0.7);
+    } else if ((widget.session.hours * 60) > 30) {
+      textColor = Colors.yellow.withOpacity(0.7);
+    } else {
+      textColor = Colors.red.withOpacity(0.7);
+    }
+    return Text("$minutes minutes elapsed of ${(widget.session.hours * 60)}", style: AppTheme.commonText(textColor, 40));
   }
 }

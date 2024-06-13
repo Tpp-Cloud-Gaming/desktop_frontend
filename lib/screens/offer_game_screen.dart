@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
-import 'package:cloud_gaming/screens/play_game_screen.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -40,10 +38,6 @@ class _PlayGameScreenState extends State<OfferGameScreen> {
                 child: Row(
                   children: [
                     Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 20.0),
-                      child: GameTimer(),
-                    ),
                   ],
                 ),
               ),
