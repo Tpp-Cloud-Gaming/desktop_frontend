@@ -1,4 +1,4 @@
-export 'package:cloud_gaming/screens/offer_game_screen.dart';
+export 'package:cloud_gaming/screens/wait_session_screen.dart';
 export 'package:cloud_gaming/screens/wait_accredit_screen.dart';
 export 'package:cloud_gaming/screens/my_coins_screen.dart';
 export 'package:cloud_gaming/screens/fav_screen.dart';

@@ -12,14 +12,9 @@ import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PlayGameScreen extends StatefulWidget {
+class PlayGameScreen extends StatelessWidget {
   const PlayGameScreen({super.key});
 
-  @override
-  State<PlayGameScreen> createState() => _PlayGameScreenState();
-}
-
-class _PlayGameScreenState extends State<PlayGameScreen> {
   @override
   Widget build(BuildContext context) {
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: true);
@@ -106,20 +101,23 @@ class _PlayGameScreenState extends State<PlayGameScreen> {
 
 Future<bool> negociateSession(BuildContext context, Session session) async {
   final userProvider = Provider.of<UserProvider>(context, listen: false);
-
-  Map<String, dynamic>? user = await BackendService().getUser();
-  if (user == null) return false;
-
-  userProvider.updateFormValue(user['user']);
-
-  if (session.hours > user['user']['credits']) return false;
-
-  RustCommunicationService rustCommunicationService = RustCommunicationService();
-  await rustCommunicationService.connect(2930);
-  rustCommunicationService.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
-  rustCommunicationService.disconnect();
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-  webSocketProvider.setConnected(true);
+
+  if (!webSocketProvider.isConnected) {
+    Map<String, dynamic>? user = await BackendService().getUser();
+    if (user == null) return false;
+
+    userProvider.updateFormValue(user['user']);
+
+    if (session.hours > user['user']['credits']) return false;
+
+    RustCommunicationService rustCommunicationService = RustCommunicationService();
+    await rustCommunicationService.connect(2930);
+    rustCommunicationService.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
+    rustCommunicationService.disconnect();
+    webSocketProvider.setConnected(true);
+  }
+
   return true;
 }
 

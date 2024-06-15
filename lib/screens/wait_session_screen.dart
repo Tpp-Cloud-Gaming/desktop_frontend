@@ -1,63 +1,93 @@
 import 'dart:ui';
-
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
-import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OfferGameScreen extends StatefulWidget {
-  const OfferGameScreen({super.key});
+class WaitSessionScreen extends StatefulWidget {
+  const WaitSessionScreen({super.key});
 
   @override
-  State<OfferGameScreen> createState() => _PlayGameScreenState();
+  State<WaitSessionScreen> createState() => _PlayGameScreenState();
 }
 
-class _PlayGameScreenState extends State<OfferGameScreen> {
+class _PlayGameScreenState extends State<WaitSessionScreen> {
   @override
   Widget build(BuildContext context) {
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: true);
 
-    if (!webSocketProvider.isConnected) {
-      Navigator.popAndPushNamed(context, "home");
-      NotificationsService.showSnackBar("Session is disconnected", Colors.red, AppTheme.loginPannelColor);
-    }
-
-    return Material(
-      child: Stack(
-        children: [
-          const BackGround(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 40, left: 80),
-                child: Row(
-                  children: [
-                    Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
-                  ],
+    if (webSocketProvider.activeSession) {
+      return Material(
+        child: Stack(
+          children: [
+            const BackGround(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 40, left: 80),
+                  child: Row(
+                    children: [
+                      Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 50.0, left: 80),
-                child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
-                    onPressed: () async {
-                      _showCreateDialog(context);
-                    },
-                    child: Text(
-                      "STOP SESSION",
-                      style: AppTheme.commonText(Colors.red, 18),
-                    )),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0, left: 80),
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
+                      onPressed: () async {
+                        _showCreateDialog(context);
+                      },
+                      child: Text(
+                        "STOP SESSION",
+                        style: AppTheme.commonText(Colors.red, 18),
+                      )),
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    } else {
+      return Material(
+        child: Stack(
+          children: [
+            const BackGround(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 40, left: 80),
+                  child: Row(
+                    children: [
+                      Text("Waiting session...", style: AppTheme.commonText(Colors.white, 50)),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0, left: 80),
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
+                      onPressed: () async {
+                        _showCreateDialog(context);
+                        webSocketProvider.activeSession = true;
+                      },
+                      child: Text(
+                        "STOP SESSION",
+                        style: AppTheme.commonText(Colors.red, 18),
+                      )),
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    }
   }
 }
 

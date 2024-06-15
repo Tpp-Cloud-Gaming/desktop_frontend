@@ -182,7 +182,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                       rustCommunicationService.disconnect();
                                       final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
                                       webSocketProvider.setConnected(true);
-                                      Navigator.pushNamed(context, "offer_game");
+                                      Navigator.pushNamed(context, "wait_session");
                                     },
                                   ),
                                 ),

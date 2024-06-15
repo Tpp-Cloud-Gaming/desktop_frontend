@@ -15,6 +15,6 @@ class AppRoutes {
     'fav': (BuildContext context) => const FavScreen(),
     'coins': (BuildContext context) => const MyCoinsScreen(),
     'waitAccredit': (BuildContext context) => const WaitAccreditScreen(),
-    'offer_game': (BuildContext context) => const OfferGameScreen(),
+    'wait_session': (BuildContext context) => const WaitSessionScreen(),
   };
 }

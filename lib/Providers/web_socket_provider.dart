@@ -27,15 +27,19 @@ class WebSocketProvider extends ChangeNotifier {
   final String _wsUrl = 'wss://cloud-gaming-server.onrender.com';
 
   bool _isConnected = false;
-  Map<String, List<User>> _gamesByUser = {
-    "The Finals": [
-      new User(username: "Test", calification: 1)
-    ]
-  };
+  Map<String, List<User>> _gamesByUser = {};
   StreamSubscription<dynamic>? a;
   UserProvider? userProvider;
   bool _accredit = false;
   Session? currentSession;
+  bool _activeSession = false;
+
+  set activeSession(bool value) {
+    _activeSession = value;
+    notifyListeners();
+  }
+
+  bool get activeSession => _activeSession;
 
   void connect(String username, UserProvider user) async {
     //Conectarse al servidor
@@ -75,8 +79,16 @@ class WebSocketProvider extends ChangeNotifier {
       } else if (type == 'notifPayment') {
         _updateCredits(splitData, user);
         setAccredit(true);
-      } else if (type == 'notifEndSession') {
-        endSession(splitData);
+      } else if (type == 'notifForceStopSession') {
+        forceEndSession(splitData);
+      } else if (type == 'sessionStarted') {
+        String offerer = splitData[1];
+        String username = userProvider!.user["username"];
+
+        if (username == offerer) {
+          print("Session started");
+          activeSession = true;
+        }
       } else {
         print("Tipo de mensaje desconocido: $type datos: $splitData");
       }
@@ -150,6 +162,7 @@ class WebSocketProvider extends ChangeNotifier {
     if (a != null) {
       a!.cancel();
     }
+    _activeSession = false;
     _isConnected = false;
     _gamesByUser = {};
     _channel!.sink.close();
@@ -160,28 +173,35 @@ class WebSocketProvider extends ChangeNotifier {
     userProvider = user;
   }
 
-  void endSession(List<String> data) async {
+  void forceEndSession(List<String> data) async {
+    //notifForceStopSession|${sessionTerminator}|${offerer}|${client}|${sessionTime};
+
     if (userProvider == null) {
       return;
     }
-
-    String offerer = data[1];
-    String receiver = data[2];
-    //int credits = int.parse(data[3]);
+    String sessionTerminator = data[1];
+    String offerer = data[2];
+    String receiver = data[3];
+    //int credits = int.parse(data[4]);
     //TODO: calcularse como credito redondeado / 60
     int credits = 5;
 
     String username = userProvider!.user["username"];
 
-    if (username == offerer) {
+    if (username != sessionTerminator && username == offerer) {
+      //Soy el sender y el cliente termino la sesion
       print("Quiero mandar start offering");
       RustCommunicationService rustCommunicationService = RustCommunicationService();
       await rustCommunicationService.connect(2930);
       rustCommunicationService.startOffering(userProvider!.user["username"]);
       rustCommunicationService.disconnect();
       userProvider!.loadCredits(credits);
-    } else {
+    } else if (username == receiver) {
       userProvider!.loadCredits(credits * -1);
+    } else if ((username == sessionTerminator && username == offerer)) {
+      userProvider!.loadCredits(credits);
     }
+    activeSession = false;
+    notifyListeners();
   }
 }
