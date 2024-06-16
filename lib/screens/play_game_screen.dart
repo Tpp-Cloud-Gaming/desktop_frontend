@@ -7,6 +7,7 @@ import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
+import 'package:cloud_gaming/widgets/back_home_button.dart';
 import 'package:cloud_gaming/widgets/background.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
@@ -57,43 +58,60 @@ class PlayGameScreen extends StatelessWidget {
               Navigator.popAndPushNamed(context, "home");
               NotificationsService.showSnackBar("Session is disconnected", Colors.red, AppTheme.loginPannelColor);
             }
-            return Material(
-              child: Stack(
-                children: [
-                  const BackGround(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 40, left: 80),
-                        child: Row(
-                          children: [
-                            Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 20.0),
-                              child: GameTimer(session: webSocketProvider.currentSession!),
-                            ),
-                          ],
+            if (webSocketProvider.activeSession) {
+              return Material(
+                child: Stack(
+                  children: [
+                    const BackGround(),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 40, left: 80),
+                          child: Row(
+                            children: [
+                              Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20.0),
+                                child: GameTimer(session: webSocketProvider.currentSession!),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 50.0, left: 80),
-                        child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
-                            onPressed: () async {
-                              _showCreateDialog(context);
-                            },
-                            child: Text(
-                              "STOP SESSION",
-                              style: AppTheme.commonText(Colors.red, 18),
-                            )),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            );
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50.0, left: 80),
+                          child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
+                              onPressed: () async {
+                                _showCreateDialog(context);
+                              },
+                              child: Text(
+                                "STOP SESSION",
+                                style: AppTheme.commonText(Colors.red, 18),
+                              )),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              );
+            } else {
+              return const Material(
+                child: Stack(
+                  children: [
+                    BackGround(),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(padding: EdgeInsets.only(top: 40, left: 80), child: BackHomeButton()),
+                      ],
+                    )
+                  ],
+                ),
+              );
+            }
           }
         });
   }
@@ -116,6 +134,7 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
     rustCommunicationService.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
     rustCommunicationService.disconnect();
     webSocketProvider.setConnected(true);
+    webSocketProvider.activeSession = true;
   }
 
   return true;
