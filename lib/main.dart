@@ -56,6 +56,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => WebSocketProvider()),
+        ChangeNotifierProvider(create: (_) => TcpProvider()),
       ],
       child: MaterialApp(
         theme: AppTheme.lightTheme,

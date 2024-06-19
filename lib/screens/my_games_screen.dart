@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:cloud_gaming/Providers/tcp_provider.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/helpers/const_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
-import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/background.dart';
 import 'package:cloud_gaming/widgets/custom_pannel.dart';
@@ -176,10 +176,9 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                       ],
                                     ),
                                     onPressed: () async {
-                                      RustCommunicationService rustCommunicationService = RustCommunicationService();
-                                      await rustCommunicationService.connect(2930);
-                                      rustCommunicationService.startOffering(userProvider.user["username"]);
-                                      rustCommunicationService.disconnect();
+                                      final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
+                                      tcpProvider.startOffering(userProvider.user["username"]);
+
                                       final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
                                       webSocketProvider.setConnected(true);
                                       Navigator.pushNamed(context, "wait_session");

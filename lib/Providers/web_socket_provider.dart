@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_gaming/Providers/providers.dart';
-import 'package:cloud_gaming/Providers/user_provider.dart';
-import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -30,6 +28,8 @@ class WebSocketProvider extends ChangeNotifier {
   Map<String, List<User>> _gamesByUser = {};
   StreamSubscription<dynamic>? a;
   UserProvider? userProvider;
+  TcpProvider? tcpProvider;
+
   bool _accredit = false;
   Session? currentSession;
   bool _activeSession = false;
@@ -173,6 +173,10 @@ class WebSocketProvider extends ChangeNotifier {
     userProvider = user;
   }
 
+  void setTcpProvider(TcpProvider tcpProvider) {
+    this.tcpProvider = tcpProvider;
+  }
+
   void forceEndSession(List<String> data) async {
     //notifForceStopSession|${sessionTerminator}|${offerer}|${client}|${sessionTime};
 
@@ -190,11 +194,12 @@ class WebSocketProvider extends ChangeNotifier {
 
     if (username != sessionTerminator && username == offerer) {
       //Soy el sender y el cliente termino la sesion
-      print("Quiero mandar start offering");
-      RustCommunicationService rustCommunicationService = RustCommunicationService();
-      await rustCommunicationService.connect(2930);
-      rustCommunicationService.startOffering(userProvider!.user["username"]);
-      rustCommunicationService.disconnect();
+      try {
+        tcpProvider!.startOffering(userProvider!.user["username"]);
+      } catch (e) {
+        print("Error al enviar mensaje de startOffering");
+      }
+
       userProvider!.loadCredits(credits);
     } else if (username == receiver) {
       userProvider!.loadCredits(credits * -1);

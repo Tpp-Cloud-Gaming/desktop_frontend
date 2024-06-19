@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:cloud_gaming/Providers/tcp_provider.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
-import 'package:cloud_gaming/services/rust_communication_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/back_home_button.dart';
 import 'package:cloud_gaming/widgets/background.dart';
@@ -129,10 +129,9 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
 
     if (session.hours > user['user']['credits']) return false;
 
-    RustCommunicationService rustCommunicationService = RustCommunicationService();
-    await rustCommunicationService.connect(2930);
-    rustCommunicationService.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
-    rustCommunicationService.disconnect();
+    final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
+    tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
+
     webSocketProvider.setConnected(true);
     webSocketProvider.activeSession = true;
   }
@@ -174,10 +173,8 @@ void _showCreateDialog(BuildContext context) {
                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
                       onPressed: () async {
                         //Notificar el stop de la sesion
-                        RustCommunicationService rustCommunicationService = RustCommunicationService();
-                        await rustCommunicationService.connect(3132);
-                        rustCommunicationService.endSession();
-                        rustCommunicationService.disconnect();
+                        final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
+                        tcpProvider.endSession();
                         Navigator.popAndPushNamed(context, "home");
                         return;
                       },

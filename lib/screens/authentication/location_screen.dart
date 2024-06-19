@@ -1,7 +1,9 @@
+import 'package:cloud_gaming/Providers/tcp_provider.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationScreen extends StatefulWidget {
@@ -89,6 +91,10 @@ class _LocationScreenState extends State<LocationScreen> {
             );
           } else {
             Future.microtask(() async {
+              //Inicializar el tcp provider
+              final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
+              tcpProvider.connect(2930);
+
               //Save the location in the shared preferences
               final prefs = await SharedPreferences.getInstance();
               prefs.setDouble("latitude", snapshot.data!.latitude);

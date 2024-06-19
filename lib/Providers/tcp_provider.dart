@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 
-class RustCommunicationService {
+class TcpProvider extends ChangeNotifier {
   String ip = "127.0.0.1";
   //int port = 2930;
   Socket? socket;

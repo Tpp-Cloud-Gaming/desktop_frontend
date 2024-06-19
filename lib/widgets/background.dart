@@ -142,9 +142,11 @@ void shutdown(BuildContext context) async {
   //Clean the providers
   final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
   final WebSocketProvider webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+  //final TcpProvider tcpProvider = Provider.of<TcpProvider>(context, listen: false);
 
   userProvider.shutdown();
   await webSocketProvider.shutdown();
+  //tcpProvider.disconnect();
 
   Navigator.push(
       context,
