@@ -21,124 +21,44 @@ class PlayGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: true);
 
-    return FutureBuilder(
-        future: negociateSession(context, webSocketProvider.currentSession!),
-        builder: (context, snapshot) {
-          if (snapshot.data == null) {
-            final colorGen = ColorFilterGenerator.getInstance();
-            final size = MediaQuery.of(context).size;
-            return Material(
-              child: Stack(
-                children: [
-                  Container(
-                    color: AppTheme.primary,
-                    child: ColorFiltered(
-                      colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
-                      child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
-                    ),
-                  ),
-                  Center(
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-                      CircularProgressIndicator(
-                        color: Colors.grey[500],
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 15.0),
-                        child: Text(
-                          "Loading...",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ),
-                    ]),
-                  ),
-                ],
+    return Material(
+      child: Stack(
+        children: [
+          const BackGround(),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 40, left: 80),
+                child: Row(
+                  children: [
+                    Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(left: 20.0),
+                    //   child: GameTimer(session: webSocketProvider.currentSession!),
+                    // ),
+                  ],
+                ),
               ),
-            );
-          } else {
-            if (!webSocketProvider.isConnected) {
-              Navigator.popAndPushNamed(context, "home");
-              NotificationsService.showSnackBar("Session is disconnected", Colors.red, AppTheme.loginPannelColor);
-            }
-            if (webSocketProvider.activeSession) {
-              return Material(
-                child: Stack(
-                  children: [
-                    const BackGround(),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40, left: 80),
-                          child: Row(
-                            children: [
-                              Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: GameTimer(session: webSocketProvider.currentSession!),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 50.0, left: 80),
-                          child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
-                              onPressed: () async {
-                                _showCreateDialog(context);
-                              },
-                              child: Text(
-                                "STOP SESSION",
-                                style: AppTheme.commonText(Colors.red, 18),
-                              )),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              );
-            } else {
-              return const Material(
-                child: Stack(
-                  children: [
-                    BackGround(),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(padding: EdgeInsets.only(top: 40, left: 80), child: BackHomeButton()),
-                      ],
-                    )
-                  ],
-                ),
-              );
-            }
-          }
-        });
+              Padding(
+                padding: const EdgeInsets.only(top: 50.0, left: 80),
+                child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
+                    onPressed: () async {
+                      _showCreateDialog(context);
+                    },
+                    child: Text(
+                      "STOP SESSION",
+                      style: AppTheme.commonText(Colors.red, 18),
+                    )),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
   }
-}
-
-Future<bool> negociateSession(BuildContext context, Session session) async {
-  final userProvider = Provider.of<UserProvider>(context, listen: false);
-  final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-
-  if (!webSocketProvider.activeSession) {
-    print("Voy a negociar una sesion");
-    Map<String, dynamic>? user = await BackendService().getUser();
-    if (user == null) return false;
-
-    userProvider.updateFormValue(user['user']);
-
-    if ((session.minutes / 60) > user['user']['credits']) return false;
-
-    final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
-    tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName, session.minutes);
-    print("Mande el startGame");
-    webSocketProvider.setConnected(true);
-    webSocketProvider.activeSession = true;
-  }
-
-  return true;
 }
 
 void _showCreateDialog(BuildContext context) {
@@ -180,7 +100,6 @@ void _showCreateDialog(BuildContext context) {
 
                         final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
                         webSocketProvider.activeSession = false;
-
                         Navigator.popAndPushNamed(context, "home");
                         return;
                       },
@@ -219,7 +138,7 @@ class _GameTimerState extends State<GameTimer> {
 
   @override
   void initState() {
-    Timer.periodic(const Duration(seconds: 60), (timer) {
+    Timer timer = Timer.periodic(const Duration(seconds: 60), (timer) {
       setState(() {
         minutes++;
       });

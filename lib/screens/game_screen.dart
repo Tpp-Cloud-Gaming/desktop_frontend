@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:cloud_gaming/Providers/providers.dart';
+import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
@@ -296,7 +297,7 @@ showNegociationDialog(BuildContext context, String offerer, String gameName) {
                   ),
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
-                      onPressed: () {
+                      onPressed: () async {
                         String hours = controller.text;
 
                         try {
@@ -306,7 +307,10 @@ showNegociationDialog(BuildContext context, String offerer, String gameName) {
                           } else {
                             //Aca iria la logica de validacion
                             webSocketProvider.currentSession = Session(offerer: offerer, gameName: gameName, minutes: int.parse(hours) * 60);
-                            Navigator.pushNamed(context, "play_game");
+
+                            if (await negociateSession(context, webSocketProvider.currentSession!)) {
+                              Navigator.pushNamed(context, "play_game");
+                            }
                           }
                         } catch (e) {
                           print(e);
@@ -323,4 +327,27 @@ showNegociationDialog(BuildContext context, String offerer, String gameName) {
           ),
         );
       });
+}
+
+Future<bool> negociateSession(BuildContext context, Session session) async {
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+
+  if (!webSocketProvider.activeSession) {
+    print("Voy a negociar una sesion");
+    Map<String, dynamic>? user = await BackendService().getUser();
+    if (user == null) return false;
+
+    userProvider.updateFormValue(user['user']);
+
+    if ((session.minutes / 60) > user['user']['credits']) return false;
+
+    final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
+    tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName, session.minutes);
+    print("Mande el startGame");
+    webSocketProvider.setConnected(true);
+    webSocketProvider.activeSession = true;
+  }
+
+  return true;
 }
