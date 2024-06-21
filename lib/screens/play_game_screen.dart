@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cloud_gaming/Providers/tcp_provider.dart';
 import 'package:cloud_gaming/Providers/user_provider.dart';
 import 'package:cloud_gaming/Providers/web_socket_provider.dart';
+import 'package:cloud_gaming/Providers/web_socket_provider.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
@@ -121,7 +122,8 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
   final userProvider = Provider.of<UserProvider>(context, listen: false);
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
 
-  if (!webSocketProvider.isConnected) {
+  if (!webSocketProvider.activeSession) {
+    print("Voy a negociar una sesion");
     Map<String, dynamic>? user = await BackendService().getUser();
     if (user == null) return false;
 
@@ -131,7 +133,7 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
 
     final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
     tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName, session.minutes);
-
+    print("Mande el startGame");
     webSocketProvider.setConnected(true);
     webSocketProvider.activeSession = true;
   }
@@ -175,6 +177,9 @@ void _showCreateDialog(BuildContext context) {
                         //Notificar el stop de la sesion
                         final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
                         tcpProvider.endSession();
+
+                        final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+                        webSocketProvider.activeSession = false;
 
                         Navigator.popAndPushNamed(context, "home");
                         return;

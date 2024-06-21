@@ -208,10 +208,7 @@ class WebSocketProvider extends ChangeNotifier {
       userProvider!.loadCredits(credits);
     }
 
-    if (username != sessionTerminator && username != receiver) {
-      activeSession = false;
-    }
-
+    activeSession = false;
     notifyListeners();
   }
 }
