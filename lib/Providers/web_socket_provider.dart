@@ -14,10 +14,10 @@ class User {
 
 class Session {
   String offerer;
-  int hours;
+  int minutes;
   String gameName;
 
-  Session({required this.offerer, required this.hours, required this.gameName});
+  Session({required this.offerer, required this.minutes, required this.gameName});
 }
 
 class WebSocketProvider extends ChangeNotifier {

@@ -127,7 +127,7 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
 
     userProvider.updateFormValue(user['user']);
 
-    if (session.hours > user['user']['credits']) return false;
+    if (session.minutes > user['user']['credits']) return false;
 
     final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
     tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
@@ -223,13 +223,13 @@ class _GameTimerState extends State<GameTimer> {
   @override
   Widget build(BuildContext context) {
     Color textColor;
-    if ((widget.session.hours * 60) > 60) {
+    if ((widget.session.minutes) > 60) {
       textColor = Colors.green.withOpacity(0.7);
-    } else if ((widget.session.hours * 60) > 30) {
+    } else if ((widget.session.minutes) > 30) {
       textColor = Colors.yellow.withOpacity(0.7);
     } else {
       textColor = Colors.red.withOpacity(0.7);
     }
-    return Text("$minutes minutes elapsed of ${(widget.session.hours * 60)}", style: AppTheme.commonText(textColor, 40));
+    return Text("$minutes minutes elapsed of ${(widget.session.minutes)}", style: AppTheme.commonText(textColor, 40));
   }
 }

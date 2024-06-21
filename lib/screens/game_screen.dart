@@ -305,7 +305,7 @@ showNegociationDialog(BuildContext context, String offerer, String gameName) {
                             NotificationsService.showSnackBar("You don't have enough credits", Colors.red, AppTheme.loginPannelColor);
                           } else {
                             //Aca iria la logica de validacion
-                            webSocketProvider.currentSession = Session(offerer: offerer, gameName: gameName, hours: int.parse(hours));
+                            webSocketProvider.currentSession = Session(offerer: offerer, gameName: gameName, minutes: int.parse(hours) * 60);
                             Navigator.pushNamed(context, "play_game");
                           }
                         } catch (e) {
