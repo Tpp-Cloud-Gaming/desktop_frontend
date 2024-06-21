@@ -194,10 +194,14 @@ class WebSocketProvider extends ChangeNotifier {
 
     if (username != sessionTerminator && username == offerer) {
       //Soy el sender y el cliente termino la sesion
-      try {
-        tcpProvider!.startOffering(userProvider!.user["username"]);
-      } catch (e) {
-        print("Error al enviar mensaje de startOffering");
+
+      String msg = await tcpProvider!.read();
+      if (msg == "readyToStart") {
+        try {
+          tcpProvider!.startOffering(userProvider!.user["username"]);
+        } catch (e) {
+          print("Error al enviar mensaje de startOffering");
+        }
       }
 
       userProvider!.loadCredits(credits);
