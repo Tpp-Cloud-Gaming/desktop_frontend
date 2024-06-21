@@ -10,6 +10,10 @@ class TcpProvider extends ChangeNotifier {
   static const Duration waitDuration = Duration(seconds: 5);
 
   Future<void> connect(int port) async {
+    if (socket != null) {
+      print("Already connected");
+      return;
+    }
     for (int attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         print("Connecting to $ip:$port (Attempt: ${attempt + 1})");
@@ -35,8 +39,8 @@ class TcpProvider extends ChangeNotifier {
     socket?.write(msg);
   }
 
-  void startGameWithUser(String usernameClient, String userToConnect, String game) {
-    String msg = 'startGameWithUser|$usernameClient|$userToConnect|$game\n';
+  void startGameWithUser(String usernameClient, String userToConnect, String game, int minutes) {
+    String msg = 'startGameWithUser|$usernameClient|$userToConnect|$game|$minutes\n';
     socket?.encoding = utf8;
     socket?.writeln(msg);
   }
@@ -49,5 +53,6 @@ class TcpProvider extends ChangeNotifier {
 
   void disconnect() {
     socket?.destroy();
+    socket = null;
   }
 }

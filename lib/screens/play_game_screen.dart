@@ -130,7 +130,7 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
     if ((session.minutes / 60) > user['user']['credits']) return false;
 
     final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
-    tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
+    tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName, session.minutes);
 
     webSocketProvider.setConnected(true);
     webSocketProvider.activeSession = true;
