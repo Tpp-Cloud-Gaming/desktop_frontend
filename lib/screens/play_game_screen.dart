@@ -127,7 +127,7 @@ Future<bool> negociateSession(BuildContext context, Session session) async {
 
     userProvider.updateFormValue(user['user']);
 
-    if (session.minutes > user['user']['credits']) return false;
+    if ((session.minutes / 60) > user['user']['credits']) return false;
 
     final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
     tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName);
