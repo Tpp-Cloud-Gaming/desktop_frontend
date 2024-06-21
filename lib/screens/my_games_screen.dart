@@ -177,14 +177,12 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                     ),
                                     onPressed: () async {
                                       final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
-                                      String msg = await tcpProvider.read();
-                                      if (msg == "readyToStart") {
-                                        tcpProvider.startOffering(userProvider.user["username"]);
 
-                                        final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-                                        webSocketProvider.setConnected(true);
-                                        Navigator.pushNamed(context, "wait_session");
-                                      }
+                                      tcpProvider.startOffering(userProvider.user["username"]);
+
+                                      final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+                                      webSocketProvider.setConnected(true);
+                                      Navigator.pushNamed(context, "wait_session");
                                     },
                                   ),
                                 ),

@@ -175,6 +175,7 @@ void _showCreateDialog(BuildContext context) {
                         //Notificar el stop de la sesion
                         final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
                         tcpProvider.endSession();
+
                         Navigator.popAndPushNamed(context, "home");
                         return;
                       },

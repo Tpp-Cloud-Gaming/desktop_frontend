@@ -35,32 +35,6 @@ class TcpProvider extends ChangeNotifier {
     }
   }
 
-  Future<String> read() async {
-    final Completer<String> completer = Completer<String>();
-    String msg = "";
-
-    socket?.listen(
-      (List<int> data) {
-        // Convertir los datos recibidos a String y completar el completer
-        msg = utf8.decode(data);
-        completer.complete(msg);
-      },
-      onDone: () {
-        // Si la conexión se cierra sin recibir datos, completar con un mensaje vacío
-        if (!completer.isCompleted) {
-          completer.complete("");
-        }
-      },
-      onError: (e) {
-        // En caso de error, completar con un mensaje vacío o manejar el error como se desee
-        completer.completeError(e);
-      },
-    );
-
-    // Esperar a que el completer se complete y luego retornar el mensaje
-    return completer.future;
-  }
-
   void startOffering(String username) {
     String msg = 'startOffering|$username\n';
     socket?.encoding = utf8;
