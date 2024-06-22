@@ -81,6 +81,8 @@ class WebSocketProvider extends ChangeNotifier {
         setAccredit(true);
       } else if (type == 'notifForceStopSession') {
         forceEndSession(splitData);
+      } else if (type == "notifEndSession") {
+        stopByTimmer(splitData);
       } else if (type == 'sessionStarted') {
         String offerer = splitData[1];
         String username = userProvider!.user["username"];
@@ -205,6 +207,29 @@ class WebSocketProvider extends ChangeNotifier {
     } else if (username == receiver) {
       userProvider!.loadCredits(credits * -1);
     } else if ((username == sessionTerminator && username == offerer)) {
+      userProvider!.loadCredits(credits);
+    }
+
+    activeSession = false;
+    notifyListeners();
+  }
+
+  void stopByTimmer(List<String> data) async {
+    if (userProvider == null) {
+      return;
+    }
+
+    String offerer = data[1];
+    String receiver = data[2];
+    //int credits = int.parse(data[3]);
+    //TODO: calcularse como credito redondeado / 60
+    int credits = 5;
+
+    String username = userProvider!.user["username"];
+
+    if (username == receiver) {
+      userProvider!.loadCredits(credits * -1);
+    } else {
       userProvider!.loadCredits(credits);
     }
 
