@@ -231,6 +231,7 @@ class WebSocketProvider extends ChangeNotifier {
       userProvider!.loadCredits(credits * -1);
     } else {
       userProvider!.loadCredits(credits);
+      tcpProvider!.startOffering(userProvider!.user["username"]);
     }
 
     activeSession = false;

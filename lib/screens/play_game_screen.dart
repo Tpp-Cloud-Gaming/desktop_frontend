@@ -55,15 +55,16 @@ class PlayGameScreen extends StatelessWidget {
         ),
       );
     } else {
-      return const Material(
+      return Material(
         child: Stack(
           children: [
-            BackGround(),
+            const BackGround(),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(padding: EdgeInsets.only(top: 40, left: 80), child: BackHomeButton()),
+                Text("Your session has ended.", style: AppTheme.commonText(Colors.white, 30)),
+                const Padding(padding: EdgeInsets.only(top: 40, left: 80), child: BackHomeButton()),
               ],
             )
           ],
