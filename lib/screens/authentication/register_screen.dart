@@ -192,7 +192,7 @@ void registerFunction(TextEditingController emailController, TextEditingControll
     usernameController.clear();
     passwordController.clear();
     emailController.clear();
-    await showRememberDialog(context);
+    //await showRememberDialog(context);
     Navigator.of(context).pushReplacementNamed("home");
   }
 }

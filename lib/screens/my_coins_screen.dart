@@ -17,6 +17,14 @@ class MyCoinsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final provider = Provider.of<UserProvider>(context, listen: true);
+
+    int totalMinutes = provider.credits;
+    int hours = totalMinutes ~/ 60;
+    int minutes = totalMinutes % 60;
+
+    String formattedTime = "$hours hours and $minutes minutes";
+
+    int hourPrice = 3000;
     return Material(
       child: Stack(
         children: [
@@ -44,15 +52,10 @@ class MyCoinsScreen extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                const Image(
-                                  image: AssetImage("assets/pannel-icons/load_coin.png"),
-                                  height: 60,
-                                  width: 60,
-                                  filterQuality: FilterQuality.high,
-                                ),
+                                Text("Available time:", style: AppTheme.commonText(Colors.white, 34)),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10, left: 20),
-                                  child: Text("${provider.credits}", style: AppTheme.commonText(Colors.white, 24)),
+                                  child: Text(formattedTime, style: AppTheme.commonText(Colors.white, 24)),
                                 )
                               ],
                             ),
@@ -63,21 +66,21 @@ class MyCoinsScreen extends StatelessWidget {
                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 2), color: const Color.fromARGB(255, 25, 0, 59).withOpacity(0.3)),
                               height: 300,
                               width: 500,
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   LoadHours(
                                     hours: "1",
-                                    price: "1000",
+                                    price: hourPrice.toString(),
+                                  ),
+                                  LoadHours(
+                                    hours: "3",
+                                    price: (hourPrice * 3).toString(),
                                   ),
                                   LoadHours(
                                     hours: "5",
-                                    price: "4500",
-                                  ),
-                                  LoadHours(
-                                    hours: "10",
-                                    price: "9000",
+                                    price: (hourPrice * 5).toString(),
                                   ),
                                 ],
                               ),
@@ -160,7 +163,7 @@ class _LoadHoursState extends State<LoadHours> {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: Text(
-                        "Coins",
+                        "Hours",
                         style: AppTheme.commonText(color, 15),
                       ),
                     ),

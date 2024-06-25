@@ -1,4 +1,5 @@
 import 'package:cloud_gaming/helpers/google_username_helper.dart';
+import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/desktop_oauth_manager.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
@@ -50,6 +51,7 @@ class GoogleAuthScreen extends StatelessWidget {
                 if (isRegister) {
                   await registerUserInBack(context);
                 }
+                //await showRememberDialog(context);
                 Navigator.of(context).pushReplacementNamed("home");
               });
               return Stack(

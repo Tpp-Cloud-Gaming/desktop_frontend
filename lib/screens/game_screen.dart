@@ -250,10 +250,11 @@ class _UserCustomItemState extends State<UserCustomItem> {
 }
 
 showNegociationDialog(BuildContext context, String offerer, String gameName) {
-  TextEditingController controller = TextEditingController();
+  //TextEditingController controller = TextEditingController();
 
   final userProvider = Provider.of<UserProvider>(context, listen: false);
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
+  String? dropdownvalue;
 
   showDialog(
       context: context,
@@ -279,49 +280,12 @@ showNegociationDialog(BuildContext context, String offerer, String gameName) {
               ),
               height: 300,
               width: 550,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    "How many hours do you want to play?",
-                    style: AppTheme.commonText(Colors.white, 22),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: CustomInputField(
-                      controller: controller,
-                      obscureText: false,
-                      hintText: "Hours",
-                      textType: TextInputType.number,
-                    ),
-                  ),
-                  OutlinedButton(
-                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
-                      onPressed: () async {
-                        String hours = controller.text;
-
-                        try {
-                          if (userProvider.user["credits"] < int.parse(hours)) {
-                            Navigator.pop(context);
-                            NotificationsService.showSnackBar("You don't have enough credits", Colors.red, AppTheme.loginPannelColor);
-                          } else {
-                            //Aca iria la logica de validacion
-                            webSocketProvider.currentSession = Session(offerer: offerer, gameName: gameName, minutes: int.parse(hours) * 60);
-
-                            if (await negociateSession(context, webSocketProvider.currentSession!)) {
-                              Navigator.pushNamed(context, "play_game");
-                            }
-                          }
-                        } catch (e) {
-                          print(e);
-                          controller.clear();
-                        }
-                      },
-                      child: Text(
-                        "Confirm",
-                        style: AppTheme.commonText(Colors.white, 18),
-                      )),
-                ],
+              child: HourSelector(
+                //controller: controller,
+                userProvider: userProvider,
+                webSocketProvider: webSocketProvider,
+                offerer: offerer,
+                gameName: gameName,
               ),
             ),
           ),
@@ -329,22 +293,128 @@ showNegociationDialog(BuildContext context, String offerer, String gameName) {
       });
 }
 
+class HourSelector extends StatefulWidget {
+  const HourSelector({
+    super.key,
+    //required this.controller,
+    required this.userProvider,
+    required this.webSocketProvider,
+    required this.offerer,
+    required this.gameName,
+  });
+
+  //final TextEditingController controller;
+  final UserProvider userProvider;
+  final WebSocketProvider webSocketProvider;
+  final String offerer;
+  final String gameName;
+
+  @override
+  State<HourSelector> createState() => _HourSelectorState();
+}
+
+class _HourSelectorState extends State<HourSelector> {
+  String dropdownvalue = '1 min';
+
+  var items = [
+    '1 min',
+    '30 min',
+    '1 hour',
+    '2 hours',
+    '3 hours',
+  ];
+
+  Map<String, int> itemValues = {
+    '1 min': 1,
+    '30 min': 30,
+    '1 hour': 60,
+    '2 hours': 120,
+    '3 hours': 180,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          "How many hours do you want to play?",
+          style: AppTheme.commonText(Colors.white, 22),
+        ),
+        Theme(
+          data: ThemeData.dark(),
+          child: DropdownButton(
+            // Initial Value
+            value: dropdownvalue,
+
+            // Down Arrow Icon
+            icon: const Icon(Icons.keyboard_arrow_down),
+
+            // Array list of items
+            items: items.map((String items) {
+              return DropdownMenuItem(
+                value: items,
+                child: Text(items, style: AppTheme.commonText(Colors.white, 16)),
+              );
+            }).toList(),
+            // After selecting the desired option,it will
+            // change button value to selected value
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownvalue = newValue!;
+              });
+            },
+          ),
+        ),
+        OutlinedButton(
+            style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
+            onPressed: () async {
+              //String hours = widget.controller.text;
+              if (itemValues[dropdownvalue] == null) {
+                NotificationsService.showSnackBar("Please select a time", Colors.red, AppTheme.loginPannelColor);
+                return;
+              }
+              int minutes = itemValues[dropdownvalue]!;
+              try {
+                if (widget.userProvider.user["credits"] < minutes) {
+                  Navigator.pop(context);
+                  NotificationsService.showSnackBar("You don't have enough credits", Colors.red, AppTheme.loginPannelColor);
+                } else {
+                  //Aca iria la logica de validacion
+                  widget.webSocketProvider.currentSession = Session(offerer: widget.offerer, gameName: widget.gameName, minutes: minutes);
+
+                  if (await negociateSession(context, widget.webSocketProvider.currentSession!)) {
+                    Navigator.pushNamed(context, "play_game");
+                  }
+                }
+              } catch (e) {
+                print(e);
+              }
+            },
+            child: Text(
+              "Confirm",
+              style: AppTheme.commonText(Colors.white, 18),
+            )),
+      ],
+    );
+  }
+}
+
 Future<bool> negociateSession(BuildContext context, Session session) async {
   final userProvider = Provider.of<UserProvider>(context, listen: false);
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
 
   if (!webSocketProvider.activeSession) {
-    print("Voy a negociar una sesion");
     Map<String, dynamic>? user = await BackendService().getUser();
     if (user == null) return false;
 
     userProvider.updateFormValue(user['user']);
 
-    if ((session.minutes / 60) > user['user']['credits']) return false;
+    if (session.minutes > user['user']['credits']) return false;
 
     final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
     tcpProvider.startGameWithUser(userProvider.user["username"], session.offerer, session.gameName, session.minutes);
-    print("Mande el startGame");
+
     webSocketProvider.setConnected(true);
     webSocketProvider.activeSession = true;
   }

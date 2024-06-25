@@ -25,7 +25,11 @@ class WebSocketProvider extends ChangeNotifier {
   final String _wsUrl = 'wss://cloud-gaming-server.onrender.com';
 
   bool _isConnected = false;
-  Map<String, List<User>> _gamesByUser = {};
+  Map<String, List<User>> _gamesByUser = {
+    "The Finals": [
+      new User(username: "user1", calification: 4)
+    ]
+  };
   StreamSubscription<dynamic>? a;
   UserProvider? userProvider;
   TcpProvider? tcpProvider;

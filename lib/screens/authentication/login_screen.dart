@@ -196,7 +196,7 @@ void loginFunction(TextEditingController emailController, TextEditingController 
 
       emailController.clear();
       passwordController.clear();
-      await showRememberDialog(context);
+      //await showRememberDialog(context);
       Navigator.of(context).pushReplacementNamed("home");
 
       // } else {

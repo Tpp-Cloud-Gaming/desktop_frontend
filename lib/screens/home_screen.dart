@@ -211,6 +211,7 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
     List<Map<String, dynamic>>? games = await BackendService().getAllGames();
     if (user == null || games == null) {
       prefs.setBool('remember', false);
+      Navigator.popAndPushNamed(context, 'login');
       return {};
     }
     //Decodificar la lista de juegos del usuario
