@@ -12,7 +12,7 @@ class FavScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final ScrollController _controller = ScrollController();
+    final ScrollController controller = ScrollController();
     final provider = Provider.of<UserProvider>(context, listen: false);
     return Material(
       child: Stack(
@@ -42,12 +42,12 @@ class FavScreen extends StatelessWidget {
                             child: Padding(
                               padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.05),
                               child: Scrollbar(
-                                controller: _controller,
+                                controller: controller,
                                 thumbVisibility: true,
                                 child: SizedBox(
                                   width: size.width > 1400 ? size.width * 0.75 : size.width * 0.9,
                                   child: GridView.builder(
-                                    controller: _controller,
+                                    controller: controller,
                                     padding: const EdgeInsets.only(right: 200, top: 100),
                                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                       //segun la resolucion de la pantalla se ajusta el numero de juegos a mostrar

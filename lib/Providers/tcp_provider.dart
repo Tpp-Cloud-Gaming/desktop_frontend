@@ -42,9 +42,7 @@ class TcpProvider extends ChangeNotifier {
   }
 
   void startGameWithUser(String usernameClient, String userToConnect, String game, int minutes) {
-    //String msg = 'startGameWithUser|$usernameClient|$userToConnect|$game|$minutes\n';
-    //Hardcodeado para pruebas:
-    String msg = 'startGameWithUser|$usernameClient|$userToConnect|$game|1\n';
+    String msg = 'startGameWithUser|$usernameClient|$userToConnect|$game|$minutes\n';
     socket?.encoding = utf8;
     socket?.writeln(msg);
   }

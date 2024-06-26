@@ -3,7 +3,6 @@ import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
-import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -107,6 +106,7 @@ class GameScreen extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class FavGameButton extends StatefulWidget {
   FavGameButton({
     super.key,
@@ -189,8 +189,6 @@ class _UserCustomItemState extends State<UserCustomItem> {
   Color color = Colors.white;
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-
     return InkWell(
       onTap: () async {
         //disparar un dialog para cargar cantidad de hs y que el back lo apruebe
@@ -250,11 +248,8 @@ class _UserCustomItemState extends State<UserCustomItem> {
 }
 
 showNegociationDialog(BuildContext context, String offerer, String gameName) {
-  //TextEditingController controller = TextEditingController();
-
   final userProvider = Provider.of<UserProvider>(context, listen: false);
   final webSocketProvider = Provider.of<WebSocketProvider>(context, listen: false);
-  String? dropdownvalue;
 
   showDialog(
       context: context,

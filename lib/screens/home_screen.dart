@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final ScrollController _controller = ScrollController();
+    final ScrollController controller = ScrollController();
     final colorGen = ColorFilterGenerator.getInstance();
     final provider = Provider.of<UserProvider>(context, listen: false);
     return FutureBuilder(
@@ -73,12 +73,12 @@ class HomeScreen extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.05),
                             child: Scrollbar(
-                              controller: _controller,
+                              controller: controller,
                               thumbVisibility: true,
                               child: SizedBox(
                                 width: size.width > 1400 ? size.width * 0.75 : size.width * 0.9,
                                 child: GridView.builder(
-                                  controller: _controller,
+                                  controller: controller,
                                   padding: const EdgeInsets.only(right: 200, top: 100),
                                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                     //segun la resolucion de la pantalla se ajusta el numero de juegos a mostrar
@@ -203,7 +203,6 @@ Future<Map<String, dynamic>> loadData(BuildContext context, UserProvider provide
   Map<String, dynamic> data = {};
   if (provider.firstLogin) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool remember = prefs.getBool('remember') ?? false;
 
     String? token = await FirebaseAuthService().getToken();
     print(token);

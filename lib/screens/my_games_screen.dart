@@ -371,7 +371,6 @@ void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIn
       context: context,
       builder: (BuildContext context) {
         final size = MediaQuery.of(context).size;
-        String? dropdownvalue;
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Dialog(
@@ -439,7 +438,6 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
       builder: (BuildContext context) {
         final size = MediaQuery.of(context).size;
         final provider = Provider.of<UserProvider>(context, listen: false);
-        String? dropdownvalue;
 
         return BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cloud_gaming/Providers/providers.dart';
 import 'package:cloud_gaming/services/backend_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
@@ -47,19 +45,7 @@ class MyCoinsScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 20, left: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text("Available time:", style: AppTheme.commonText(Colors.white, 34)),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10, left: 20),
-                                  child: Text(formattedTime, style: AppTheme.commonText(Colors.white, 24)),
-                                )
-                              ],
-                            ),
-                          ),
+                          Padding(padding: const EdgeInsets.only(top: 20, left: 20), child: Text("Available time: $formattedTime", style: AppTheme.commonText(Colors.white, 34))),
                           Padding(
                             padding: const EdgeInsets.only(left: 20, top: 80),
                             child: Container(

@@ -25,11 +25,7 @@ class WebSocketProvider extends ChangeNotifier {
   final String _wsUrl = 'wss://cloud-gaming-server.onrender.com';
 
   bool _isConnected = false;
-  Map<String, List<User>> _gamesByUser = {
-    "The Finals": [
-      new User(username: "user1", calification: 4)
-    ]
-  };
+  Map<String, List<User>> _gamesByUser = {};
   StreamSubscription<dynamic>? a;
   UserProvider? userProvider;
   TcpProvider? tcpProvider;
@@ -192,9 +188,7 @@ class WebSocketProvider extends ChangeNotifier {
     String sessionTerminator = data[1];
     String offerer = data[2];
     String receiver = data[3];
-    //int credits = int.parse(data[4]);
-    //TODO: calcularse como credito redondeado / 60
-    int credits = 5;
+    int credits = int.parse(data[4]);
 
     String username = userProvider!.user["username"];
 
@@ -225,9 +219,7 @@ class WebSocketProvider extends ChangeNotifier {
 
     String offerer = data[1];
     String receiver = data[2];
-    //int credits = int.parse(data[3]);
-    //TODO: calcularse como credito redondeado / 60
-    int credits = 5;
+    int credits = int.parse(data[3]);
 
     String username = userProvider!.user["username"];
 
