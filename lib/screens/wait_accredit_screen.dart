@@ -22,12 +22,12 @@ class WaitAccreditScreen extends StatelessWidget {
               children: [
                 webSocketProvider.accredit
                     ? Text(
-                        "Accreditation completed",
-                        style: AppTheme.commonText(Colors.white, 22),
+                        "ACCREDITED",
+                        style: AppTheme.commonText(Colors.white, 35, FontWeight.bold),
                       )
                     : Text(
-                        "Waiting for accreditation",
-                        style: AppTheme.commonText(Colors.white, 22),
+                        "WAITING ACCREDITATION",
+                        style: AppTheme.commonText(Colors.white, 35, FontWeight.bold),
                       ),
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),

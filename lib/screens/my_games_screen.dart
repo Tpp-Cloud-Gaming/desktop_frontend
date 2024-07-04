@@ -74,7 +74,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
             const BackGround(),
             Row(
               children: [
-                size.width > 1400 ? const CustomPannel() : Container(),
+                size.width > 1400 ? const CustomPannel(page: "my_games") : Container(),
                 Expanded(
                   child: Column(children: [
                     Align(

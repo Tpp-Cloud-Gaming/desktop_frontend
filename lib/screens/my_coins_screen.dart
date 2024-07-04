@@ -14,6 +14,7 @@ class MyCoinsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final ScrollController controller = ScrollController();
     final provider = Provider.of<UserProvider>(context, listen: true);
 
     int totalMinutes = provider.credits;
@@ -23,6 +24,25 @@ class MyCoinsScreen extends StatelessWidget {
     String formattedTime = "$hours hours and $minutes minutes";
 
     int hourPrice = 3000;
+
+    List<Map<String, String>> prices = [
+      {
+        "hours": "1",
+        "price": (hourPrice).toString(),
+        "image": "assets/prices/1hour.jpg"
+      },
+      {
+        "hours": "3",
+        "price": (hourPrice * 3).toString(),
+        "image": "assets/prices/3hours.jpg"
+      },
+      {
+        "hours": "5",
+        "price": (hourPrice * 5).toString(),
+        "image": "assets/prices/5hours.jpg"
+      },
+    ];
+
     return Material(
       child: Stack(
         children: [
@@ -30,54 +50,53 @@ class MyCoinsScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              size.width > 1400 ? const CustomPannel() : Container(),
-              Padding(
-                padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
-                child: Container(
-                  height: 500,
-                  width: size.width > 1400 ? size.width * 0.55 : size.width * 0.9,
-                  decoration: BoxDecoration(color: AppTheme.pannelColor.withOpacity(0.45), borderRadius: BorderRadius.circular(5)),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(padding: const EdgeInsets.only(top: 20, left: 20), child: Text("Available time: $formattedTime", style: AppTheme.commonText(Colors.white, 34))),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20, top: 80),
-                            child: Container(
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 2), color: const Color.fromARGB(255, 25, 0, 59).withOpacity(0.3)),
-                              height: 300,
-                              width: 500,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  LoadHours(
-                                    hours: "1",
-                                    price: hourPrice.toString(),
-                                  ),
-                                  LoadHours(
-                                    hours: "3",
-                                    price: (hourPrice * 3).toString(),
-                                  ),
-                                  LoadHours(
-                                    hours: "5",
-                                    price: (hourPrice * 5).toString(),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+              size.width > 1400 ? const CustomPannel(page: "coins") : Container(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 60, top: 70),
+                    child: Text("CHOOSE YOUR PACK", style: AppTheme.commonText(Colors.white, 35, FontWeight.bold)),
                   ),
-                ),
-              ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 60, top: 20),
+                    child: Text("Available time: $formattedTime", style: AppTheme.commonText(Colors.white, 32)),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: size.width * 0.03, left: size.width * 0.05),
+                      child: Scrollbar(
+                        controller: controller,
+                        thumbVisibility: true,
+                        child: SizedBox(
+                          width: size.width > 1400 ? size.width * 0.75 : size.width * 0.9,
+                          child: GridView.builder(
+                            controller: controller,
+                            padding: const EdgeInsets.only(right: 200, top: 100),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              //segun la resolucion de la pantalla se ajusta el numero de juegos a mostrar
+                              crossAxisCount: size.width > 1800
+                                  ? 4
+                                  : size.width > 1400
+                                      ? 3
+                                      : 2, // number of items in each row
+                              mainAxisSpacing: 5.0, // spacing between rows
+                              crossAxisSpacing: 5.0, // spacing between columns
+                            ),
+                            itemCount: prices.length,
+                            itemBuilder: (context, index) {
+                              return PriceCard(
+                                item: prices[index],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           )
         ],
@@ -86,111 +105,90 @@ class MyCoinsScreen extends StatelessWidget {
   }
 }
 
-class LoadHours extends StatefulWidget {
-  const LoadHours({super.key, required this.hours, required this.price});
-  final String hours;
-  final String price;
+class PriceCard extends StatefulWidget {
+  const PriceCard({super.key, required this.item});
+
+  final Map<String, String> item;
 
   @override
-  State<LoadHours> createState() => _LoadHoursState();
+  State<PriceCard> createState() => _PriceCardState();
 }
 
-class _LoadHoursState extends State<LoadHours> {
-  Color color = Colors.white;
+class _PriceCardState extends State<PriceCard> {
   double scale = 1.0;
-  double opacity = 0.5;
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WebSocketProvider>(context, listen: true);
-    return Container(
-      height: 270,
-      width: 140,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Colors.white, width: 3), color: const Color.fromARGB(255, 25, 0, 59).withOpacity(opacity)),
-      child: InkWell(
-        onHover: (value) {
-          if (value) {
-            setState(() {
-              scale = 1.1;
-              opacity = 1.0;
-            });
-          } else {
-            setState(() {
-              scale = 1.0;
-              opacity = 0.5;
-            });
-          }
-        },
-        onTap: () async {
-          final user = Provider.of<UserProvider>(context, listen: false);
+    return InkWell(
+      onTap: () async {
+        final user = Provider.of<UserProvider>(context, listen: false);
 
-          Map<String, dynamic>? resp = await BackendService().loadCredits(int.parse(widget.hours), user.user["username"]);
-          if (resp == null) {
-            NotificationsService.showSnackBar("Error locading payment: $resp", Colors.red, AppTheme.loginPannelColor);
-          } else {
-            if (resp["url"] != null) {
-              //Sirve para probar pagos, dsp comentar
-              print(resp["url"]);
-              provider.setAccredit(false);
-              _launchInBrowser(Uri.parse(resp["url"]));
-              Navigator.popAndPushNamed(context, "waitAccredit");
-            }
+        Map<String, dynamic>? resp = await BackendService().loadCredits(int.parse(widget.item["hours"] ?? "0"), user.user["username"]);
+        if (resp == null) {
+          NotificationsService.showSnackBar("Error locading payment: $resp", Colors.red, AppTheme.loginPannelColor);
+        } else {
+          if (resp["url"] != null) {
+            //Sirve para probar pagos, dsp comentar
+            print(resp["url"]);
+            provider.setAccredit(false);
+            _launchInBrowser(Uri.parse(resp["url"]));
+            Navigator.popAndPushNamed(context, "waitAccredit");
           }
-        },
+        }
+      },
+      onHover: (value) {
+        if (value) {
+          setState(() {
+            scale = 1.1;
+          });
+        } else {
+          setState(() {
+            scale = 1.0;
+          });
+        }
+      },
+      child: Transform.scale(
+        scale: scale,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Transform.scale(
-              scale: scale,
-              child: SizedBox(
-                height: 130,
-                width: 140,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: Text(
-                        "Hours",
-                        style: AppTheme.commonText(color, 15),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        widget.hours,
-                        style: AppTheme.commonText(color, 34),
-                      ),
-                    ),
-                  ],
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  widget.item["image"] ?? 'assets/no-image.jpg',
+                  width: 190,
+                  height: 240,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            Container(
-              color: Colors.white,
-              width: 140,
-              height: 3,
+            const SizedBox(
+              height: 5,
             ),
-            Transform.scale(
-              scale: scale,
-              child: SizedBox(
-                height: 130,
-                width: 140,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: Text(
-                        "Price",
-                        style: AppTheme.commonText(color, 15),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        widget.price,
-                        style: AppTheme.commonText(color, 34),
-                      ),
-                    ),
-                  ],
+            SizedBox(
+              height: 25,
+              width: 170,
+              child: Center(
+                child: Text(
+                  "${widget.item["price"]} ARS",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
               ),
             ),

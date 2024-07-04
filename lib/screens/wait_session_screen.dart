@@ -23,31 +23,26 @@ class _PlayGameScreenState extends State<WaitSessionScreen> {
         child: Stack(
           children: [
             const BackGround(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, left: 80),
-                  child: Row(
-                    children: [
-                      Text("Your session is in progress", style: AppTheme.commonText(Colors.white, 50)),
-                    ],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("YOUR SESSION IS IN PROGRESS", style: AppTheme.commonText(Colors.white, 40, FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40.0),
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), backgroundColor: const Color(0xFFD9D9D9)),
+                        onPressed: () async {
+                          _showCreateDialog(context);
+                        },
+                        child: Text(
+                          "STOP SESSION",
+                          style: AppTheme.commonText(const Color(0xFF902424), 18, FontWeight.bold),
+                        )),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0, left: 80),
-                  child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
-                      onPressed: () async {
-                        _showCreateDialog(context);
-                      },
-                      child: Text(
-                        "STOP SESSION",
-                        style: AppTheme.commonText(Colors.red, 18),
-                      )),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
@@ -57,32 +52,26 @@ class _PlayGameScreenState extends State<WaitSessionScreen> {
         child: Stack(
           children: [
             const BackGround(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, left: 80),
-                  child: Row(
-                    children: [
-                      Text("Waiting session...", style: AppTheme.commonText(Colors.white, 50)),
-                    ],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("WAITING SESSION...", style: AppTheme.commonText(Colors.white, 40, FontWeight.bold)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40, right: 25),
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), backgroundColor: const Color(0xFFD9D9D9)),
+                        onPressed: () async {
+                          _showCreateDialog(context);
+                        },
+                        child: Text(
+                          "STOP SESSION",
+                          style: AppTheme.commonText(const Color(0xFF902424), 18, FontWeight.bold),
+                        )),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0, left: 80),
-                  child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary.withOpacity(0.7)),
-                      onPressed: () async {
-                        _showCreateDialog(context);
-                        webSocketProvider.activeSession = true;
-                      },
-                      child: Text(
-                        "STOP SESSION",
-                        style: AppTheme.commonText(Colors.red, 18),
-                      )),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
@@ -114,39 +103,41 @@ void _showCreateDialog(BuildContext context) {
                 ),
               ],
             ),
-            height: 200,
-            width: 500,
-            child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              Text("Are you sure you want to stop the session?", style: AppTheme.commonText(Colors.black, 20)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  OutlinedButton(
-                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-                      onPressed: () async {
-                        //Notificar el stop de la sesion
-                        final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
-                        tcpProvider.endSession();
-                        Navigator.popAndPushNamed(context, "home");
-                        return;
-                      },
-                      child: Text(
-                        "YES",
-                        style: AppTheme.commonText(Colors.black, 18),
-                      )),
-                  OutlinedButton(
-                      style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.loginButtonColor),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        return;
-                      },
-                      child: Text(
-                        "NO",
-                        style: AppTheme.commonText(Colors.black, 18),
-                      ))
-                ],
-              )
-            ]),
+            height: 300,
+            width: 700,
+            child: Center(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                Text("Are you sure you want to stop the session?", style: AppTheme.commonText(Colors.white, 30)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    OutlinedButton(
+                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: const Color(0xFFD9D9D9)),
+                        onPressed: () async {
+                          //Notificar el stop de la sesion
+                          final tcpProvider = Provider.of<TcpProvider>(context, listen: false);
+                          tcpProvider.endSession();
+                          Navigator.popAndPushNamed(context, "home");
+                          return;
+                        },
+                        child: Text(
+                          "YES",
+                          style: AppTheme.commonText(AppTheme.primary, 18, FontWeight.bold),
+                        )),
+                    OutlinedButton(
+                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: const Color(0xFFD9D9D9)),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          return;
+                        },
+                        child: Text(
+                          "NO",
+                          style: AppTheme.commonText(AppTheme.primary, 18, FontWeight.bold),
+                        ))
+                  ],
+                )
+              ]),
+            ),
           )),
         );
       });

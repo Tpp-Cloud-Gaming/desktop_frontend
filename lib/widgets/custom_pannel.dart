@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../themes/app_theme.dart';
 
 class CustomPannel extends StatefulWidget {
-  const CustomPannel({super.key});
+  const CustomPannel({super.key, this.page});
+
+  final String? page;
 
   @override
   State<CustomPannel> createState() => _CustomPannelState();
@@ -12,34 +14,35 @@ class CustomPannel extends StatefulWidget {
 class _CustomPannelState extends State<CustomPannel> {
   List<Map<String, dynamic>> items = [
     {
-      'image': 'assets/pannel-icons/joystick.png',
-      'title': 'My Games',
+      'image': 'assets/pannel-icons/games.png',
+      'title': 'GAMES',
       'page': 'my_games',
-      'color': Colors.white
+      'color': const Color.fromARGB(255, 225, 186, 186).withOpacity(0.4)
     },
     {
-      'image': 'assets/pannel-icons/favourite.png',
-      'title': 'Favourites',
+      'image': 'assets/pannel-icons/favorite.png',
+      'title': 'FAVORITES',
       'page': 'fav',
-      'color': Colors.red.withOpacity(0.8)
+      'color': const Color.fromARGB(255, 225, 186, 186).withOpacity(0.4)
     },
     {
-      'image': 'assets/pannel-icons/load_coin.png',
-      'title': 'My Coins',
+      'image': 'assets/pannel-icons/credits.png',
+      'title': 'CREDITS',
       'page': 'coins',
-      'color': null
+      'color': const Color.fromARGB(255, 225, 186, 186).withOpacity(0.4)
     },
     {
       'image': 'assets/pannel-icons/settings.png',
-      'title': 'Settings',
+      'title': 'SETTINGS',
       'page': 'settings',
-      'color': Colors.white
+      'color': const Color.fromARGB(255, 225, 186, 186).withOpacity(0.4)
     },
   ];
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return Container(
         width: size.width > 1800 ? 350 : 280,
         height: size.height,
@@ -56,14 +59,14 @@ class _CustomPannelState extends State<CustomPannel> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: size.height * 0.2, left: size.width * 0.02),
+              padding: EdgeInsets.only(top: size.height * 0.2),
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: EdgeInsets.all(size.height * 0.01),
-                    child: CustomItem(item: items[index], context: context),
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: CustomItem(item: items[index], context: context, page: widget.page ?? ""),
                   );
                 },
               ),
@@ -97,7 +100,8 @@ class _AppLogoButtonState extends State<AppLogoButton> {
 class CustomItem extends StatefulWidget {
   final BuildContext context;
   final Map<String, dynamic> item;
-  const CustomItem({super.key, required this.context, required this.item});
+  final String page;
+  const CustomItem({super.key, required this.context, required this.item, required this.page});
 
   @override
   State<CustomItem> createState() => _CustomItemState();
@@ -124,7 +128,9 @@ class _CustomItemState extends State<CustomItem> {
         }
       },
       style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         side: const BorderSide(color: Colors.transparent),
+        backgroundColor: widget.item["page"] == widget.page ? const Color.fromRGBO(158, 111, 70, 0.2) : Colors.transparent,
       ),
       onPressed: () {
         Navigator.pushNamed(context, widget.item["page"]);
@@ -148,7 +154,7 @@ class _CustomItemState extends State<CustomItem> {
               padding: const EdgeInsets.only(left: 10),
               child: Text(
                 widget.item["title"],
-                style: AppTheme.commonText(color, 24),
+                style: AppTheme.commonText(color, 30),
               ),
             ),
           ],

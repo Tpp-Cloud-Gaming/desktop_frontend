@@ -35,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              size.width > 1400 ? const CustomPannel() : Container(),
+              size.width > 1400 ? const CustomPannel(page: "settings") : Container(),
               Padding(
                 padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
                 child: Container(
