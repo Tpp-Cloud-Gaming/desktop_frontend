@@ -57,14 +57,21 @@ class _ProfileCardState extends State<ProfileCard> {
 
   @override
   Widget build(BuildContext context) {
-    String username = widget.provider.user["username"] ?? "";
+    String username = (widget.provider.user["username"] ?? "").toUpperCase();
+    int credits = widget.provider.user["credits"] ?? 0;
+    int hours = credits ~/ 60;
+    int minutes = credits % 60;
+    String hoursString = hours.toString();
+    String minutesString = minutes.toString();
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),
       child: InkWell(
         onTap: () {
-          setState(() {
-            showWidget = !showWidget;
-          });
+          // setState(() {
+          //   showWidget = !showWidget;
+          // });
+          Navigator.popAndPushNamed(context, "coins");
         },
         onHover: (value) {
           if (!showWidget) {
@@ -85,45 +92,68 @@ class _ProfileCardState extends State<ProfileCard> {
           children: [
             Container(
               color: color,
-              height: 75,
-              width: 200,
+              height: 60,
+              width: 330,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.person, color: personColor, size: 40),
-                  Text(
-                    username.length > 14 ? "${username.substring(0, 11)}..." : username,
-                    style: AppTheme.commonText(Colors.white, 14),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Icon(Icons.person, color: personColor, size: 40),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5, right: 15),
+                    child: Text(
+                      username.length > 14 ? "${username.substring(0, 11)}..." : username,
+                      style: AppTheme.commonText(Colors.white.withOpacity(0.6), 18),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Image.asset(
+                      color: personColor,
+                      "assets/background/watch.png",
+                      height: 40,
+                      width: 30,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Text(
+                      "${hoursString}h ${minutesString}min",
+                      style: AppTheme.commonText(Colors.white.withOpacity(0.6), 18),
+                    ),
                   ),
                 ],
               ),
             ),
-            showWidget
-                ? Container(
-                    color: AppTheme.pannelColor.withOpacity(0.75),
-                    height: 40,
-                    width: 200,
-                    child: ListTile(
-                      focusColor: AppTheme.onHoverColor.withOpacity(0.7),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Icon(
-                            Icons.logout_rounded,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            "Log Out",
-                            style: AppTheme.commonText(Colors.white, 14),
-                          ),
-                        ],
-                      ),
-                      onTap: () async {
-                        shutdown(context);
-                      },
-                    ),
-                  )
-                : Container(),
+            // showWidget
+            //     ? Container(
+            //         color: AppTheme.pannelColor.withOpacity(0.75),
+            //         height: 40,
+            //         width: 200,
+            //         child: ListTile(
+            //           focusColor: AppTheme.onHoverColor.withOpacity(0.7),
+            //           title: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //             children: [
+            //               const Icon(
+            //                 Icons.logout_rounded,
+            //                 color: Colors.white,
+            //               ),
+            //               Text(
+            //                 "Log Out",
+            //                 style: AppTheme.commonText(Colors.white, 14),
+            //               ),
+            //             ],
+            //           ),
+            //           onTap: () async {
+            //             shutdown(context);
+            //           },
+            //         ),
+            //       )
+            //     : Container(),
           ],
         ),
       ),

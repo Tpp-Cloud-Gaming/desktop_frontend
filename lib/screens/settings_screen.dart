@@ -36,52 +36,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               size.width > 1400 ? const CustomPannel(page: "settings") : Container(),
-              Padding(
-                padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
-                child: Container(
-                  height: 500,
-                  width: size.width > 1400 ? size.width * 0.55 : size.width * 0.9,
-                  decoration: BoxDecoration(color: AppTheme.pannelColor.withOpacity(0.45), borderRadius: BorderRadius.circular(5)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 40),
-                        child: Text("Settings", style: AppTheme.commonText(Colors.white54, 40)),
-                      ),
-                      //Aca listar las distintas opciones, se podría usar un GriView para mostrarlas
-                      Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 60, top: 70),
+                    child: Text("SETTINGS", style: AppTheme.commonText(Colors.white, 35, FontWeight.bold)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: size.width * 0.08, left: size.height * 0.05),
+                    child: Container(
+                      height: 500,
+                      width: size.width > 1400 ? size.width * 0.55 : size.width * 0.9,
+                      decoration: BoxDecoration(color: AppTheme.pannelColor.withOpacity(0.45), borderRadius: BorderRadius.circular(5)),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SettingOption(
-                                title: "Change Username",
-                                notifyParent: refresh,
-                                settingContainer: const ChangeUsername(),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SettingOption(
+                                    title: "Change Username",
+                                    notifyParent: refresh,
+                                    settingContainer: const ChangeUsername(),
+                                  ),
+                                  SettingOption(
+                                    title: "Load payment account",
+                                    notifyParent: refresh,
+                                    settingContainer: const LoadPaymentAccount(),
+                                  ),
+                                  SettingOption(
+                                    title: "Logout",
+                                    notifyParent: refresh,
+                                    settingContainer: const Logout(),
+                                  ),
+                                ],
                               ),
-                              SettingOption(
-                                title: "Load payment account",
-                                notifyParent: refresh,
-                                settingContainer: const LoadPaymentAccount(),
-                              ),
-                              SettingOption(
-                                title: "Logout",
-                                notifyParent: refresh,
-                                settingContainer: const Logout(),
-                              ),
+                              settingContainer
                             ],
                           ),
-                          settingContainer
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -127,7 +132,7 @@ class _SettingOptionState extends State<SettingOption> {
               });
             }
           },
-          child: Text(widget.title, style: AppTheme.commonText(color, 20))),
+          child: Text(widget.title.toUpperCase(), style: AppTheme.commonText(color, 20))),
     );
   }
 }
@@ -308,7 +313,7 @@ class Logout extends StatelessWidget {
             InkWell(
               child: Text(
                 "logout?",
-                style: AppTheme.loginTextStyle.copyWith(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold),
+                style: AppTheme.loginTextStyle.copyWith(color: AppTheme.onHoverColor, fontWeight: FontWeight.bold),
               ),
               onTap: () async {
                 shutdown(context);

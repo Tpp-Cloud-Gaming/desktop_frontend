@@ -37,9 +37,12 @@ class GoogleAuthScreen extends StatelessWidget {
                         CircularProgressIndicator(
                           color: Colors.grey[500],
                         ),
-                        const Text(
-                          "Please, verify your Google Account",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 25.0),
+                          child: Text(
+                            "Please, verify your Google Account",
+                            style: AppTheme.commonText(Colors.white, 30, FontWeight.bold),
+                          ),
                         ),
                       ]),
                     ),

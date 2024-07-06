@@ -38,11 +38,11 @@ class HomeScreen extends StatelessWidget {
                       CircularProgressIndicator(
                         color: Colors.grey[500],
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 15.0),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 25.0, left: 20),
                         child: Text(
-                          "Loading...",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          "LOADING...",
+                          style: AppTheme.commonText(Colors.white, 30, FontWeight.bold),
                         ),
                       ),
                     ]),
