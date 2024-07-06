@@ -73,7 +73,6 @@ class _MyAppState extends State<MyApp> {
         ],
         debugShowCheckedModeBanner: false,
         title: 'Cloud Gaming',
-
         home: remember ? const HomeScreen() : const LocationScreen(),
         routes: AppRoutes.routes,
         scaffoldMessengerKey: NotificationsService.messengerKey,

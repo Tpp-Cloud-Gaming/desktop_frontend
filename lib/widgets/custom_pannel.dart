@@ -136,7 +136,7 @@ class _CustomItemState extends State<CustomItem> {
         Navigator.pushNamed(context, widget.item["page"]);
       },
       child: SizedBox(
-        height: imgSize.toDouble(),
+        height: 55,
         width: 300,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,

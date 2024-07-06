@@ -55,7 +55,7 @@ class PlayGameScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("YOUR SESSION HAS ENDED", style: AppTheme.commonText(Colors.white, 40, FontWeight.bold)),
-                  const Padding(padding: EdgeInsets.only(top: 40, left: 80), child: BackHomeButton()),
+                  const Padding(padding: EdgeInsets.only(top: 40), child: BackHomeButton()),
                 ],
               ),
             )

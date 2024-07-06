@@ -29,9 +29,9 @@ class WaitAccreditScreen extends StatelessWidget {
                         "WAITING ACCREDITATION",
                         style: AppTheme.commonText(Colors.white, 35, FontWeight.bold),
                       ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: webSocketProvider.accredit ? const BackHomeButton() : const CircularProgressIndicator(),
+                const Padding(
+                  padding: EdgeInsets.only(top: 15.0),
+                  child: BackHomeButton(),
                 ),
               ],
             ),

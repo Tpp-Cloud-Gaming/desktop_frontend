@@ -128,7 +128,10 @@ class WebSocketProvider extends ChangeNotifier {
 
     for (var element in data) {
       if (_gamesByUser.containsKey(element)) {
-        _gamesByUser[element]!.add(User(username: username, calification: int.parse(calification)));
+        bool isGameAdded = _gamesByUser[element]!.any((user) => user.username == username);
+        if (!isGameAdded) {
+          _gamesByUser[element]!.add(User(username: username, calification: int.parse(calification)));
+        }
       } else {
         _gamesByUser[element] = [
           User(username: username, calification: int.parse(calification))
