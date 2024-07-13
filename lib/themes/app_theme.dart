@@ -8,16 +8,14 @@ class AppTheme {
 
   static const Color onHoverColor = Color(0xFF558088);
 
-  static const Color registerCollorContainerLetter =
-      Color.fromARGB(255, 89, 116, 167);
+  static const Color registerCollorContainerLetter = Color.fromARGB(255, 89, 116, 167);
   static const Color pannelColor = Color(0xFF233043);
   static const Color loginPannelColor = Color(0xFF1B2942);
   static const Color loginButtonColor = Color(0xFF1B2942);
   static const Color loginButtonTextColor = Color.fromARGB(249, 81, 68, 150);
 
   static const String loginBackgroundPath = 'assets/background/login.jpg';
-  static const String appBackgroundPath =
-      'assets/background/wallhaven-d6mkv3.jpg';
+  static const String appBackgroundPath = 'assets/background/wallhaven-d6mkv3.jpg';
   static const String logoPath = 'assets/logo.png';
   static const String googleIconPath = 'assets/google_icon.png';
 
@@ -42,7 +40,7 @@ class AppTheme {
     inputDecorationTheme: const InputDecorationTheme(),
   );
 
-  static TextStyle commonText(Color color, int size) {
-    return GoogleFonts.roboto(color: color, fontSize: size.toDouble());
+  static TextStyle commonText(Color color, int size, [FontWeight? weight]) {
+    return GoogleFonts.roboto(color: color, fontSize: size.toDouble(), fontWeight: weight);
   }
 }

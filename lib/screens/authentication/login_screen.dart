@@ -3,17 +3,14 @@ import 'package:cloud_gaming/helpers/remember_helper.dart';
 import 'package:cloud_gaming/screens/screens.dart';
 import 'package:cloud_gaming/services/firebase_auth_service.dart';
 import 'package:cloud_gaming/services/notifications_service.dart';
-import 'package:cloud_gaming/services/server_service.dart';
 import 'package:cloud_gaming/widgets/custom_input_field.dart';
 import 'package:cloud_gaming/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_gaming/themes/app_theme.dart';
 import 'package:fhoto_editor/fhoto_editor.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatelessWidget {
-  final ServerService server;
-  const LoginScreen({super.key, required this.server});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +27,8 @@ class LoginScreen extends StatelessWidget {
             Container(
               color: AppTheme.primary,
               child: ColorFiltered(
-                colorFilter: ColorFilter.matrix(
-                    colorGen.getHighlightedMatrix(value: 0.12)),
-                child: Image(
-                    fit: BoxFit.cover,
-                    height: size.height,
-                    width: size.width,
-                    image: const AssetImage(AppTheme.loginBackgroundPath)),
+                colorFilter: ColorFilter.matrix(colorGen.getHighlightedMatrix(value: 0.12)),
+                child: Image(fit: BoxFit.cover, height: size.height, width: size.width, image: const AssetImage(AppTheme.loginBackgroundPath)),
               ),
             ),
             Center(
@@ -55,8 +47,8 @@ class LoginScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   child: Container(
                     color: AppTheme.loginPannelColor,
-                    height: size.height * 0.55,
-                    width: size.width * 0.25,
+                    height: 600,
+                    width: 480,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -71,15 +63,14 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 30, left: 40),
+                          padding: const EdgeInsets.only(top: 10, left: 40),
                           child: Text(
                             "Email",
                             style: AppTheme.loginTextStyle,
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 40, right: 40),
+                            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
                             child: CustomInputField(
                               controller: emailController,
                               obscureText: false,
@@ -93,8 +84,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, left: 40, right: 40),
+                            padding: const EdgeInsets.only(top: 10, left: 40, right: 40),
                             child: CustomInputField(
                               controller: passwordController,
                               obscureText: true,
@@ -102,9 +92,10 @@ class LoginScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 40, top: 10),
                           child: InkWell(
-                            onTap: () {},
-                            child: Text("Forgot your password?",
-                                style: AppTheme.loginTextButtonsStyle),
+                            onTap: () {
+                              Navigator.of(context).pushNamed("forgot_password");
+                            },
+                            child: Text("Forgot your password?", style: AppTheme.loginTextButtonsStyle),
                           ),
                         ),
                         Padding(
@@ -114,8 +105,7 @@ class LoginScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 45,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 40, right: 40),
+                              padding: const EdgeInsets.only(left: 40, right: 40),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -123,28 +113,20 @@ class LoginScreen extends StatelessWidget {
                                     width: size.width * 0.10,
                                     height: 50,
                                     child: OutlinedButton(
-                                        style: OutlinedButton.styleFrom(
-                                            elevation: 10,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5)),
-                                            backgroundColor: AppTheme.primary),
+                                        style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: AppTheme.primary),
                                         onPressed: () async {
-                                          loginFunction(
-                                              emailController,
-                                              passwordController,
-                                              context,
-                                              server);
+                                          loginFunction(emailController, passwordController, context);
                                         },
                                         child: Text(
                                           "Login",
-                                          style: AppTheme.commonText(
-                                              Colors.white, 18),
+                                          style: AppTheme.commonText(Colors.white, 18),
                                         )),
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.only(left: 20.0),
-                                    child: GoogleLoginButton(),
+                                    child: GoogleLoginButton(
+                                      isRegister: false,
+                                    ),
                                   )
                                 ],
                               ),
@@ -169,12 +151,10 @@ class LoginScreen extends StatelessWidget {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute<void>(
-                                          builder: (BuildContext context) =>
-                                              RegisterScreen(server: server),
+                                          builder: (BuildContext context) => RegisterScreen(),
                                         ));
                                   },
-                                  child: Text("Register",
-                                      style: AppTheme.loginTextButtonsStyle),
+                                  child: Text("Register", style: AppTheme.loginTextButtonsStyle),
                                 ),
                               ),
                             ],
@@ -193,11 +173,7 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-void loginFunction(
-    TextEditingController emailController,
-    TextEditingController passwordController,
-    BuildContext context,
-    ServerService server) async {
+void loginFunction(TextEditingController emailController, TextEditingController passwordController, BuildContext context) async {
   String email = emailController.text;
   String password = passwordController.text;
 
@@ -208,22 +184,20 @@ void loginFunction(
   if (!validUsername || !validPassword) {
     //Mensaje por pantalla de error
     passwordController.clear();
-    NotificationsService.showSnackBar(
-        "Invalid Email or Password", Colors.red, AppTheme.loginPannelColor);
+    NotificationsService.showSnackBar("Invalid Email or Password", Colors.red, AppTheme.loginPannelColor);
   } else {
     final String? resp = await authService.loginUser(email, password);
     if (resp != null) {
       passwordController.clear();
-      NotificationsService.showSnackBar(
-          resp, Colors.red, AppTheme.loginPannelColor);
+      NotificationsService.showSnackBar(resp, Colors.red, AppTheme.loginPannelColor);
       return;
     } else {
       //if (await authService.isEmailVerified()) {
 
-      server.login(email, password, context);
       emailController.clear();
       passwordController.clear();
-      await ShowRememberDialog(context);
+      //await showRememberDialog(context);
+      Navigator.of(context).pushReplacementNamed("home");
 
       // } else {
       //   NotificationsService.showSnackBar(
