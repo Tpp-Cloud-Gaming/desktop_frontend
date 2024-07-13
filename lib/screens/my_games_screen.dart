@@ -132,7 +132,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                 width: 600,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: Colors.transparent,
                                 )),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -390,7 +390,7 @@ void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIn
                     ),
                   ],
                 ),
-                height: size.height * 0.85,
+                height: size.height * 0.15,
                 width: size.width * 0.35,
                 child: Expanded(
                   child: Column(
@@ -458,7 +458,7 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
                   ),
                 ],
               ),
-              height: size.height * 0.85,
+              height: size.height * 0.3,
               width: size.width * 0.35,
               child: Expanded(
                 child: Column(children: [
