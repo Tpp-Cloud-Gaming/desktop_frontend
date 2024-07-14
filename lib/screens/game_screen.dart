@@ -320,7 +320,7 @@ class _HourSelectorState extends State<HourSelector> {
   ];
 
   Map<String, int> itemValues = {
-    '1 min': 10,
+    '1 min': 1,
     '30 min': 30,
     '1 hour': 60,
     '2 hours': 120,

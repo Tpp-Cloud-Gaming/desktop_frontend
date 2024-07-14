@@ -74,7 +74,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
             const BackGround(),
             Row(
               children: [
-                size.width > 1400 ? const CustomPannel(page: "my_games") : Container(),
+                const CustomPannel(page: "my_games"),
                 Expanded(
                   child: Column(children: [
                     Align(
@@ -141,7 +141,7 @@ class _MyGamesScreenState extends State<MyGamesScreen> {
                                 OutlinedButton(
                                     style: OutlinedButton.styleFrom(elevation: 10, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)), backgroundColor: Colors.white),
                                     onPressed: () async {
-                                      _showDriveDialog(context, await getDrivesOnWindows(), null, refresh);
+                                      _showDriveDialog(context, await getDisks(), null, refresh);
                                     },
                                     child: const Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -261,7 +261,7 @@ class GameItemState extends State<GameItem> {
           )),
           IconButton(
             onPressed: () async {
-              _showDriveDialog(context, await getDrivesOnWindows(), widget.index, widget.callback);
+              _showDriveDialog(context, await getDisks(), widget.index, widget.callback);
             },
             icon: Icon(
               Icons.edit,
@@ -353,20 +353,47 @@ Future<String> selectPath(BuildContext context, String drive) async {
   return path ?? '';
 }
 
-Future<Iterable<String>> getDrivesOnWindows() async => LineSplitter.split((await Process.run(
-            'wmic',
-            [
-              'logicaldisk',
-              'get',
-              'caption'
-            ],
-            stdoutEncoding: const SystemEncoding()))
-        .stdout as String)
-    .map((string) => string.trim())
-    .where((string) => string.isNotEmpty)
-    .skip(1);
+Future<List<String>> getDisks() async {
+  try {
+    final result = await Process.run(
+      'wmic',
+      [
+        'logicaldisk',
+        'get',
+        'caption'
+      ],
+      stdoutEncoding: const SystemEncoding(),
+      stderrEncoding: const SystemEncoding(),
+    );
+
+    if (result.exitCode != 0) {
+      return [
+        'C'
+      ];
+    }
+
+    final disks = LineSplitter.split(result.stdout as String)
+        .map((string) => string.trim())
+        .where((string) => string.isNotEmpty)
+        .skip(1) // Saltar el encabezado
+        .toList();
+
+    return disks.isNotEmpty
+        ? disks
+        : [
+            'C'
+          ];
+  } catch (e) {
+    return [
+      'C'
+    ];
+  }
+}
 
 void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIndexEdit, Function() dialog) async {
+  if (drives.isEmpty) {
+    return;
+  }
   showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -390,13 +417,13 @@ void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIn
                     ),
                   ],
                 ),
-                height: size.height * 0.15,
-                width: size.width * 0.35,
-                child: Expanded(
-                  child: Column(
-                    children: [
-                      Text("Select Drive", style: AppTheme.commonText(Colors.white, 24)),
-                      ListView.builder(
+                height: drives.length * 75,
+                width: 500,
+                child: Column(
+                  children: [
+                    Text("Select Drive", style: AppTheme.commonText(Colors.white, 24)),
+                    Expanded(
+                      child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: drives.length,
                         itemBuilder: (context, index) {
@@ -409,13 +436,11 @@ void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIn
                               String? path = await selectPath(context, drives.elementAt(index));
                               if (gameIndexEdit != null) {
                                 if (path != null && path.isNotEmpty) {
-                                  //Mostrar el dialogo para que el usuario confirme la carga del juego
                                   Navigator.of(context).pop();
                                   _showEditDialog(context, path, gameIndexEdit, dialog);
                                 }
                               } else {
                                 if (path != null && path.isNotEmpty) {
-                                  //Mostrar el dialogo para que el usuario confirme la carga del juego
                                   Navigator.of(context).pop();
                                   _showCreateDialog(context, path, dialog);
                                 }
@@ -424,8 +449,8 @@ void _showDriveDialog(BuildContext context, Iterable<String> drives, int? gameIn
                           );
                         },
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 )),
           ),
         );
@@ -458,28 +483,28 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
                   ),
                 ],
               ),
-              height: size.height * 0.3,
-              width: size.width * 0.35,
-              child: Expanded(
-                child: Column(children: [
+              height: 350,
+              width: 700,
+              child: Column(
+                children: [
                   Padding(
-                    padding: EdgeInsets.only(top: 0.0, left: size.width * 0.02),
+                    padding: const EdgeInsets.only(top: 20.0, left: 20),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text("Selected Path: $path",
                           style: GoogleFonts.kanit(
                             color: Colors.white,
-                            fontSize: size.height * 0.03,
+                            fontSize: 22,
                             fontWeight: FontWeight.normal,
                           )),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
+                    padding: const EdgeInsets.only(left: 100, right: 100, top: 20),
                     child: DropdownGames(provider: provider),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: size.height * 0.03),
+                    padding: const EdgeInsets.only(top: 40),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -509,16 +534,16 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
                               }
                             }
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.check,
                             color: Colors.white,
-                            size: size.height * 0.04,
+                            size: 28,
                           ),
                           label: Text(
                             "Guardar",
                             style: GoogleFonts.kanit(
                               color: Colors.white,
-                              fontSize: size.height * 0.04,
+                              fontSize: 28,
                               fontWeight: FontWeight.normal,
                             ),
                           ),
@@ -534,16 +559,16 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
                             Navigator.of(context).pop();
                             return;
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.close,
                             color: Colors.white,
-                            size: size.height * 0.04,
+                            size: 28,
                           ),
                           label: Text(
                             "Cancelar",
                             style: GoogleFonts.kanit(
                               color: Colors.white,
-                              fontSize: size.height * 0.04,
+                              fontSize: 28,
                               fontWeight: FontWeight.normal,
                             ),
                           ),
@@ -556,7 +581,7 @@ void _showCreateDialog(BuildContext context, String path, Function() notifyParen
                       ],
                     ),
                   )
-                ]),
+                ],
               ),
             ),
           ),
@@ -621,8 +646,8 @@ void _showEditDialog(BuildContext context, String path, index, Function() notify
           child: SizedBox(
             child: Dialog(
               child: Container(
-                height: size.height * 0.6,
-                width: size.width * 0.4,
+                height: 350,
+                width: 700,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(15)),
                   border: Border.all(
@@ -641,31 +666,31 @@ void _showEditDialog(BuildContext context, String path, index, Function() notify
                 child: Expanded(
                   child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 40.0, left: size.width * 0.02),
+                      padding: const EdgeInsets.only(top: 20.0, left: 20),
                       child: Align(
                         alignment: Alignment.topLeft,
-                        child: Text("GameName: $game['gamename']",
+                        child: Text("GameName: ${game['gamename']}",
                             style: GoogleFonts.kanit(
                               color: Colors.white,
-                              fontSize: size.height * 0.03,
+                              fontSize: 22,
                               fontWeight: FontWeight.normal,
                             )),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20.0, left: size.width * 0.02),
+                      padding: const EdgeInsets.only(top: 20.0, left: 20),
                       child: Align(
                         alignment: Alignment.topLeft,
                         child: Text("Selected Path: $path",
                             style: GoogleFonts.kanit(
                               color: Colors.white,
-                              fontSize: size.height * 0.03,
+                              fontSize: 22,
                               fontWeight: FontWeight.normal,
                             )),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: size.height * 0.08),
+                      padding: const EdgeInsets.only(top: 40),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -692,16 +717,16 @@ void _showEditDialog(BuildContext context, String path, index, Function() notify
                                 }
                               }
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.check,
                               color: Colors.white,
-                              size: size.height * 0.04,
+                              size: 25,
                             ),
                             label: Text(
                               "Save",
                               style: GoogleFonts.kanit(
                                 color: Colors.white,
-                                fontSize: size.height * 0.04,
+                                fontSize: 25,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
@@ -716,16 +741,16 @@ void _showEditDialog(BuildContext context, String path, index, Function() notify
                               Navigator.of(context).pop();
                               return;
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.close,
                               color: Colors.white,
-                              size: size.height * 0.04,
+                              size: 25,
                             ),
                             label: Text(
                               "Cancel",
                               style: GoogleFonts.kanit(
                                 color: Colors.white,
-                                fontSize: size.height * 0.04,
+                                fontSize: 25,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),

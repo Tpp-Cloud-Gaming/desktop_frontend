@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                 const BackGround(),
                 Row(
                   children: [
-                    size.width > 1400 ? const CustomPannel() : Container(),
+                    const CustomPannel(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

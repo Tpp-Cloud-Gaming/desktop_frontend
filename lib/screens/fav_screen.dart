@@ -21,11 +21,9 @@ class FavScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              size.width > 1400
-                  ? const CustomPannel(
-                      page: "fav",
-                    )
-                  : Container(),
+              const CustomPannel(
+                page: "fav",
+              ),
               FutureBuilder(
                   future: SharedPreferences.getInstance(),
                   builder: (context, snapshot) {

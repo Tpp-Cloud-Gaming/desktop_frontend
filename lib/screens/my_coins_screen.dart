@@ -50,7 +50,7 @@ class MyCoinsScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              size.width > 1400 ? const CustomPannel(page: "coins") : Container(),
+              const CustomPannel(page: "coins"),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
